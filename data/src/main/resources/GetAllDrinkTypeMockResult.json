@@ -1,0 +1,13 @@
+{
+  "drinks": [
+    {
+      "strAlcoholic": "Alcoholic"
+    },
+    {
+      "strAlcoholic": "Non alcoholic"
+    },
+    {
+      "strAlcoholic": "Optional alcohol"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id 'kotlin-kapt'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    implementation dep.kotlin.jre
+    implementation dep.android.coroutinesAndroid
+    testImplementation dep.test.jUnit
+    testImplementation dep.test.mockitoCore
+
+    // Hilt
+    implementation dep.android.hiltCore
+    kapt dep.android.hiltCompiler
+}

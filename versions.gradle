@@ -1,0 +1,82 @@
+ext.deps = [:]
+
+def versions = [:]
+versions.gradle = "7.0.0"
+versions.kotlin = "1.5.0"
+versions.hilt = "2.38.1"
+versions.coreKtx = "1.5.0"
+versions.appCompat = "1.3.0"
+versions.material = "1.3.0"
+versions.constraintLayout= "2.0.4"
+versions.lifeCycleExtensions = "2.2.0"
+versions.jUnit = "4.+"
+versions.extJunit = "1.1.2"
+versions.espressoCore = "3.3.0"
+versions.mockitoCore = "1.10.19"
+versions.coroutinesAndroid = "1.3.9"
+versions.lifeCycleViewModelKtx = "2.3.1"
+versions.timber = "4.7.1"
+versions.activityKtx = "1.2.3"
+versions.retrofit = "2.9.0"
+versions.gsonConverter = "2.8.6"
+versions.room = "2.3.0"
+versions.mockWebServer = "4.9.1"
+
+def dep = [:]
+dep.gradle = "com.android.tools.build:gradle:$versions.gradle"
+
+def android = [:]
+android.hiltGradle = "com.google.dagger:hilt-android-gradle-plugin:$versions.hilt"
+android.coreKtx = "androidx.core:core-ktx:$versions.coreKtx"
+android.appCompat = "androidx.appcompat:appcompat:$versions.appCompat"
+android.material = "com.google.android.material:material:$versions.material"
+android.constraintLayout = "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
+android.lifeCycleExtensions = "androidx.lifecycle:lifecycle-extensions:$versions.lifeCycleExtensions"
+android.coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutinesAndroid"
+android.lifeCycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifeCycleViewModelKtx"
+android.timber = "com.jakewharton.timber:timber:$versions.timber"
+android.activityKtx = "androidx.activity:activity-ktx:$versions.activityKtx"
+android.retrofit = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+android.gsonConverter = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+android.hilt = "com.google.dagger:hilt-android:$versions.hilt"
+android.hiltCore = "com.google.dagger:hilt-core:$versions.hilt"
+android.hiltCompiler = "com.google.dagger:hilt-android-compiler:$versions.hilt"
+android.roomRuntime = "androidx.room:room-runtime:$versions.room"
+android.roomCompiler = "androidx.room:room-compiler:$versions.room"
+
+def test = [:]
+test.jUnit = "junit:junit:$versions.jUnit"
+test.extJunit = "androidx.test.ext:junit:$versions.extJunit"
+test.espressoCore = "androidx.test.espresso:espresso-core:$versions.espressoCore"
+test.mockitoCore = "org.mockito:mockito-core:$versions.mockitoCore"
+test.mockWebServer = "com.squareup.okhttp3:mockwebserver:$versions.mockWebServer"
+
+
+def rx = [:]
+
+def kotlin = [:]
+kotlin.kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+kotlin.jre = "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlinV"
+
+def buildVersions = [:]
+buildVersions.compileSdkVersion = 30
+buildVersions.minSdkVersion = 29
+buildVersions.targetSdkVersion = 30
+buildVersions.versionCode = 1
+buildVersions.versionName = "1.0.0"
+
+def addRepositories(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+dep.android = android
+dep.test = test
+dep.kotlin = kotlin
+
+ext.dep = dep
+ext.buildVersions = buildVersions
+ext.addRepositories = this.&addRepositories

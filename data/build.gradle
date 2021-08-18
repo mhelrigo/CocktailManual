@@ -1,0 +1,76 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    compileSdk 30
+
+    defaultConfig {
+        minSdk 19
+        targetSdk 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    sourceSets {
+        main {
+            resources {
+                srcDirs 'src\\main\\resources'
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation project(path: ':domain')
+
+    implementation dep.kotlin.jre
+    implementation dep.android.coreKtx
+    testImplementation dep.test.jUnit
+    androidTestImplementation dep.test.extJunit
+    androidTestImplementation dep.test.espressoCore
+    testImplementation dep.test.mockitoCore
+    testImplementation dep.test.mockWebServer
+
+    // Retrofit
+    implementation dep.android.retrofit
+
+    // GSON Converter
+    implementation dep.android.gsonConverter
+
+    // Hilt
+    implementation dep.android.hiltCore
+    implementation dep.android.hilt
+    kapt dep.android.hiltCompiler
+
+    // Kotlin Coroutine
+    implementation dep.android.coroutinesAndroid
+
+    // KTX for Coroutine
+    implementation dep.android.lifeCycleViewModelKtx
+
+    // Timber for Logging
+    implementation dep.android.timber
+
+    // Room
+    implementation dep.android.roomRuntime
+    kapt dep.android.roomCompiler
+}
