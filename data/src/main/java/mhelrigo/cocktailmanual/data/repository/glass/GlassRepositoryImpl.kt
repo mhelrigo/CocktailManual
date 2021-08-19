@@ -14,7 +14,7 @@ class GlassRepositoryImpl constructor(
     var glassApi: GlassApi,
     @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
 ) : GlassRepository {
-    override suspend fun getAll(): ResultWrapper<Glasses, Exception> =
+    override suspend fun getAll(): ResultWrapper<Exception, Glasses> =
         withContext(ioCoroutineContext) {
             ResultWrapper.build { glassApi.getAll() }
         }

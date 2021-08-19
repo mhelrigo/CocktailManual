@@ -8,8 +8,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetLatestDrinksUseCase @Inject constructor(var drinkRepository: DrinkRepository) : UseCase<ResultWrapper<Drinks, Exception>, List<Any>>() {
-    override suspend fun buildExecutable(params: List<Any>?): ResultWrapper<Drinks, Exception> {
+class GetLatestDrinksUseCase @Inject constructor(var drinkRepository: DrinkRepository) : UseCase<ResultWrapper<Exception, Drinks>, List<Any>>() {
+    override suspend fun buildExecutable(params: List<Any>?): ResultWrapper<Exception, Drinks> {
         return drinkRepository.getLatest()
     }
 }

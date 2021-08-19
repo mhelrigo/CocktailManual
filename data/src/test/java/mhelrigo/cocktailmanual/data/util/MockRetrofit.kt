@@ -10,7 +10,7 @@ class MockRetrofit() {
         fun mockRetrofit() : Retrofit =
              Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(mockWebServer.url("https://www.thecocktaildb.com/api/json/v2/API_NO_HERE/"))
+                .baseUrl(mockWebServer.url("https://www.thecocktaildb.com/api/json/v2/API_HERE/"))
                 .build()
 
     }

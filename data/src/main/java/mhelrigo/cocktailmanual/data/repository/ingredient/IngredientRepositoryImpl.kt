@@ -14,12 +14,12 @@ class IngredientRepositoryImpl constructor(
     var ingredientApi: IngredientApi,
     @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
 ) : IngredientRepository {
-    override suspend fun getAll(): ResultWrapper<Ingredients, Exception> =
+    override suspend fun getAll(): ResultWrapper<Exception, Ingredients> =
         withContext(ioCoroutineContext) {
             ResultWrapper.build { ingredientApi.getAll() }
         }
 
-    override suspend fun getDetails(name: String): ResultWrapper<Ingredients, Exception> =
+    override suspend fun getDetails(name: String): ResultWrapper<Exception, Ingredients> =
         withContext(ioCoroutineContext) {
             ResultWrapper.build { ingredientApi.getDetails(name) }
         }

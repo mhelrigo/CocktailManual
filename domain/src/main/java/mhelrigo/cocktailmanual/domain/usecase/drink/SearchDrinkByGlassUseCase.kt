@@ -6,8 +6,8 @@ import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import mhelrigo.cocktailmanual.domain.usecase.base.UseCase
 
 class SearchDrinkByGlassUseCase(private val drinkRepository: DrinkRepository) :
-    UseCase<ResultWrapper<Drinks, Exception>, List<Any>>() {
-    override suspend fun buildExecutable(params: List<Any>?): ResultWrapper<Drinks, Exception> {
+    UseCase<ResultWrapper<Exception, Drinks>, List<Any>>() {
+    override suspend fun buildExecutable(params: List<Any>?): ResultWrapper<Exception, Drinks> {
         return drinkRepository.searchByGlass(params?.get(0)!! as String)
     }
 }

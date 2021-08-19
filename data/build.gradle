@@ -41,9 +41,11 @@ android {
 
 dependencies {
     implementation project(path: ':domain')
+    implementation project(path: ':commons')
 
     implementation dep.kotlin.jre
     implementation dep.android.coreKtx
+    implementation dep.test.junitKtx
     testImplementation dep.test.jUnit
     androidTestImplementation dep.test.extJunit
     androidTestImplementation dep.test.espressoCore

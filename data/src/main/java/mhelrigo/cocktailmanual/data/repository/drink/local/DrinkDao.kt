@@ -1,9 +1,6 @@
 package mhelrigo.cocktailmanual.data.repository.drink.local
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.*
 import mhelrigo.cocktailmanual.data.model.Drink
 
 @Dao
@@ -13,4 +10,7 @@ interface DrinkDao {
 
     @Delete
     fun delete(drink: Drink)
+
+    @Query("SELECT * FROM Drink WHERE idDrink = :idDrink")
+    fun selectById(idDrink: String) : Drink
 }

@@ -6,8 +6,8 @@ import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import mhelrigo.cocktailmanual.domain.usecase.base.UseCase
 
 class GetIngredientDetailUseCase(private val ingredientRepository: IngredientRepository) :
-    UseCase<ResultWrapper<Ingredients, Exception>, List<Any>>() {
-    override suspend fun buildExecutable(params: List<Any>?): ResultWrapper<Ingredients, Exception> {
+    UseCase<ResultWrapper<Exception, Ingredients>, List<Any>>() {
+    override suspend fun buildExecutable(params: List<Any>?): ResultWrapper<Exception, Ingredients> {
         return ingredientRepository.getDetails(params?.get(0)!! as String)
     }
 }

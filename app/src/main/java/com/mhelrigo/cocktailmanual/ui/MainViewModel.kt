@@ -19,7 +19,7 @@ class MainViewModel @Inject constructor(
     @Named("Dispatchers.Main") var uiCoroutineContext: CoroutineContext
 ) : ViewModel(), CoroutineScope {
     fun fetchAMeal() = launch {
-        when (val a: ResultWrapper<Drinks, Exception> = drinksUseCase.buildExecutable(null)) {
+        when (val a: ResultWrapper<Exception, Drinks> = drinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> Timber.e("Success: ${a.value}")
             is ResultWrapper.Error -> Timber.e("Error: ${a.error}")
         }

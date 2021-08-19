@@ -1,15 +1,14 @@
 package mhelrigo.cocktailmanual.domain.usecase.base
 
 sealed class ResultWrapper<out A, out B> {
-    data class Success<out A>(val value: A) : ResultWrapper<A, Nothing>()
-    data class Error<out B>(val error: B) : ResultWrapper<Nothing, B>()
+    data class Success<out B>(val value: B) : ResultWrapper<Nothing, B>()
+    data class Error<out A>(val error: A) : ResultWrapper<A, Nothing>()
 
     companion object Factory {
-        inline fun <V> build(function: () -> V): ResultWrapper<V, Exception> =
+        inline fun <V> build(function: () -> V): ResultWrapper<Exception, V> =
             try {
                 Success(function.invoke())
-            } catch (e: java.lang.Exception) {
-                e.printStackTrace()
+            } catch (e: Exception) {
                 Error(e)
             }
     }

@@ -21,6 +21,7 @@ versions.retrofit = "2.9.0"
 versions.gsonConverter = "2.8.6"
 versions.room = "2.3.0"
 versions.mockWebServer = "4.9.1"
+versions.junitKtx = "1.1.3"
 
 def dep = [:]
 dep.gradle = "com.android.tools.build:gradle:$versions.gradle"
@@ -50,6 +51,7 @@ test.extJunit = "androidx.test.ext:junit:$versions.extJunit"
 test.espressoCore = "androidx.test.espresso:espresso-core:$versions.espressoCore"
 test.mockitoCore = "org.mockito:mockito-core:$versions.mockitoCore"
 test.mockWebServer = "com.squareup.okhttp3:mockwebserver:$versions.mockWebServer"
+test.junitKtx = "androidx.test.ext:junit-ktx:$versions.junitKtx"
 
 
 def rx = [:]

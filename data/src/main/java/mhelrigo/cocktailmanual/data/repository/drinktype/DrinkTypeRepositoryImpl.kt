@@ -15,7 +15,7 @@ class DrinkTypeRepositoryImpl constructor(
     @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
 ) :
     DrinkTypeRepository {
-    override suspend fun getAll(): ResultWrapper<DrinkTypes, Exception> =
+    override suspend fun getAll(): ResultWrapper<Exception, DrinkTypes> =
         withContext(ioCoroutineContext) {
             ResultWrapper.build { drinkTypeApi.getAll() }
         }

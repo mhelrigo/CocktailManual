@@ -1,13 +1,18 @@
 package mhelrigo.cocktailmanual.data.repository
 
+import com.mhelrigo.commons.MockFileReader
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import mhelrigo.cocktailmanual.data.repository.glass.GlassRepositoryImpl
 import mhelrigo.cocktailmanual.data.repository.glass.remote.GlassApi
-import mhelrigo.cocktailmanual.data.util.MockResponseFileReader
 import mhelrigo.cocktailmanual.data.util.MockRetrofit
+import mhelrigo.cocktailmanual.domain.model.Glasses
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import org.hamcrest.CoreMatchers.isA
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
@@ -15,21 +20,27 @@ import retrofit2.Retrofit
 class GlassRepositoryTest {
     private val mockWebServer = MockWebServer()
     private lateinit var retrofit: Retrofit
-    private lateinit var glassApi: GlassApi
+    private lateinit var glassRepositoryImpl: GlassRepositoryImpl
 
     @Before
     fun init() {
         mockRetrofit()
-        glassApi = retrofit.create(GlassApi::class.java)
+        glassRepositoryImpl =
+            GlassRepositoryImpl(retrofit.create(GlassApi::class.java), Dispatchers.Unconfined)
     }
 
     @Test
-    fun getAll_Success() = runBlocking{
-        mockWebServer.enqueue(MockResponse().setBody(MockResponseFileReader("GetAllGlassMockResult.json").content))
+    fun getAll_Success() = runBlocking {
+        mockWebServer.enqueue(MockResponse().setBody(MockFileReader("GetAllGlassMockResult.json").content))
 
-        val result = ResultWrapper.build { glassApi.getAll() }
-
-        assertEquals((result as ResultWrapper.Success).value.drinks.isNotEmpty(), true)
+        when (val result: ResultWrapper<Exception, Glasses> = glassRepositoryImpl.getAll()) {
+            is ResultWrapper.Success -> {
+                assertEquals(result.value.drinks.isNotEmpty(), true)
+            }
+            is ResultWrapper.Error -> {
+                assertThat(result.error, `isA`(Exception::class.java))
+            }
+        }
     }
 
     private fun mockRetrofit() {

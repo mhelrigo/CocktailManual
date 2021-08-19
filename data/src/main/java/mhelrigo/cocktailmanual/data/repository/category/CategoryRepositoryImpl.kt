@@ -14,7 +14,7 @@ class CategoryRepositoryImpl constructor(
     var categoryApi: CategoryApi,
     @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
 ) : CategoryRepository {
-    override suspend fun getAll(): ResultWrapper<Categories, Exception> =
+    override suspend fun getAll(): ResultWrapper<Exception, Categories> =
         withContext(ioCoroutineContext) {
             ResultWrapper.build { categoryApi.getAll() }
         }

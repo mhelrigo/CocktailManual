@@ -1,9 +1,12 @@
-package mhelrigo.cocktailmanual.data.util
+package com.mhelrigo.commons
 
 import java.io.InputStreamReader
 
-class MockResponseFileReader(path: String) {
-
+/**
+ * Reads the mock results created @mhelrigo.cocktailmanual.data.resources
+ * For test purposes only.
+ * */
+class MockFileReader(path: String) {
     val content: String
 
     init {

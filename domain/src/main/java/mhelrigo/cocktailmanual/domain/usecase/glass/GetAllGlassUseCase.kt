@@ -6,8 +6,8 @@ import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import mhelrigo.cocktailmanual.domain.usecase.base.UseCase
 
 class GetAllGlassUseCase(private val glassRepository: GlassRepository) :
-    UseCase<ResultWrapper<Glasses, Exception>, List<Any>>() {
-    override suspend fun buildExecutable(params: List<Any>?): ResultWrapper<Glasses, Exception> {
+    UseCase<ResultWrapper<Exception, Glasses>, List<Any>>() {
+    override suspend fun buildExecutable(params: List<Any>?): ResultWrapper<Exception, Glasses> {
         return glassRepository.getAll()
     }
 }

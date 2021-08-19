@@ -2,3 +2,4 @@ rootProject.name = "CocktailManual"
 include ':app'
 include ':domain'
 include ':data'
+include ':commons'
