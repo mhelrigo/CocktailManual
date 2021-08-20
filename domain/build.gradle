@@ -17,10 +17,13 @@ repositories {
 dependencies {
     implementation dep.kotlin.jre
     implementation dep.android.coroutinesAndroid
+    implementation project(path: ':commons')
     testImplementation dep.test.jUnit
     testImplementation dep.test.mockitoCore
 
     // Hilt
     implementation dep.android.hiltCore
     kapt dep.android.hiltCompiler
+
+    testImplementation dep.android.gsonConverter
 }
