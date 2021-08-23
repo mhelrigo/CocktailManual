@@ -12,5 +12,8 @@ interface DrinkDao {
     fun delete(drink: Drink)
 
     @Query("SELECT * FROM Drink WHERE idDrink = :idDrink")
-    fun selectById(idDrink: String) : Drink
+    fun selectById(idDrink: String): Drink
+
+    @Query("SELECT * FROM Drink")
+    fun selectAllFavorites(): List<Drink>
 }

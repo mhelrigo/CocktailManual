@@ -30,7 +30,9 @@ class DrinkRepositoryImpl @Inject constructor(
 
     override suspend fun getLatest(): ResultWrapper<Exception, Drinks> =
         withContext(ioCoroutineContext) {
-            ResultWrapper.build { drinkApi.getLatest() }
+            ResultWrapper.build {
+                drinkApi.getLatest()
+            }
         }
 
     override suspend fun searchByFirstLetter(firstLetter: String): ResultWrapper<Exception, Drinks> =
@@ -68,17 +70,17 @@ class DrinkRepositoryImpl @Inject constructor(
             ResultWrapper.build { drinkApi.getDetails(id) }
         }
 
-    override suspend fun addFavoriteById(id: String): ResultWrapper<Exception, Unit> {
+    override suspend fun addFavoriteById(id: Int): ResultWrapper<Exception, Unit> {
         return try {
             withContext(ioCoroutineContext) {
-                ResultWrapper.build { drinkDao.insert(Drink(uid = id as Int, idDrink = id)) }
+                ResultWrapper.build { drinkDao.insert(Drink(uid = id, idDrink = id)) }
             }
         } catch (e: Exception) {
             ResultWrapper.build { throw Exception("Insert failed") }
         }
     }
 
-    override suspend fun removeFavoriteById(id: String): ResultWrapper<Exception, Unit> {
+    override suspend fun removeFavoriteById(id: Int): ResultWrapper<Exception, Unit> {
         return try {
             withContext(ioCoroutineContext) {
                 ResultWrapper.build { drinkDao.delete(Drink(uid = id as Int, idDrink = id)) }
@@ -95,6 +97,20 @@ class DrinkRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             ResultWrapper.build { throw Exception("Insert failed") }
+        }
+    }
+
+    override suspend fun selectAllFavorite(): ResultWrapper<Exception, List<mhelrigo.cocktailmanual.domain.model.Drink>> {
+        return try {
+            withContext(ioCoroutineContext) {
+                ResultWrapper.build {
+                    drinkDao.selectAllFavorites().map {
+                        it.toDrinkUseCase()
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            ResultWrapper.build { throw Exception("Failed Operation") }
         }
     }
 }

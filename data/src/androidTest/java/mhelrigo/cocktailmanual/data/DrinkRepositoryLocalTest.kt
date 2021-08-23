@@ -45,12 +45,12 @@ class DrinkRepositoryLocalTest {
 
         drinkDao.insert(
             mhelrigo.cocktailmanual.data.model.Drink(
-                drinks.drinks[0].idDrink.toInt(),
-                drinks.drinks[0].idDrink
+                drinks.drinks[0].idDrink?.toInt()!!,
+                drinks.drinks[0].idDrink as Int
             )
         )
 
-        assertEquals(drinks.drinks[0].idDrink, drinkDao.selectById(drinks.drinks[0].idDrink).toDrinkUseCase().idDrink)
+        assertEquals(drinks.drinks[0].idDrink, drinkDao.selectById(drinks.drinks[0].idDrink!!).toDrinkUseCase().idDrink)
     }
 
     @Test
@@ -61,19 +61,19 @@ class DrinkRepositoryLocalTest {
 
         drinkDao.insert(
             mhelrigo.cocktailmanual.data.model.Drink(
-                drinks.drinks[0].idDrink.toInt(),
-                drinks.drinks[0].idDrink
+                drinks.drinks[0].idDrink!!.toInt(),
+                drinks.drinks[0].idDrink as Int
             )
         )
 
         drinkDao.delete(
             mhelrigo.cocktailmanual.data.model.Drink(
-                drinks.drinks[0].idDrink.toInt(),
-                drinks.drinks[0].idDrink
+                drinks.drinks[0].idDrink!!.toInt(),
+                drinks.drinks[0].idDrink as Int
             )
         )
 
-        assertEquals(null, drinkDao.selectById(drinks.drinks[0].idDrink))
+        assertEquals(null, drinkDao.selectById(drinks.drinks[0].idDrink!!))
     }
 
     private fun mockRoom() {
