@@ -15,7 +15,8 @@ interface DrinkRepository {
     suspend fun searchByCategory(category: String): ResultWrapper<Exception, Drinks>
     suspend fun searchByGlass(glass: String): ResultWrapper<Exception, Drinks>
     suspend fun getDetails(id: String): ResultWrapper<Exception, Drinks>
-    suspend fun addFavoriteById(id: String): ResultWrapper<Exception, Unit>
-    suspend fun removeFavoriteById(id: String): ResultWrapper<Exception, Unit>
+    suspend fun addFavoriteById(id: Int): ResultWrapper<Exception, Unit>
+    suspend fun removeFavoriteById(id: Int): ResultWrapper<Exception, Unit>
     suspend fun selectFavoriteById(id: String): ResultWrapper<Exception, Drink>
+    suspend fun selectAllFavorite(): ResultWrapper<Exception, List<Drink>>
 }

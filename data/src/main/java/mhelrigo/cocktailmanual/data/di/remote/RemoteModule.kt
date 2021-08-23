@@ -20,7 +20,7 @@ object RemoteModule {
     @Provides
     fun provideApiHandler(): Retrofit =
         Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://www.thecocktaildb.com/api/json/v2/API_NO_HERE/").build()
+            .baseUrl("https://www.thecocktaildb.com/api/json/v2/9973533/").build()
 
     @Singleton
     @Provides
