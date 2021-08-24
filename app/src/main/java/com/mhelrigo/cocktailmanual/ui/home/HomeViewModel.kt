@@ -3,6 +3,7 @@ package com.mhelrigo.cocktailmanual.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.mhelrigo.cocktailmanual.ui.model.FromCollectionOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import mhelrigo.cocktailmanual.domain.model.Drink
@@ -32,6 +33,10 @@ class HomeViewModel @Inject constructor(
     private val _popularDrinks = MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
     val popularDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _popularDrinks
 
+    private val _expandedDrinkDetails =
+        MutableLiveData<com.mhelrigo.cocktailmanual.ui.model.Drink>()
+    val expandedDrinkDetails: LiveData<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _expandedDrinkDetails
+
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
 
@@ -45,6 +50,7 @@ class HomeViewModel @Inject constructor(
                     ).map {
                         com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it).apply {
                             assignDrawableColor()
+                            fromCollectionOf = FromCollectionOf.LATEST
                         }
                     }
                 )
@@ -65,6 +71,7 @@ class HomeViewModel @Inject constructor(
                     ).map {
                         com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it).apply {
                             assignDrawableColor()
+                            fromCollectionOf = FromCollectionOf.POPULAR
                         }
                     }
                 )
@@ -118,7 +125,7 @@ class HomeViewModel @Inject constructor(
      * @param [drink] The Drink to be processed
      * @return [ResultWrapper<Exception, Drink>?] View will handle operation's result
      * */
-    fun toggleFavoriteOfADrink(drink: Drink): ResultWrapper<Exception, com.mhelrigo.cocktailmanual.ui.model.Drink>? {
+    fun toggleFavoriteOfADrink(drink: com.mhelrigo.cocktailmanual.ui.model.Drink): ResultWrapper<Exception, com.mhelrigo.cocktailmanual.ui.model.Drink>? {
         var result: ResultWrapper<Exception, Unit>?
 
         val deferredResult = async {
@@ -134,21 +141,23 @@ class HomeViewModel @Inject constructor(
 
         return when (result) {
             is ResultWrapper.Success -> ResultWrapper.build {
-                com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(drink.apply {
+                drink.apply {
                     markFavorite(!isFavourite)
-                })
+                }
             }
             is ResultWrapper.Error -> {
                 ResultWrapper.build { throw Exception((result as ResultWrapper.Error<Exception>).error) }
             }
             else -> {
                 ResultWrapper.build {
-                    com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(
-                        drink
-                    )
+                    drink
                 }
             }
         }
+    }
+
+    fun expandDrinkDetails(drink: com.mhelrigo.cocktailmanual.ui.model.Drink) {
+        _expandedDrinkDetails.postValue(drink)
     }
 
     override val coroutineContext: CoroutineContext

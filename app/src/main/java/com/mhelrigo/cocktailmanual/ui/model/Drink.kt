@@ -2,6 +2,13 @@ package com.mhelrigo.cocktailmanual.ui.model
 
 import com.mhelrigo.cocktailmanual.R
 
+enum class FromCollectionOf {
+    LATEST,
+    POPULAR,
+    RANDOM,
+    NONE
+}
+
 data class Drink(
     val dateModified: String?,
     val idDrink: String?,
@@ -56,6 +63,8 @@ data class Drink(
     val strVideo: Any?,
     var isFavourite: Boolean,
     var backGroundColorDrawableColor: Int,
+    var bindingAdapterPosition: Int,
+    var fromCollectionOf: FromCollectionOf
 ) {
     companion object Factory {
         fun fromDrinkDomainModel(drink: mhelrigo.cocktailmanual.domain.model.Drink): Drink {
@@ -112,9 +121,15 @@ data class Drink(
                 strTags = drink.strTags,
                 strVideo = drink.strVideo,
                 isFavourite = drink.isFavourite,
-                backGroundColorDrawableColor = 0
+                bindingAdapterPosition = -1,
+                backGroundColorDrawableColor = 0,
+                fromCollectionOf = FromCollectionOf.NONE
             )
         }
+    }
+
+    fun markFavorite(a: Boolean) {
+        this.isFavourite = a
     }
 
     fun returnIconForFavorite(): Int {
@@ -147,6 +162,32 @@ data class Drink(
             }
             else -> R.color.red_100
         }
+    }
+
+    fun returnMeasurements(): String {
+        return (if (strMeasure1.isNullOrBlank()) "" else " $strMeasure1") +
+                (if (strMeasure2.isNullOrBlank()) "" else "\n $strMeasure2") +
+                (if (strMeasure3.isNullOrBlank()) "" else "\n $strMeasure3") +
+                (if (strMeasure4 == null) "" else "\n $strMeasure4") +
+                (if (strMeasure5 == null) "" else "\n $strMeasure5") +
+                (if (strMeasure6 == null) "" else "\n $strMeasure6") +
+                (if (strMeasure7 == null) "" else "\n $strMeasure7") +
+                (if (strMeasure8 == null) "" else "\n $strMeasure8") +
+                (if (strMeasure9 == null) "" else "\n $strMeasure9") +
+                if (strMeasure10 == null) "" else "\n $strMeasure10"
+    }
+
+    fun returnIngredients(): String {
+        return (if (strIngredient1.isNullOrBlank()) "" else "$strIngredient1") +
+                (if (strIngredient2.isNullOrBlank()) "" else "\n $strIngredient2") +
+                (if (strIngredient3.isNullOrBlank()) "" else "\n $strIngredient3") +
+                (if (strIngredient4.isNullOrBlank()) "" else "\n $strIngredient4") +
+                (if (strIngredient5 == null) "" else "\n $strIngredient5") +
+                (if (strIngredient6 == null) "" else "\n $strIngredient6") +
+                (if (strIngredient7 == null) "" else "\n $strIngredient7") +
+                (if (strIngredient8 == null) "" else "\n $strIngredient8") +
+                (if (strIngredient9 == null) "" else "\n $strIngredient9") +
+                if (strIngredient10 == null) "" else "\n $strIngredient10"
     }
 
     fun toDrinkDomainModel(): mhelrigo.cocktailmanual.domain.model.Drink =
