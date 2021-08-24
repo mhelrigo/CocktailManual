@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".ui.home.DrinkDetailsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageViewThumbnail"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_16"
+            android:layout_marginTop="@dimen/base_16"
+            android:layout_marginEnd="@dimen/base_4"
+            android:fontFamily="@font/roboto_light"
+            android:text="TextView"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_24"
+            app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewThumbnail" />
+
+        <ImageView
+            android:id="@+id/imageViewFavorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/base_16"
+            android:src="@drawable/ic_favorite_border_black"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textViewName" />
+
+        <TextView
+            android:id="@+id/textViewShortDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_24"
+            android:layout_marginTop="@dimen/base_16"
+            android:layout_marginEnd="@dimen/base_16"
+            android:fontFamily="@font/roboto_light"
+            android:text="TextView"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewName" />
+
+        <TextView
+            android:id="@+id/textViewIngredient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_16"
+            android:layout_marginTop="@dimen/base_24"
+            android:fontFamily="@font/roboto_light"
+            android:text="Ingredients"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewShortDesc" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/base_16"
+            android:src="@drawable/ic_fact_check_black"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewIngredient"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textViewIngredient" />
+
+        <TextView
+            android:id="@+id/textViewMeasurements"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_24"
+            android:layout_marginTop="@dimen/base_16"
+            android:fontFamily="@font/roboto_light"
+            android:text="TextView"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewIngredient" />
+
+        <TextView
+            android:id="@+id/textViewIngredients"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_4"
+            android:layout_marginTop="@dimen/base_16"
+            android:fontFamily="@font/roboto_light"
+            android:text="TextView"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/textViewMeasurements"
+            app:layout_constraintTop_toBottomOf="@+id/textViewIngredient" />
+
+        <TextView
+            android:id="@+id/textViewInstructionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_16"
+            android:layout_marginTop="@dimen/base_24"
+            android:layout_marginEnd="@dimen/base_16"
+            android:fontFamily="@font/roboto_light"
+            android:text="Instruction"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewMeasurements" />
+
+        <TextView
+            android:id="@+id/textViewInstruction"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_24"
+            android:layout_marginTop="@dimen/base_16"
+            android:layout_marginEnd="@dimen/base_16"
+            android:layout_marginBottom="@dimen/base_16"
+            android:fontFamily="@font/roboto_light"
+            android:text="TextView"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewInstructionLabel"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/base_16"
+            android:src="@drawable/ic_article_black"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewInstructionLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textViewInstructionLabel" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

@@ -9,7 +9,10 @@ import com.mhelrigo.cocktailmanual.ui.model.Drink
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 
-class HorizontalDrinksRecyclerViewAdapter(var onItemClickListener: OnItemClickListener<Drink>) :
+class HorizontalDrinksRecyclerViewAdapter(
+    var onFavoritesToggled: OnItemClickListener<Drink>,
+    var onItemClicked: OnItemClickListener<Drink>
+) :
     RecyclerView.Adapter<HorizontalDrinksRecyclerViewAdapter.ViewHolder>() {
     private val _drinks = ArrayList<Drink>()
 
@@ -50,6 +53,8 @@ class HorizontalDrinksRecyclerViewAdapter(var onItemClickListener: OnItemClickLi
 
     inner class ViewHolder(var view: ItemLatestDrinkBinding) : RecyclerView.ViewHolder(view.root) {
         fun bind(drink: Drink) {
+            drink.bindingAdapterPosition = bindingAdapterPosition
+
             view.textViewName.text = drink.strDrink
             view.textViewCategory.text = drink.strCategory
             view.textViewType.text = drink.strAlcoholic
@@ -58,12 +63,15 @@ class HorizontalDrinksRecyclerViewAdapter(var onItemClickListener: OnItemClickLi
                 .into(view.imageView)
 
             setUpFavoriteIcon(drink.returnIconForFavorite())
+            setUpBackgroundColor(drink)
 
             view.imageViewFavorite.setOnClickListener {
-                onItemClickListener.onClick(Pair(bindingAdapterPosition, drink))
+                onFavoritesToggled.onClick(drink)
             }
 
-            setUpBackgroundColor(drink)
+            view.root.setOnClickListener {
+                onItemClicked.onClick(drink)
+            }
         }
 
         private fun setUpFavoriteIcon(resourceDrawable: Int) {
