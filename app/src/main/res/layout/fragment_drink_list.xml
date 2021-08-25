@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nestScrollViewContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -16,10 +17,12 @@
             android:id="@+id/textViewTrending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_8"
             android:fontFamily="@font/roboto_light"
             android:text="Trending"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_16"
+            android:textSize="@dimen/base_20"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,22 +32,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/base_8"
             android:layout_marginEnd="2dp"
-            android:layout_marginBottom="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTrending"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewTrending" />
 
         <TextView
             android:id="@+id/textViewPopular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_8"
             android:layout_marginTop="@dimen/base_12"
             android:fontFamily="@font/roboto_light"
-            android:text="Top Booze"
+            android:text="A must try"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_16"
+            android:textSize="@dimen/base_20"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recyclerViewLatestDrinks" />
 
@@ -54,11 +56,43 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/base_8"
             android:layout_marginEnd="2dp"
-            android:layout_marginBottom="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPopular" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_8"
+            android:layout_marginTop="@dimen/base_32"
+            android:fontFamily="@font/roboto_light"
+            android:text="Discover Drinks"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_20"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerViewPopularDrinks" />
+
+        <ImageView
+            android:id="@+id/imageViewRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/base_8"
+            android:src="@drawable/ic_refresh_black"
+            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewRandomDrinks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/base_16"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewPopular"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewRefresh"
             app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

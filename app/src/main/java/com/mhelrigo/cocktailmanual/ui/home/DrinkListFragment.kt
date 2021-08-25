@@ -12,6 +12,7 @@ import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkListBinding
 import com.mhelrigo.cocktailmanual.ui.home.adapter.HorizontalDrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.home.adapter.OnItemClickListener
+import com.mhelrigo.cocktailmanual.ui.home.adapter.VerticalDrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.model.Drink
 import com.mhelrigo.cocktailmanual.ui.model.FromCollectionOf
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
@@ -24,30 +25,46 @@ import timber.log.Timber
 class DrinkListFragment : Fragment() {
     private val homeViewModel: HomeViewModel by activityViewModels()
 
-    private lateinit var drinkListBinding: FragmentDrinkListBinding
+    private var drinkListBinding: FragmentDrinkListBinding? = null
 
     private lateinit var popularDrinkAdapter: HorizontalDrinksRecyclerViewAdapter
     private lateinit var latestDrinkAdapter: HorizontalDrinksRecyclerViewAdapter
+    private lateinit var randomDrinkAdapter: VerticalDrinksRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        drinkListBinding = FragmentDrinkListBinding.inflate(layoutInflater)
+        if (drinkListBinding == null) {
+            drinkListBinding = FragmentDrinkListBinding.inflate(layoutInflater)
+        }
+
         // Inflate the layout for this fragment
-        return drinkListBinding.root
+        return drinkListBinding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUpRecyclerView()
+
+        drinkListBinding?.imageViewRefresh?.setOnClickListener {
+            homeViewModel.requestForRandomDrinks()
+        }
+
+        setUpRecyclerViews()
 
         handleLatestDrinks()
         handlePopularDrinks()
+        handleRandomDrinks()
         handleExpandedDrink()
     }
 
-    private fun setUpRecyclerView() {
+    private fun setUpRecyclerViews() {
+        setUpLatestDrinkRecyclerView()
+        setUpPopularDrinkRecyclerView()
+        setUpRandomDrinkRecyclerView()
+    }
+
+    private fun setUpLatestDrinkRecyclerView() {
         latestDrinkAdapter =
             HorizontalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
@@ -70,20 +87,21 @@ class DrinkListFragment : Fragment() {
                 }
             })
 
-        drinkListBinding.recyclerViewLatestDrinks.apply {
+        drinkListBinding?.recyclerViewLatestDrinks?.apply {
             adapter = latestDrinkAdapter
             layoutManager = LinearLayoutManager(
                 context, LinearLayoutManager.HORIZONTAL, false
             )
         }
+    }
 
+    private fun setUpPopularDrinkRecyclerView() {
         popularDrinkAdapter =
             HorizontalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
                     when (val result =
                         homeViewModel.toggleFavoriteOfADrink(item)) {
                         is ResultWrapper.Success -> {
-                            Timber.e("result.value ${result.value.isFavourite}")
                             popularDrinkAdapter.toggleFavoriteOfADrink(
                                 item.bindingAdapterPosition,
                                 result.value
@@ -100,7 +118,7 @@ class DrinkListFragment : Fragment() {
                 }
             })
 
-        drinkListBinding.recyclerViewPopularDrinks.apply {
+        drinkListBinding?.recyclerViewPopularDrinks?.apply {
             adapter = popularDrinkAdapter
             layoutManager = LinearLayoutManager(
                 context, LinearLayoutManager.HORIZONTAL, false
@@ -108,10 +126,41 @@ class DrinkListFragment : Fragment() {
         }
     }
 
+    private fun setUpRandomDrinkRecyclerView() {
+        randomDrinkAdapter =
+            VerticalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
+                override fun onClick(item: Drink) {
+                    when (val result =
+                        homeViewModel.toggleFavoriteOfADrink(item)) {
+                        is ResultWrapper.Success -> {
+                            randomDrinkAdapter.toggleFavoriteOfADrink(
+                                item.bindingAdapterPosition,
+                                result.value
+                            )
+                        }
+                        is ResultWrapper.Error -> {
+                            Timber.e("Something went wrong sport...")
+                        }
+                    }
+                }
+            }, object : OnItemClickListener<Drink> {
+                override fun onClick(item: Drink) {
+                    expandDrinkDetails(item)
+                }
+            })
+
+        drinkListBinding?.recyclerViewRandomDrinks?.apply {
+            adapter = randomDrinkAdapter
+            layoutManager = LinearLayoutManager(
+                context, LinearLayoutManager.VERTICAL, false
+            )
+        }
+    }
+
     private fun handleLatestDrinks() {
         homeViewModel.latestDrinks.observe(viewLifecycleOwner, {
             it?.let { drinks ->
-                latestDrinkAdapter.submit(drinks)
+                latestDrinkAdapter.differ.submitList(drinks)
             }
         })
     }
@@ -119,7 +168,15 @@ class DrinkListFragment : Fragment() {
     private fun handlePopularDrinks() {
         homeViewModel.popularDrinks.observe(viewLifecycleOwner, {
             it?.let { drinks ->
-                popularDrinkAdapter.submit(drinks)
+                popularDrinkAdapter.differ.submitList(drinks)
+            }
+        })
+    }
+
+    private fun handleRandomDrinks() {
+        homeViewModel.randomDrinks.observe(viewLifecycleOwner, {
+            it?.let { drinks ->
+                randomDrinkAdapter.differ.submitList(drinks.toList())
             }
         })
     }
@@ -127,13 +184,15 @@ class DrinkListFragment : Fragment() {
     private fun handleExpandedDrink() {
         homeViewModel.expandedDrinkDetails.observe(viewLifecycleOwner, {
             it?.let {
-                Timber.e("Drink $it")
                 when (it.fromCollectionOf!!) {
                     FromCollectionOf.LATEST -> {
                         latestDrinkAdapter.toggleFavoriteOfADrink(it.bindingAdapterPosition, it)
                     }
                     FromCollectionOf.POPULAR -> {
                         popularDrinkAdapter.toggleFavoriteOfADrink(it.bindingAdapterPosition, it)
+                    }
+                    FromCollectionOf.RANDOM -> {
+                        randomDrinkAdapter.toggleFavoriteOfADrink(it.bindingAdapterPosition, it)
                     }
                 }
             }

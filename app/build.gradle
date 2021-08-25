@@ -83,6 +83,9 @@ dependencies {
     implementation dep.android.picasso
     implementation dep.android.picassoTransformations
 
+    implementation dep.android.glide
+    annotationProcessor dep.android.glideAnnotation
+
     // KTX for Fragment
     implementation dep.android.fragmentKtx
 }
