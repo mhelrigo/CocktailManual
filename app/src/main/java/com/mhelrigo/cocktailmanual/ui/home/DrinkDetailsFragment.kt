@@ -40,7 +40,7 @@ class DrinkDetailsFragment : Fragment() {
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    findNavController().navigateUp()
+                    findNavController().popBackStack()
                 }
             })
     }

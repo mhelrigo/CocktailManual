@@ -7,6 +7,7 @@ import com.mhelrigo.cocktailmanual.ui.model.FromCollectionOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import mhelrigo.cocktailmanual.domain.model.Drink
+import mhelrigo.cocktailmanual.domain.model.Drinks
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import mhelrigo.cocktailmanual.domain.usecase.drink.*
 import timber.log.Timber
@@ -16,8 +17,9 @@ import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    var getPopularDrinksUseCase: GetPopularDrinksUseCase,
+    var popularDrinksUseCase: GetPopularDrinksUseCase,
     var latestDrinksUseCase: GetLatestDrinksUseCase,
+    var randomDrinksUseCase: GetRandomDrinksUseCase,
     var addFavoriteUseCase: AddFavoriteUseCase,
     var selectAllFavoritesUseCase: SelectAllFavoritesUseCase,
     var removeFavoriteUseCase: RemoveFavoriteUseCase,
@@ -33,6 +35,10 @@ class HomeViewModel @Inject constructor(
     private val _popularDrinks = MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
     val popularDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _popularDrinks
 
+    private val _randomDrinks =
+        MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
+    val randomDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _randomDrinks
+
     private val _expandedDrinkDetails =
         MutableLiveData<com.mhelrigo.cocktailmanual.ui.model.Drink>()
     val expandedDrinkDetails: LiveData<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _expandedDrinkDetails
@@ -40,19 +46,11 @@ class HomeViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
 
-    fun fetchLatestDrinks() = launch {
+    fun requestForLatestDrinks() = launch {
         when (val result = latestDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
                 _latestDrinks.postValue(
-                    markAllFavorites(
-                        result.value.drinks,
-                        fetchFavorites()
-                    ).map {
-                        com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it).apply {
-                            assignDrawableColor()
-                            fromCollectionOf = FromCollectionOf.LATEST
-                        }
-                    }
+                    beautifyDrinkResult(result.value, FromCollectionOf.LATEST)
                 )
             }
             is ResultWrapper.Error -> {
@@ -61,23 +59,54 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun fetchPopularDrinks() = launch {
-        when (val result = getPopularDrinksUseCase.buildExecutable(null)) {
+    fun requestForPopularDrinks() = launch {
+        when (val result = popularDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
                 _popularDrinks.postValue(
-                    markAllFavorites(
-                        result.value.drinks,
-                        fetchFavorites()
-                    ).map {
-                        com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it).apply {
-                            assignDrawableColor()
-                            fromCollectionOf = FromCollectionOf.POPULAR
-                        }
-                    }
+                    beautifyDrinkResult(result.value, FromCollectionOf.POPULAR)
                 )
             }
             is ResultWrapper.Error -> {
                 Timber.e("Error ${result.error}")
+            }
+        }
+    }
+
+    /**
+     * This request will cache previous result for pagination suitable for infinite scrolling.
+     * */
+    fun requestForRandomDrinks() = launch {
+        when (val result = randomDrinksUseCase.buildExecutable(null)) {
+            is ResultWrapper.Success -> {
+                _randomDrinks.postValue(beautifyDrinkResult(result.value, FromCollectionOf.RANDOM))
+            }
+            is ResultWrapper.Error -> {
+                Timber.e("Error ${result.error}")
+            }
+        }
+    }
+
+    /**
+     * What this does is it will make Drinks from remote into a presentable model that will be used
+     * by the Views. It will do the following:
+     * 1. Call for the method [markAllFavorites] to match the local favorites with result from remote by [idDrink].
+     * 2. Assign a background color by using [assignDrawableColor].
+     * 3. Each Drink will be assigned an enum of [FromCollectionOf], the value depends on where the result came from(LATEST or POPULAR or RANDOM).
+     *
+     * [FromCollectionOf] is needed for when updating specific Drink item from there respective Collections
+     *
+     * @param [result] the return value from the remote request
+     * @param [fromCollectionOfValue] the type of request and the source of the return value
+     * @return [List<com.mhelrigo.cocktailmanual.ui.model.Drink>] the processed list that will be used by a View
+     * */
+    private suspend fun beautifyDrinkResult(
+        result: Drinks,
+        fromCollectionOfValue: FromCollectionOf
+    ): List<com.mhelrigo.cocktailmanual.ui.model.Drink> {
+        return markAllFavorites(result.drinks, fetchFavorites()).map {
+            com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it).apply {
+                assignDrawableColor()
+                fromCollectionOf = fromCollectionOfValue
             }
         }
     }

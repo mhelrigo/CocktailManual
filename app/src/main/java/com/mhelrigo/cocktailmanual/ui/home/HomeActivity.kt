@@ -19,13 +19,18 @@ class HomeActivity : AppCompatActivity() {
 
         requestForLatestDrinks()
         requestForPopularDrinks()
+        requestForRandomDrinks()
     }
 
     private fun requestForLatestDrinks() {
-        homeViewModel.fetchLatestDrinks()
+        homeViewModel.requestForLatestDrinks()
     }
 
     private fun requestForPopularDrinks() {
-        homeViewModel.fetchPopularDrinks()
+        homeViewModel.requestForPopularDrinks()
+    }
+
+    private fun requestForRandomDrinks() {
+        homeViewModel.requestForRandomDrinks()
     }
 }
