@@ -80,9 +80,6 @@ dependencies {
     implementation dep.android.paging
 
     // Image Loading
-    implementation dep.android.picasso
-    implementation dep.android.picassoTransformations
-
     implementation dep.android.glide
     annotationProcessor dep.android.glideAnnotation
 

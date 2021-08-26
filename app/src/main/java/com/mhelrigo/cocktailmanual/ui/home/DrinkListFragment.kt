@@ -139,7 +139,7 @@ class DrinkListFragment : Fragment() {
                             )
                         }
                         is ResultWrapper.Error -> {
-                            Timber.e("Something went wrong sport...")
+                            Timber.e("${result.error}")
                         }
                     }
                 }

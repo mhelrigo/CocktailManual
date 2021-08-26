@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_drinkListFragment_to_drinkDetailsFragment"
             app:destination="@id/drinkDetailsFragment"/>
+        <action
+            android:id="@+id/action_drinkListFragment_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
     </fragment>
     <fragment
         android:id="@+id/drinkDetailsFragment"
@@ -23,4 +26,18 @@
             android:id="@+id/action_drinkDetailsFragment_to_drinkListFragment"
             app:destination="@id/drinkListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.mhelrigo.cocktailmanual.ui.home.FavoritesFragment"
+        android:label="fragment_favorites"
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_drinkDetailsFragment"
+            app:destination="@id/drinkDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.mhelrigo.cocktailmanual.ui.home.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
 </navigation>

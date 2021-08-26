@@ -39,6 +39,10 @@ class HomeViewModel @Inject constructor(
         MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
     val randomDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _randomDrinks
 
+    private val _favoriteDrinks =
+        MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
+    val favoriteDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _favoriteDrinks
+
     private val _expandedDrinkDetails =
         MutableLiveData<com.mhelrigo.cocktailmanual.ui.model.Drink>()
     val expandedDrinkDetails: LiveData<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _expandedDrinkDetails
@@ -99,11 +103,11 @@ class HomeViewModel @Inject constructor(
      * @param [fromCollectionOfValue] the type of request and the source of the return value
      * @return [List<com.mhelrigo.cocktailmanual.ui.model.Drink>] the processed list that will be used by a View
      * */
-    private suspend fun beautifyDrinkResult(
+    private fun beautifyDrinkResult(
         result: Drinks,
         fromCollectionOfValue: FromCollectionOf
     ): List<com.mhelrigo.cocktailmanual.ui.model.Drink> {
-        return markAllFavorites(result.drinks, fetchFavorites()).map {
+        return markAllFavorites(result.drinks, requestForFavoriteDrinks()).map {
             com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it).apply {
                 assignDrawableColor()
                 fromCollectionOf = fromCollectionOfValue
@@ -134,14 +138,28 @@ class HomeViewModel @Inject constructor(
         return toBeMerged
     }
 
-    private suspend fun fetchFavorites(): List<Drink> {
-        val result = selectAllFavoritesUseCase.buildExecutable()
+    fun requestForFavoriteDrinks(): List<Drink> {
+        var deferredResult = listOf<Drink>()
+        val asyncResult = async {
+            val result = selectAllFavoritesUseCase.buildExecutable()
+            deferredResult = if (result is ResultWrapper.Success) {
+                _favoriteDrinks.postValue(result.value.map {
+                    com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it)
+                })
 
-        return if (result is ResultWrapper.Success) {
-            result.value
-        } else {
-            emptyList()
+                result.value
+            } else {
+                _favoriteDrinks.postValue(emptyList())
+
+                emptyList()
+            }
         }
+
+        launch {
+            asyncResult.await()
+        }
+
+        return deferredResult
     }
 
     /**
@@ -158,10 +176,19 @@ class HomeViewModel @Inject constructor(
         var result: ResultWrapper<Exception, Unit>?
 
         val deferredResult = async {
-            if (drink.isFavourite)
-                removeFavoriteUseCase.buildExecutable(listOf(drink.idDrink!!))
-            else
-                addFavoriteUseCase.buildExecutable(listOf(drink.idDrink!!))
+            if (drink.isFavourite) {
+                drink.apply {
+                    markFavorite(false)
+                }
+
+                removeFavoriteUseCase.buildExecutable(listOf(drink.toDrinkDomainModel()))
+            } else {
+                drink.apply {
+                    markFavorite(true)
+                }
+
+                addFavoriteUseCase.buildExecutable(listOf(drink.toDrinkDomainModel()))
+            }
         }
 
         runBlocking {
@@ -170,9 +197,7 @@ class HomeViewModel @Inject constructor(
 
         return when (result) {
             is ResultWrapper.Success -> ResultWrapper.build {
-                drink.apply {
-                    markFavorite(!isFavourite)
-                }
+                drink
             }
             is ResultWrapper.Error -> {
                 ResultWrapper.build { throw Exception((result as ResultWrapper.Error<Exception>).error) }

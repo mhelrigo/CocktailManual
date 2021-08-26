@@ -9,9 +9,14 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="red_100">#FFCDD2</color>
+    <color name="red_900">#B71C1C</color>
+    <color name="red_A700">#D50000</color>
     <color name="pink_100">#F8BBD0</color>
     <color name="purple_100">#E1BEE7</color>
     <color name="yellow_50">#FFFDE7</color>
     <color name="amber_50">#FFF8E1</color>
     <color name="orange_50">#FFF3E0</color>
+    <color name="orange_800">#EF6C00</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="yellow_500">#F57F17</color>
 </resources>

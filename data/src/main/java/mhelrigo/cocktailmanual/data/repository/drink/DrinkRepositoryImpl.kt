@@ -70,20 +70,20 @@ class DrinkRepositoryImpl @Inject constructor(
             ResultWrapper.build { drinkApi.getDetails(id) }
         }
 
-    override suspend fun addFavoriteById(id: Int): ResultWrapper<Exception, Unit> {
+    override suspend fun addFavoriteById(drink: mhelrigo.cocktailmanual.domain.model.Drink): ResultWrapper<Exception, Unit> {
         return try {
             withContext(ioCoroutineContext) {
-                ResultWrapper.build { drinkDao.insert(Drink(uid = id, idDrink = id)) }
+                ResultWrapper.build { drinkDao.insert(Drink.fromDrinkDomainModel(drink)) }
             }
         } catch (e: Exception) {
             ResultWrapper.build { throw Exception("Insert failed") }
         }
     }
 
-    override suspend fun removeFavoriteById(id: Int): ResultWrapper<Exception, Unit> {
+    override suspend fun removeFavoriteById(drink: mhelrigo.cocktailmanual.domain.model.Drink): ResultWrapper<Exception, Unit> {
         return try {
             withContext(ioCoroutineContext) {
-                ResultWrapper.build { drinkDao.delete(Drink(uid = id as Int, idDrink = id)) }
+                ResultWrapper.build { drinkDao.delete(Drink.fromDrinkDomainModel(drink)) }
             }
         } catch (e: Exception) {
             ResultWrapper.build { throw Exception("Insert failed") }

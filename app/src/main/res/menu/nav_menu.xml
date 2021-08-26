@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/drinkListFragment"
+        android:icon="@drawable/ic_home_black"
+        android:title="Home" />
+    <item
+        android:id="@+id/favoritesFragment"
+        android:icon="@drawable/ic_favorite_black"
+        android:title="Favorites" />
+    <item
+        android:id="@+id/settingFragment"
+        android:icon="@drawable/ic_setting_black"
+        android:title="Setting" />
+</menu>
