@@ -9,8 +9,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkDetailsBinding
-import com.squareup.picasso.Picasso
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
@@ -72,7 +73,9 @@ class DrinkDetailsFragment : Fragment() {
                 it.returnIngredients()
             drinkDetailsBinding.textViewInstruction.text = it.strInstructions
 
-            Picasso.get().load(it.strDrinkThumb).into(drinkDetailsBinding.imageViewThumbnail)
+            Glide.with(requireContext()).load(it.strDrinkThumb).diskCacheStrategy(
+                DiskCacheStrategy.ALL
+            ).into(drinkDetailsBinding.imageViewThumbnail)
 
             setUpFavoriteIcon(it.returnIconForFavorite())
         })

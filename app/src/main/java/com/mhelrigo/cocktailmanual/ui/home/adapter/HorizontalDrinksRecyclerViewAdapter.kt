@@ -6,9 +6,10 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.ItemDrink1Binding
 import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.squareup.picasso.Picasso
 
 class HorizontalDrinksRecyclerViewAdapter(
     var onFavoritesToggled: OnItemClickListener<Drink>,
@@ -66,8 +67,9 @@ class HorizontalDrinksRecyclerViewAdapter(
             view.textViewCategory.text = drink.strCategory
             view.textViewType.text = drink.strAlcoholic
 
-            Picasso.get().load(drink.strDrinkThumb)
-                .into(view.imageViewThumbnail)
+            Glide.with(view.root.context).load(drink.strDrinkThumb).diskCacheStrategy(
+                DiskCacheStrategy.ALL
+            ).into(view.imageViewThumbnail)
 
             setUpFavoriteIcon(drink.returnIconForFavorite())
 

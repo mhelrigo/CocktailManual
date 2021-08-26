@@ -3,8 +3,14 @@ package com.mhelrigo.cocktailmanual.ui.home
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.ActivityHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
+
+
+
 
 @AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
@@ -20,6 +26,12 @@ class HomeActivity : AppCompatActivity() {
         requestForLatestDrinks()
         requestForPopularDrinks()
         requestForRandomDrinks()
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerViewNavHost) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        binding.bottomNavigationView.setupWithNavController(navController)
     }
 
     private fun requestForLatestDrinks() {
