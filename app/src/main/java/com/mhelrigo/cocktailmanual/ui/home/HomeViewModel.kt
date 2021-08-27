@@ -138,28 +138,38 @@ class HomeViewModel @Inject constructor(
         return toBeMerged
     }
 
+    /**
+     * A method that will get favorite list from local source while at the same time will handle result
+     * by assigning to a MutableLiveData and returning said list.
+     *
+     * @return [List<Drink] the collection of favorite drinks from a local source
+     * */
     fun requestForFavoriteDrinks(): List<Drink> {
-        var deferredResult = listOf<Drink>()
-        val asyncResult = async {
-            val result = selectAllFavoritesUseCase.buildExecutable()
-            deferredResult = if (result is ResultWrapper.Success) {
-                _favoriteDrinks.postValue(result.value.map {
+        var result: ResultWrapper<Exception, List<Drink>>?
+        val deferredResult = async {
+            selectAllFavoritesUseCase.buildExecutable()
+        }
+
+        runBlocking {
+            result = deferredResult.await()
+        }
+
+        return when (result) {
+            is ResultWrapper.Success -> {
+                _favoriteDrinks.postValue((result as ResultWrapper.Success<List<Drink>>).value.map {
                     com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it)
                 })
 
-                result.value
-            } else {
-                _favoriteDrinks.postValue(emptyList())
+                (result as ResultWrapper.Success<List<Drink>>).value
+            }
 
+            is ResultWrapper.Error -> {
+                emptyList()
+            }
+            else -> {
                 emptyList()
             }
         }
-
-        launch {
-            asyncResult.await()
-        }
-
-        return deferredResult
     }
 
     /**

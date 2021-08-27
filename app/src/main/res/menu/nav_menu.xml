@@ -3,13 +3,13 @@
     <item
         android:id="@+id/drinkListFragment"
         android:icon="@drawable/ic_home_black"
-        android:title="Home" />
+        android:title="@string/home" />
     <item
         android:id="@+id/favoritesFragment"
         android:icon="@drawable/ic_favorite_black"
-        android:title="Favorites" />
+        android:title="@string/favorites" />
     <item
         android:id="@+id/settingFragment"
         android:icon="@drawable/ic_setting_black"
-        android:title="Setting" />
+        android:title="@string/settings" />
 </menu>

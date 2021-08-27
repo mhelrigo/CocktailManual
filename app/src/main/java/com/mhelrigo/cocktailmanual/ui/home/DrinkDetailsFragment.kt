@@ -41,15 +41,13 @@ class DrinkDetailsFragment : Fragment() {
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    findNavController().popBackStack()
+                    navigateBack()
                 }
             })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        handleDrinkDetails()
-
         drinkDetailsBinding.imageViewFavorite.setOnClickListener {
             when (val result =
                 homeViewModel.toggleFavoriteOfADrink(homeViewModel.expandedDrinkDetails.value!!)) {
@@ -61,10 +59,24 @@ class DrinkDetailsFragment : Fragment() {
                 }
             }
         }
+
+        drinkDetailsBinding.imageViewBack.setOnClickListener {
+            navigateBack()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleDrinkDetails()
+    }
+
+    private fun navigateBack() {
+        findNavController().popBackStack()
     }
 
     private fun handleDrinkDetails() {
         homeViewModel.expandedDrinkDetails.observe(viewLifecycleOwner, {
+            Timber.e("Drink $it")
             drinkDetailsBinding.textViewName.text = it.strDrink
             drinkDetailsBinding.textViewShortDesc.text =
                 "${it.strCategory} | ${it.strAlcoholic} | ${it.strGlass}"

@@ -5,7 +5,8 @@
     android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/base_2"
-    android:layout_marginEnd="@dimen/base_8">
+    android:layout_marginEnd="@dimen/base_8"
+    android:background="@drawable/item_drink_1_background">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewContainer"
@@ -58,10 +59,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/base_4"
         android:layout_marginTop="@dimen/base_2"
+        android:layout_marginBottom="@dimen/base_2"
         android:fontFamily="@font/roboto_light"
         android:text="TextView"
         android:textColor="?attr/colorOnPrimary"
         android:textSize="@dimen/base_8"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewName" />
 
@@ -85,8 +88,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/base_4"
+        android:src="@drawable/ic_favorite_filled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardViewContainer"
-        app:srcCompat="@drawable/ic_favorite_border_black" />
+        app:layout_constraintTop_toBottomOf="@+id/cardViewContainer" />
 </androidx.constraintlayout.widget.ConstraintLayout>
