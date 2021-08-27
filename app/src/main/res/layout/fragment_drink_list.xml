@@ -6,12 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:padding="@dimen/base_8"
     tools:context=".ui.home.DrinkListFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/base_8">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/textViewTrending"
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
             android:fontFamily="@font/roboto_light"
-            android:text="Trending"
+            android:text="@string/trending"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_20"
             android:textStyle="bold"
@@ -30,7 +30,7 @@
             android:id="@+id/recyclerViewLatestDrinks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/base_8"
+            android:layout_marginTop="@dimen/base_16"
             android:layout_marginEnd="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +43,7 @@
             android:layout_marginStart="@dimen/base_8"
             android:layout_marginTop="@dimen/base_12"
             android:fontFamily="@font/roboto_light"
-            android:text="A must try"
+            android:text="@string/a_must_try"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_20"
             android:textStyle="bold"
@@ -54,7 +54,7 @@
             android:id="@+id/recyclerViewPopularDrinks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/base_8"
+            android:layout_marginTop="@dimen/base_16"
             android:layout_marginEnd="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -67,7 +67,7 @@
             android:layout_marginStart="@dimen/base_8"
             android:layout_marginTop="@dimen/base_32"
             android:fontFamily="@font/roboto_light"
-            android:text="Discover Drinks"
+            android:text="@string/discover_drinks"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_20"
             android:textStyle="bold"
@@ -82,12 +82,14 @@
             android:src="@drawable/ic_refresh_black"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView" />
+            app:layout_constraintTop_toTopOf="@+id/textView"
+            app:tint="?attr/colorOnPrimary" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewRandomDrinks"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_16"
             android:layout_marginBottom="@dimen/base_16"
             android:paddingBottom="64dp"
             app:layout_constraintBottom_toBottomOf="parent"

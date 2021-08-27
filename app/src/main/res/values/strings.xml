@@ -2,4 +2,14 @@
     <string name="app_name">CocktailManual</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">Home</string>
+    <string name="favorites">Favorites</string>
+    <string name="settings">Settings</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="instruction">Instruction</string>
+    <string name="trending">Trending</string>
+    <string name="a_must_try">A must try</string>
+    <string name="discover_drinks">Discover Drinks</string>
+    <string name="your_favorites">Your favorites</string>
+    <string name="enable_night_mode">Night Mode</string>
 </resources>

@@ -136,7 +136,7 @@ data class Drink(
         return if (isFavourite) {
             R.drawable.ic_favorite_red
         } else {
-            R.drawable.ic_favorite_border_black
+            R.drawable.ic_favorite_filled
         }
     }
 

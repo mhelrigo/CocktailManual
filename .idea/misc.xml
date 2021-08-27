@@ -6,15 +6,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_article_black.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_favorite_black.xml" value="0.2703125" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_favorite_border_black.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_favorite_filled.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable/bottom_nav_background.xml" value="0.2703125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable/bottom_nav_selector.xml" value="0.2703125" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable/item_drink_1_background.xml" value="0.2703125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/font/roboto_light.xml" value="0.284375" />
-        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/activity_home.xml" value="0.152" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/activity_home.xml" value="0.4" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/activity_main.xml" value="0.13020833333333334" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_drink_details.xml" value="0.264" />
-        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_drink_list.xml" value="0.1" />
-        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_favorites.xml" value="0.1" />
-        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_setting.xml" value="0.1" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_drink_list.xml" value="0.25427350427350426" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_favorites.xml" value="0.264" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_setting.xml" value="0.264" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_1.xml" value="0.4" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_2.xml" value="0.4" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_latest_drink.xml" value="0.6" />
