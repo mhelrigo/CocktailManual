@@ -95,6 +95,11 @@ class DrinkListFragment : Fragment() {
         }
     }
 
+    private fun hideLatestDrinkUI() {
+        drinkListBinding?.textViewLatest?.visibility = View.INVISIBLE
+        drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
+    }
+
     private fun setUpPopularDrinkRecyclerView() {
         popularDrinkAdapter =
             HorizontalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
@@ -124,6 +129,11 @@ class DrinkListFragment : Fragment() {
                 context, LinearLayoutManager.HORIZONTAL, false
             )
         }
+    }
+
+    private fun hidePopularDrinkUI() {
+        drinkListBinding?.textViewPopular?.visibility = View.INVISIBLE
+        drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
     }
 
     private fun setUpRandomDrinkRecyclerView() {
@@ -157,26 +167,77 @@ class DrinkListFragment : Fragment() {
         }
     }
 
+    private fun hideRandomDrinkUI() {
+        drinkListBinding?.textViewRandom?.visibility = View.INVISIBLE
+        drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
+    }
+
     private fun handleLatestDrinks() {
         homeViewModel.latestDrinks.observe(viewLifecycleOwner, {
-            it?.let { drinks ->
-                latestDrinkAdapter.differ.submitList(drinks)
+            when (it) {
+                is ResultWrapper.Success -> {
+                    Timber.e("Success")
+                    drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.VISIBLE
+                    drinkListBinding?.shimmerFrameLayoutLatestDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutLatestDrinks?.stopShimmer()
+                    latestDrinkAdapter.differ.submitList(it.value)
+                }
+                is ResultWrapper.Error -> {
+                    drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutLatestDrinks?.visibility = View.INVISIBLE
+                    hideLatestDrinkUI()
+                }
+                is ResultWrapper.Loading -> {
+                    drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutLatestDrinks?.visibility = View.VISIBLE
+                    drinkListBinding?.shimmerFrameLayoutLatestDrinks?.startShimmer()
+                }
             }
         })
     }
 
     private fun handlePopularDrinks() {
         homeViewModel.popularDrinks.observe(viewLifecycleOwner, {
-            it?.let { drinks ->
-                popularDrinkAdapter.differ.submitList(drinks)
+            when (it) {
+                is ResultWrapper.Success -> {
+                    drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.VISIBLE
+                    drinkListBinding?.shimmerFrameLayoutPopularDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutPopularDrinks?.stopShimmer()
+                    popularDrinkAdapter.differ.submitList(it.value)
+                }
+                is ResultWrapper.Error -> {
+                    drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutPopularDrinks?.visibility = View.INVISIBLE
+                    hidePopularDrinkUI()
+                }
+                is ResultWrapper.Loading -> {
+                    drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutPopularDrinks?.visibility = View.VISIBLE
+                    Timber.e("Loading")
+                }
             }
         })
     }
 
     private fun handleRandomDrinks() {
         homeViewModel.randomDrinks.observe(viewLifecycleOwner, {
-            it?.let { drinks ->
-                randomDrinkAdapter.differ.submitList(drinks.toList())
+            when (it) {
+                is ResultWrapper.Success -> {
+                    drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.VISIBLE
+                    drinkListBinding?.shimmerFrameLayoutRandomDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutRandomDrinks?.stopShimmer()
+                    randomDrinkAdapter.differ.submitList(it.value)
+                }
+                is ResultWrapper.Error -> {
+                    drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutRandomDrinks?.visibility = View.INVISIBLE
+                    hideRandomDrinkUI()
+                }
+                is ResultWrapper.Loading -> {
+                    drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
+                    drinkListBinding?.shimmerFrameLayoutRandomDrinks?.visibility = View.VISIBLE
+                    Timber.e("Loading")
+                }
             }
         })
     }

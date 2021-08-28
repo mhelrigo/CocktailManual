@@ -14,7 +14,21 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textViewTrending"
+            android:id="@+id/textViewError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_light"
+            android:text="Something is not right... Best try again later, Bub."
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewLatest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
@@ -34,7 +48,32 @@
             android:layout_marginEnd="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTrending" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewLatest" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerFrameLayoutLatestDrinks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_16"
+            android:layout_marginEnd="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewLatest">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="clip_vertical">
+
+                <include layout="@layout/item_drink_1_shimmer" />
+
+                <include layout="@layout/item_drink_1_shimmer" />
+
+                <include layout="@layout/item_drink_1_shimmer" />
+
+                <include layout="@layout/item_drink_1_shimmer" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
 
         <TextView
             android:id="@+id/textViewPopular"
@@ -48,7 +87,7 @@
             android:textSize="@dimen/base_20"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerViewLatestDrinks" />
+            app:layout_constraintTop_toBottomOf="@+id/shimmerFrameLayoutLatestDrinks" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPopularDrinks"
@@ -60,8 +99,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewPopular" />
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerFrameLayoutPopularDrinks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/base_16"
+            android:layout_marginEnd="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPopular">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="clip_vertical">
+
+                <include layout="@layout/item_drink_1_shimmer" />
+
+                <include layout="@layout/item_drink_1_shimmer" />
+
+                <include layout="@layout/item_drink_1_shimmer" />
+
+                <include layout="@layout/item_drink_1_shimmer" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textViewRandom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
@@ -72,7 +136,7 @@
             android:textSize="@dimen/base_20"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerViewPopularDrinks" />
+            app:layout_constraintTop_toBottomOf="@+id/shimmerFrameLayoutPopularDrinks" />
 
         <ImageView
             android:id="@+id/imageViewRefresh"
@@ -80,9 +144,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/base_8"
             android:src="@drawable/ic_refresh_black"
-            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewRandom"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView"
+            app:layout_constraintTop_toTopOf="@+id/textViewRandom"
             app:tint="?attr/colorOnPrimary" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -97,6 +161,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewRefresh"
             app:layout_constraintVertical_bias="0.0" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerFrameLayoutRandomDrinks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/base_16"
+            android:layout_marginBottom="@dimen/base_16"
+            android:paddingBottom="64dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageViewRefresh">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <include layout="@layout/item_drink_2_shimmer" />
+
+                <include layout="@layout/item_drink_2_shimmer" />
+
+                <include layout="@layout/item_drink_2_shimmer" />
+
+                <include layout="@layout/item_drink_2_shimmer" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

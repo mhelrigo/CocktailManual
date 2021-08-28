@@ -85,4 +85,7 @@ dependencies {
 
     // KTX for Fragment
     implementation dep.android.fragmentKtx
+
+    // Shimmer for Loading
+    implementation dep.android.shimmer
 }
