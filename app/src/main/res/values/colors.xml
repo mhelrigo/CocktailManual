@@ -18,6 +18,8 @@
     <color name="orange_50">#FFF3E0</color>
     <color name="orange_800">#EF6C00</color>
     <color name="gray_500">#9E9E9E</color>
+    <color name="gray_custom_1">#18191A</color>
+    <color name="gray_custom_2">#242526</color>
     <color name="yellow_500">#F57F17</color>
     <color name="yellow_A200">#FFFF00</color>
 </resources>

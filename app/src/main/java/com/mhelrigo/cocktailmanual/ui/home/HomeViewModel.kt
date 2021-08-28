@@ -29,15 +29,17 @@ class HomeViewModel @Inject constructor(
 
     private val job = Job()
 
-    private val _latestDrinks = MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
-    val latestDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _latestDrinks
+    private val _latestDrinks =
+        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
+    val latestDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _latestDrinks
 
-    private val _popularDrinks = MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
-    val popularDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _popularDrinks
+    private val _popularDrinks =
+        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
+    val popularDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _popularDrinks
 
     private val _randomDrinks =
-        MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
-    val randomDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _randomDrinks
+        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
+    val randomDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _randomDrinks
 
     private val _favoriteDrinks =
         MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
@@ -47,45 +49,61 @@ class HomeViewModel @Inject constructor(
         MutableLiveData<com.mhelrigo.cocktailmanual.ui.model.Drink>()
     val expandedDrinkDetails: LiveData<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _expandedDrinkDetails
 
-    private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> get() = _errorMessage
-
     fun requestForLatestDrinks() = launch {
+        _latestDrinks.postValue(ResultWrapper.buildLoading())
         when (val result = latestDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
                 _latestDrinks.postValue(
-                    beautifyDrinkResult(result.value, FromCollectionOf.LATEST)
+                    ResultWrapper.build {
+                        beautifyDrinkResult(
+                            result.value,
+                            FromCollectionOf.LATEST
+                        )
+                    }
                 )
             }
             is ResultWrapper.Error -> {
-                Timber.e("Error ${result.error}")
+                _latestDrinks.postValue(
+                    ResultWrapper.build { throw Exception(result.error) }
+                )
             }
         }
     }
 
     fun requestForPopularDrinks() = launch {
+        _popularDrinks.postValue(ResultWrapper.buildLoading())
         when (val result = popularDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
                 _popularDrinks.postValue(
-                    beautifyDrinkResult(result.value, FromCollectionOf.POPULAR)
+                    ResultWrapper.build {
+                        beautifyDrinkResult(
+                            result.value,
+                            FromCollectionOf.POPULAR
+                        )
+                    }
                 )
             }
             is ResultWrapper.Error -> {
                 Timber.e("Error ${result.error}")
+                ResultWrapper.build { throw Exception(result.error) }
             }
         }
     }
 
-    /**
-     * This request will cache previous result for pagination suitable for infinite scrolling.
-     * */
     fun requestForRandomDrinks() = launch {
+        _randomDrinks.postValue(ResultWrapper.buildLoading())
         when (val result = randomDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
-                _randomDrinks.postValue(beautifyDrinkResult(result.value, FromCollectionOf.RANDOM))
+                _randomDrinks.postValue(ResultWrapper.build {
+                    beautifyDrinkResult(
+                        result.value,
+                        FromCollectionOf.RANDOM
+                    )
+                })
             }
             is ResultWrapper.Error -> {
                 Timber.e("Error ${result.error}")
+                ResultWrapper.build { throw Exception(result.error) }
             }
         }
     }

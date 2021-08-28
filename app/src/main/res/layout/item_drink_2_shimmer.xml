@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="@dimen/base_16"
-    android:layout_marginTop="@dimen/base_8">
+    android:layout_marginTop="@dimen/base_8"
+    android:layout_marginEnd="@dimen/base_8"
+    app:cardCornerRadius="@dimen/base_16">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,8 +16,9 @@
             android:id="@+id/imageViewThumbnail"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scaleType="centerCrop"
             android:layout_marginBottom="@dimen/base_8"
+            android:background="?attr/colorPrimaryVariant"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toTopOf="@+id/textViewName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -29,42 +31,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
-            android:layout_marginEnd="@dimen/base_8"
+            android:layout_marginEnd="@dimen/base_50"
             android:layout_marginBottom="@dimen/base_8"
-            android:fontFamily="@font/roboto"
-            android:text="TextView"
-            android:textColor="?attr/colorOnPrimary"
+            android:background="?attr/colorPrimaryVariant"
             android:textSize="@dimen/base_16"
             app:layout_constraintBottom_toTopOf="@+id/textViewCategory"
-            app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/textViewCategory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_8"
+            android:layout_marginEnd="@dimen/base_80"
             android:layout_marginBottom="@dimen/base_8"
-            android:layout_marginEnd="@dimen/base_8"
-            android:fontFamily="@font/roboto_light"
-            android:text="TextView"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_12"
+            android:layout_marginStart="@dimen/base_8"
+            android:background="?attr/colorSecondaryVariant"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageViewFavorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/base_16"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewCategory"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textViewName"
-            android:src="@drawable/ic_favorite_filled" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

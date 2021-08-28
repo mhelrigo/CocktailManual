@@ -64,8 +64,7 @@ class HorizontalDrinksRecyclerViewAdapter(
             drink.bindingAdapterPosition = bindingAdapterPosition
 
             view.textViewName.text = drink.strDrink
-            view.textViewCategory.text = drink.strCategory
-            view.textViewType.text = drink.strAlcoholic
+            view.textViewCategory.text = "${drink.strCategory} and ${drink.strAlcoholic}"
 
             Glide.with(view.root.context).load(drink.strDrinkThumb).diskCacheStrategy(
                 DiskCacheStrategy.ALL
