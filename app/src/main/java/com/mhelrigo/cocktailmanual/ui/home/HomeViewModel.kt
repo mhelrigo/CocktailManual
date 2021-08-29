@@ -10,7 +10,6 @@ import mhelrigo.cocktailmanual.domain.model.Drink
 import mhelrigo.cocktailmanual.domain.model.Drinks
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import mhelrigo.cocktailmanual.domain.usecase.drink.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.coroutines.CoroutineContext
@@ -53,19 +52,15 @@ class HomeViewModel @Inject constructor(
         _latestDrinks.postValue(ResultWrapper.buildLoading())
         when (val result = latestDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
-                _latestDrinks.postValue(
-                    ResultWrapper.build {
-                        beautifyDrinkResult(
-                            result.value,
-                            FromCollectionOf.LATEST
-                        )
-                    }
-                )
+                _latestDrinks.postValue(ResultWrapper.build {
+                    beautifyDrinkResult(
+                        result.value,
+                        FromCollectionOf.LATEST
+                    )
+                })
             }
             is ResultWrapper.Error -> {
-                _latestDrinks.postValue(
-                    ResultWrapper.build { throw Exception(result.error) }
-                )
+                _latestDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
             }
         }
     }
@@ -74,18 +69,15 @@ class HomeViewModel @Inject constructor(
         _popularDrinks.postValue(ResultWrapper.buildLoading())
         when (val result = popularDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
-                _popularDrinks.postValue(
-                    ResultWrapper.build {
-                        beautifyDrinkResult(
-                            result.value,
-                            FromCollectionOf.POPULAR
-                        )
-                    }
-                )
+                _popularDrinks.postValue(ResultWrapper.build {
+                    beautifyDrinkResult(
+                        result.value,
+                        FromCollectionOf.POPULAR
+                    )
+                })
             }
             is ResultWrapper.Error -> {
-                Timber.e("Error ${result.error}")
-                ResultWrapper.build { throw Exception(result.error) }
+                _popularDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
             }
         }
     }
@@ -102,8 +94,7 @@ class HomeViewModel @Inject constructor(
                 })
             }
             is ResultWrapper.Error -> {
-                Timber.e("Error ${result.error}")
-                ResultWrapper.build { throw Exception(result.error) }
+                _randomDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
             }
         }
     }

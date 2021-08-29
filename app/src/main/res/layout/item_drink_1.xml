@@ -5,6 +5,7 @@
     android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/base_2"
+    android:layout_marginBottom="@dimen/base_2"
     android:layout_marginEnd="@dimen/base_8"
     app:cardCornerRadius="@dimen/base_16"
     android:id="@+id/cardViewContainer">

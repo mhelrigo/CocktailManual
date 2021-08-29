@@ -5,10 +5,10 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface DrinkApi {
-    @GET("randomselection.php")
+    @GET("randomselections.php")
     suspend fun getRandomly(): Drinks
 
-    @GET("popular.php")
+    @GET("populars.php")
     suspend fun getByPopularity(): Drinks
 
     @GET("latest.php")

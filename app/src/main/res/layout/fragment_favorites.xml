@@ -12,6 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/textViewFavoritesLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_8"
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/your_favorites"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_20"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewFavorites"
             android:layout_width="match_parent"
@@ -26,17 +39,18 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
-            android:id="@+id/textViewFavoritesLabel"
+            android:id="@+id/textViewFavoritesError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_8"
             android:fontFamily="@font/roboto_light"
-            android:text="@string/your_favorites"
+            android:text="Nothing to show at the moment"
+            android:textAlignment="center"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_20"
-            android:textStyle="bold"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewFavoritesLabel" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
