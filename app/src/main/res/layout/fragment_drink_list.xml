@@ -14,18 +14,18 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textViewError"
+            android:id="@+id/textViewErrorLatest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_light"
-            android:text="Something is not right... Best try again later, Bub."
+            android:text="Whoops there seems to be a problem , try maybe later."
             android:textAlignment="center"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_16"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/textViewPopular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/textViewLatest" />
 
         <TextView
             android:id="@+id/textViewLatest"
@@ -89,6 +89,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shimmerFrameLayoutLatestDrinks" />
 
+        <TextView
+            android:id="@+id/textViewErrorPopular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_light"
+            android:text="Whoops there seems to be a problem , try maybe later."
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintBottom_toTopOf="@id/textViewRandom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewPopular" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPopularDrinks"
             android:layout_width="0dp"
@@ -137,6 +151,23 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shimmerFrameLayoutPopularDrinks" />
+
+        <TextView
+            android:id="@+id/textViewErrorRandom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/base_16"
+            android:layout_marginTop="@dimen/base_16"
+            android:fontFamily="@font/roboto_light"
+            android:paddingBottom="64dp"
+            android:text="Whoops there seems to be a problem , try maybe later."
+            android:textAlignment="center"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewRandom" />
 
         <ImageView
             android:id="@+id/imageViewRefresh"

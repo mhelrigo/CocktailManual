@@ -95,11 +95,6 @@ class DrinkListFragment : Fragment() {
         }
     }
 
-    private fun hideLatestDrinkUI() {
-        drinkListBinding?.textViewLatest?.visibility = View.INVISIBLE
-        drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
-    }
-
     private fun setUpPopularDrinkRecyclerView() {
         popularDrinkAdapter =
             HorizontalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
@@ -129,11 +124,6 @@ class DrinkListFragment : Fragment() {
                 context, LinearLayoutManager.HORIZONTAL, false
             )
         }
-    }
-
-    private fun hidePopularDrinkUI() {
-        drinkListBinding?.textViewPopular?.visibility = View.INVISIBLE
-        drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
     }
 
     private fun setUpRandomDrinkRecyclerView() {
@@ -167,30 +157,26 @@ class DrinkListFragment : Fragment() {
         }
     }
 
-    private fun hideRandomDrinkUI() {
-        drinkListBinding?.textViewRandom?.visibility = View.INVISIBLE
-        drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
-    }
-
     private fun handleLatestDrinks() {
         homeViewModel.latestDrinks.observe(viewLifecycleOwner, {
             when (it) {
                 is ResultWrapper.Success -> {
-                    Timber.e("Success")
                     drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.VISIBLE
+                    latestDrinkAdapter.differ.submitList(it.value)
+                    drinkListBinding?.textViewErrorLatest?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutLatestDrinks?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutLatestDrinks?.stopShimmer()
-                    latestDrinkAdapter.differ.submitList(it.value)
                 }
                 is ResultWrapper.Error -> {
+                    drinkListBinding?.textViewErrorLatest?.visibility = View.VISIBLE
                     drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutLatestDrinks?.visibility = View.INVISIBLE
-                    hideLatestDrinkUI()
+                    drinkListBinding?.shimmerFrameLayoutLatestDrinks?.stopShimmer()
                 }
                 is ResultWrapper.Loading -> {
-                    drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutLatestDrinks?.visibility = View.VISIBLE
-                    drinkListBinding?.shimmerFrameLayoutLatestDrinks?.startShimmer()
+                    drinkListBinding?.textViewErrorLatest?.visibility = View.INVISIBLE
+                    drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
                 }
             }
         })
@@ -201,19 +187,21 @@ class DrinkListFragment : Fragment() {
             when (it) {
                 is ResultWrapper.Success -> {
                     drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.VISIBLE
+                    popularDrinkAdapter.differ.submitList(it.value)
+                    drinkListBinding?.textViewErrorPopular?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutPopularDrinks?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutPopularDrinks?.stopShimmer()
-                    popularDrinkAdapter.differ.submitList(it.value)
                 }
                 is ResultWrapper.Error -> {
+                    drinkListBinding?.textViewErrorPopular?.visibility = View.VISIBLE
                     drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutPopularDrinks?.visibility = View.INVISIBLE
-                    hidePopularDrinkUI()
+                    drinkListBinding?.shimmerFrameLayoutPopularDrinks?.stopShimmer()
                 }
                 is ResultWrapper.Loading -> {
-                    drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutPopularDrinks?.visibility = View.VISIBLE
-                    Timber.e("Loading")
+                    drinkListBinding?.textViewErrorPopular?.visibility = View.INVISIBLE
+                    drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
                 }
             }
         })
@@ -223,20 +211,22 @@ class DrinkListFragment : Fragment() {
         homeViewModel.randomDrinks.observe(viewLifecycleOwner, {
             when (it) {
                 is ResultWrapper.Success -> {
+                    drinkListBinding?.textViewErrorRandom?.visibility = View.INVISIBLE
                     drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.VISIBLE
+                    randomDrinkAdapter.differ.submitList(it.value)
                     drinkListBinding?.shimmerFrameLayoutRandomDrinks?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutRandomDrinks?.stopShimmer()
-                    randomDrinkAdapter.differ.submitList(it.value)
                 }
                 is ResultWrapper.Error -> {
-                    drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
-                    drinkListBinding?.shimmerFrameLayoutRandomDrinks?.visibility = View.INVISIBLE
-                    hideRandomDrinkUI()
+                    drinkListBinding?.textViewErrorRandom?.visibility = View.VISIBLE
+                    drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.GONE
+                    drinkListBinding?.shimmerFrameLayoutRandomDrinks?.visibility = View.GONE
+                    drinkListBinding?.shimmerFrameLayoutRandomDrinks?.stopShimmer()
                 }
                 is ResultWrapper.Loading -> {
-                    drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
                     drinkListBinding?.shimmerFrameLayoutRandomDrinks?.visibility = View.VISIBLE
-                    Timber.e("Loading")
+                    drinkListBinding?.textViewErrorRandom?.visibility = View.INVISIBLE
+                    drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
                 }
             }
         })
