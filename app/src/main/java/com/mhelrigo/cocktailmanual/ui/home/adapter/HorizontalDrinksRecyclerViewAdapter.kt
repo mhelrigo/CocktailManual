@@ -23,7 +23,7 @@ class HorizontalDrinksRecyclerViewAdapter(
         }
 
         override fun areContentsTheSame(oldItem: Drink, newItem: Drink): Boolean {
-            return oldItem.strDrink == newItem.strDrink && oldItem.idDrink?.toInt() == newItem.idDrink?.toInt()
+            return oldItem.strDrink == newItem.strDrink && oldItem.idDrink?.toInt() == newItem.idDrink?.toInt() && oldItem.isFavourite == newItem.isFavourite
         }
 
     }

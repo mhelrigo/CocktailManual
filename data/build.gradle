@@ -4,17 +4,23 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def cocktailmanualPropertiesFile = rootProject.file("cocktailmanual.properties")
+def cocktailmanualProperties = new Properties()
+cocktailmanualProperties.load(new FileInputStream(cocktailmanualPropertiesFile))
+
 android {
-    compileSdk 30
+    compileSdk buildVersions.compileSdkVersion
 
     defaultConfig {
-        minSdk 19
-        targetSdk 30
-        versionCode 1
-        versionName "1.0"
+        minSdk buildVersions.minSdkVersion
+        targetSdk buildVersions.targetSdkVersion
+        versionCode buildVersions.versionCode
+        versionName buildVersions.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        buildConfigField("String", "API_KEY", cocktailmanualProperties['API_KEY'])
     }
 
     buildTypes {

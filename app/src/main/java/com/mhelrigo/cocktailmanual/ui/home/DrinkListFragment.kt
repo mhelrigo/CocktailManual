@@ -14,7 +14,6 @@ import com.mhelrigo.cocktailmanual.ui.home.adapter.HorizontalDrinksRecyclerViewA
 import com.mhelrigo.cocktailmanual.ui.home.adapter.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.home.adapter.VerticalDrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.cocktailmanual.ui.model.FromCollectionOf
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
@@ -55,7 +54,13 @@ class DrinkListFragment : Fragment() {
         handleLatestDrinks()
         handlePopularDrinks()
         handleRandomDrinks()
-        handleExpandedDrink()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requestForLatestDrinks()
+        requestForPopularDrinks()
+        requestForRandomDrinks()
     }
 
     private fun setUpRecyclerViews() {
@@ -232,22 +237,16 @@ class DrinkListFragment : Fragment() {
         })
     }
 
-    private fun handleExpandedDrink() {
-        homeViewModel.expandedDrinkDetails.observe(viewLifecycleOwner, {
-            it?.let {
-                when (it.fromCollectionOf!!) {
-                    FromCollectionOf.LATEST -> {
-                        latestDrinkAdapter.toggleFavoriteOfADrink(it.bindingAdapterPosition, it)
-                    }
-                    FromCollectionOf.POPULAR -> {
-                        popularDrinkAdapter.toggleFavoriteOfADrink(it.bindingAdapterPosition, it)
-                    }
-                    FromCollectionOf.RANDOM -> {
-                        randomDrinkAdapter.toggleFavoriteOfADrink(it.bindingAdapterPosition, it)
-                    }
-                }
-            }
-        })
+    private fun requestForLatestDrinks() {
+        homeViewModel.requestForLatestDrinks()
+    }
+
+    private fun requestForPopularDrinks() {
+        homeViewModel.requestForPopularDrinks()
+    }
+
+    private fun requestForRandomDrinks() {
+        homeViewModel.requestForRandomDrinks()
     }
 
     private fun expandDrinkDetails(drink: Drink) {

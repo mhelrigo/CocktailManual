@@ -2,13 +2,13 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardViewContainer"
     android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:layout_marginStart="@dimen/base_2"
-    android:layout_marginBottom="@dimen/base_2"
     android:layout_marginEnd="@dimen/base_8"
-    app:cardCornerRadius="@dimen/base_16"
-    android:id="@+id/cardViewContainer">
+    android:layout_marginBottom="@dimen/base_2"
+    app:cardCornerRadius="@dimen/base_16">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,49 +18,50 @@
             android:id="@+id/imageViewThumbnail"
             android:layout_width="0dp"
             android:layout_height="100dp"
-            android:layout_marginBottom="@dimen/base_8"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toTopOf="@+id/textViewName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_launcher_background" />
 
         <TextView
             android:id="@+id/textViewName"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
-            android:layout_marginTop="@dimen/base_8"
-            android:layout_marginEnd="@dimen/base_8"
+            android:layout_marginTop="@dimen/base_4"
+            android:layout_marginEnd="@dimen/base_2"
+            android:ellipsize="end"
             android:fontFamily="@font/roboto"
-            android:text="TextView"
+            android:singleLine="true"
+            android:text="Textview"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_12"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/textViewCategory"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@id/imageViewThumbnail" />
 
         <TextView
             android:id="@+id/textViewCategory"
             android:layout_width="0dp"
-            android:layout_marginEnd="@dimen/base_8"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
+            android:layout_marginTop="@dimen/base_4"
+            android:layout_marginEnd="@dimen/base_8"
             android:layout_marginBottom="@dimen/base_8"
+            android:ellipsize="end"
             android:fontFamily="@font/roboto_light"
-            android:text="TextView"
+            android:singleLine="true"
+            android:text="Textview"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_8"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewName"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
             android:id="@+id/imageViewFavorite"
