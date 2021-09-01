@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import mhelrigo.cocktailmanual.data.BuildConfig
 import mhelrigo.cocktailmanual.data.repository.category.remote.CategoryApi
 import mhelrigo.cocktailmanual.data.repository.drink.remote.DrinkApi
 import mhelrigo.cocktailmanual.data.repository.drinktype.remote.DrinkTypeApi
@@ -20,7 +21,7 @@ object RemoteModule {
     @Provides
     fun provideApiHandler(): Retrofit =
         Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://www.thecocktaildb.com/api/json/v2/9973533/").build()
+            .baseUrl("https://www.thecocktaildb.com/api/json/v2/${BuildConfig.API_KEY}/").build()
 
     @Singleton
     @Provides

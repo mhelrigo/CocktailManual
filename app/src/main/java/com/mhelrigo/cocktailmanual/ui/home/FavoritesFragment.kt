@@ -69,14 +69,25 @@ class FavoritesFragment : Fragment() {
 
     private fun handleFavorites() {
         homeViewModel.favoriteDrinks.observe(viewLifecycleOwner, {
-            it?.let { drinks ->
-                if (drinks.isEmpty()) {
-                    fragmentFavoritesBinding.recyclerViewFavorites.visibility = View.GONE
-                    fragmentFavoritesBinding.textViewFavoritesError.visibility = View.VISIBLE
-                } else {
-                    fragmentFavoritesBinding.recyclerViewFavorites.visibility = View.VISIBLE
-                    fragmentFavoritesBinding.textViewFavoritesError.visibility = View.GONE
-                    favoritesAdapter.differ.submitList(it)
+            it?.let { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        favoritesAdapter.differ.submitList(result.value)
+                        if (result.value.isNotEmpty()) {
+                            fragmentFavoritesBinding.recyclerViewFavorites.visibility = View.VISIBLE
+                            fragmentFavoritesBinding.textViewFavoritesError.visibility = View.GONE
+                        } else {
+                            fragmentFavoritesBinding.textViewFavoritesError.visibility = View.VISIBLE
+                        }
+                    }
+                    is ResultWrapper.Error -> {
+                        fragmentFavoritesBinding.recyclerViewFavorites.visibility = View.GONE
+                        fragmentFavoritesBinding.textViewFavoritesError.visibility = View.VISIBLE
+                    }
+                    is ResultWrapper.Loading -> {
+                        fragmentFavoritesBinding.recyclerViewFavorites.visibility = View.GONE
+                        fragmentFavoritesBinding.textViewFavoritesError.visibility = View.GONE
+                    }
                 }
             }
         })

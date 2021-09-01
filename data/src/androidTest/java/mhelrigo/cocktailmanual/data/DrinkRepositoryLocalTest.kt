@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.gson.Gson
 import com.mhelrigo.commons.MockFileReader
 import kotlinx.coroutines.runBlocking
+import mhelrigo.cocktailmanual.data.model.Drink
 import mhelrigo.cocktailmanual.data.repository.CocktailDatabase
 import mhelrigo.cocktailmanual.data.repository.drink.local.DrinkDao
 import mhelrigo.cocktailmanual.domain.model.Drinks
@@ -44,10 +45,7 @@ class DrinkRepositoryLocalTest {
         val drinks: Drinks = Gson().fromJson(rawData, Drinks::class.java)
 
         drinkDao.insert(
-            mhelrigo.cocktailmanual.data.model.Drink(
-                drinks.drinks[0].idDrink?.toInt()!!,
-                drinks.drinks[0].idDrink as Int
-            )
+            Drink.fromDrinkDomainModel(drinks.drinks[0])
         )
 
         assertEquals(drinks.drinks[0].idDrink, drinkDao.selectById(drinks.drinks[0].idDrink!!).toDrinkUseCase().idDrink)
@@ -60,17 +58,11 @@ class DrinkRepositoryLocalTest {
         val drinks: Drinks = Gson().fromJson(rawData, Drinks::class.java)
 
         drinkDao.insert(
-            mhelrigo.cocktailmanual.data.model.Drink(
-                drinks.drinks[0].idDrink!!.toInt(),
-                drinks.drinks[0].idDrink as Int
-            )
+            Drink.fromDrinkDomainModel(drinks.drinks[0])
         )
 
         drinkDao.delete(
-            mhelrigo.cocktailmanual.data.model.Drink(
-                drinks.drinks[0].idDrink!!.toInt(),
-                drinks.drinks[0].idDrink as Int
-            )
+            Drink.fromDrinkDomainModel(drinks.drinks[0])
         )
 
         assertEquals(null, drinkDao.selectById(drinks.drinks[0].idDrink!!))

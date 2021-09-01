@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.mhelrigo.cocktailmanual.BuildConfig
 import com.mhelrigo.cocktailmanual.databinding.FragmentSettingBinding
 
 class SettingFragment : Fragment() {
@@ -36,6 +37,8 @@ class SettingFragment : Fragment() {
                 settingBinding.switchNightMode.isChecked = it
             }
         })
+
+        displayApplicationVersion()
     }
 
     /**
@@ -48,5 +51,9 @@ class SettingFragment : Fragment() {
             Configuration.UI_MODE_NIGHT_UNDEFINED -> false
             else -> false
         }
+    }
+
+    private fun displayApplicationVersion() {
+        settingBinding.textViewVersion.text = "version: ${BuildConfig.VERSION_NAME}"
     }
 }

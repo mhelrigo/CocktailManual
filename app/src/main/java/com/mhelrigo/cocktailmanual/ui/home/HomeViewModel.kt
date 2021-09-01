@@ -41,12 +41,15 @@ class HomeViewModel @Inject constructor(
     val randomDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _randomDrinks
 
     private val _favoriteDrinks =
-        MutableLiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>>()
-    val favoriteDrinks: LiveData<List<com.mhelrigo.cocktailmanual.ui.model.Drink>> get() = _favoriteDrinks
+        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
+    val favoriteDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _favoriteDrinks
 
     private val _expandedDrinkDetails =
         MutableLiveData<com.mhelrigo.cocktailmanual.ui.model.Drink>()
     val expandedDrinkDetails: LiveData<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _expandedDrinkDetails
+
+    private val _isConnectedToInternet = MutableLiveData(false)
+    val isConnectedToInternet: LiveData<Boolean> get() = _isConnectedToInternet
 
     fun requestForLatestDrinks() = launch {
         _latestDrinks.postValue(ResultWrapper.buildLoading())
@@ -149,11 +152,13 @@ class HomeViewModel @Inject constructor(
 
     /**
      * A method that will get favorite list from local source while at the same time will handle result
-     * by assigning to a MutableLiveData and returning said list.
+     * by assigning said result to a MutableLiveData and returning said list.
      *
      * @return [List<Drink] the collection of favorite drinks from a local source
      * */
     fun requestForFavoriteDrinks(): List<Drink> {
+        _favoriteDrinks.postValue(ResultWrapper.buildLoading())
+
         var result: ResultWrapper<Exception, List<Drink>>?
         val deferredResult = async {
             selectAllFavoritesUseCase.buildExecutable()
@@ -165,8 +170,10 @@ class HomeViewModel @Inject constructor(
 
         return when (result) {
             is ResultWrapper.Success -> {
-                _favoriteDrinks.postValue((result as ResultWrapper.Success<List<Drink>>).value.map {
-                    com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it)
+                _favoriteDrinks.postValue(ResultWrapper.build {
+                    (result as ResultWrapper.Success<List<Drink>>).value.map {
+                        com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it)
+                    }
                 })
 
                 (result as ResultWrapper.Success<List<Drink>>).value
@@ -231,6 +238,13 @@ class HomeViewModel @Inject constructor(
 
     fun expandDrinkDetails(drink: com.mhelrigo.cocktailmanual.ui.model.Drink) {
         _expandedDrinkDetails.postValue(drink)
+    }
+
+    fun handleInternetConnectionChanges(p0: Boolean) {
+        requestForRandomDrinks()
+        requestForLatestDrinks()
+        requestForPopularDrinks()
+        _isConnectedToInternet.postValue(p0)
     }
 
     override val coroutineContext: CoroutineContext

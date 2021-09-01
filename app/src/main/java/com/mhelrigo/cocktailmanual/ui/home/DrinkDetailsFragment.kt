@@ -76,7 +76,6 @@ class DrinkDetailsFragment : Fragment() {
 
     private fun handleDrinkDetails() {
         homeViewModel.expandedDrinkDetails.observe(viewLifecycleOwner, {
-            Timber.e("Drink $it")
             drinkDetailsBinding.textViewName.text = it.strDrink
             drinkDetailsBinding.textViewShortDesc.text =
                 "${it.strCategory} | ${it.strAlcoholic} | ${it.strGlass}"
