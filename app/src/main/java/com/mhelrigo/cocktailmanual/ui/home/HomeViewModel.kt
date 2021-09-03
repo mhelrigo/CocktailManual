@@ -3,6 +3,7 @@ package com.mhelrigo.cocktailmanual.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mhelrigo.cocktailmanual.ui.model.FromCollectionOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -63,6 +64,7 @@ class HomeViewModel @Inject constructor(
                 })
             }
             is ResultWrapper.Error -> {
+                FirebaseCrashlytics.getInstance().recordException(result.error)
                 _latestDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
             }
         }
@@ -80,6 +82,7 @@ class HomeViewModel @Inject constructor(
                 })
             }
             is ResultWrapper.Error -> {
+                FirebaseCrashlytics.getInstance().recordException(result.error)
                 _popularDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
             }
         }
@@ -97,6 +100,7 @@ class HomeViewModel @Inject constructor(
                 })
             }
             is ResultWrapper.Error -> {
+                FirebaseCrashlytics.getInstance().recordException(result.error)
                 _randomDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
             }
         }
