@@ -27,6 +27,15 @@ versions.fragmentKtx = "1.3.6"
 versions.glide = "4.12.0"
 versions.glideAnnotation = "4.12.0"
 versions.shimmer = "0.5.0"
+versions.legacySupport = "1.0.0"
+versions.navFragKtx = "2.3.5"
+versions.navUiKtx = "2.3.5"
+versions.navUiKtx = "2.3.5"
+versions.kotlinGradle = "1.5.21"
+versions.googleServices = "4.3.10"
+versions.crashlyticsGradle = "2.7.1"
+versions.crashlyticsKtx = "18.2.1"
+versions.analyticsKtx = "19.0.1"
 
 def dep = [:]
 dep.gradle = "com.android.tools.build:gradle:$versions.gradle"
@@ -54,6 +63,9 @@ android.fragmentKtx = "androidx.fragment:fragment-ktx:$versions.fragmentKtx"
 android.glide = "com.github.bumptech.glide:glide:$versions.glide"
 android.glideAnnotation = "com.github.bumptech.glide:compiler:$versions.glide"
 android.shimmer = "com.facebook.shimmer:shimmer:$versions.shimmer"
+android.legacySupport = "androidx.legacy:legacy-support-v4:$versions.legacySupport"
+android.navFragKtx = "androidx.navigation:navigation-fragment-ktx:$versions.navFragKtx"
+android.navUiKtx = "androidx.navigation:navigation-ui-ktx:$versions.navUiKtx"
 
 def test = [:]
 test.jUnit = "junit:junit:$versions.jUnit"
@@ -69,6 +81,14 @@ def rx = [:]
 def kotlin = [:]
 kotlin.kotlin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
 kotlin.jre = "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlinV"
+kotlin.gradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlinGradle"
+
+def firebase = [:]
+firebase.googleServices = "com.google.gms:google-services:$versions.googleServices"
+firebase.crashlyticsGradle = "com.google.firebase:firebase-crashlytics-gradle:$versions.crashlyticsGradle"
+firebase.crashlyticsKtx = "com.google.firebase:firebase-crashlytics-ktx:$versions.crashlyticsKtx"
+firebase.analyticsKtx = "com.google.firebase:firebase-analytics-ktx:$versions.analyticsKtx"
+
 
 def buildVersions = [:]
 buildVersions.compileSdkVersion = 30
@@ -88,6 +108,7 @@ def addRepositories(RepositoryHandler handler) {
 dep.android = android
 dep.test = test
 dep.kotlin = kotlin
+dep.firebase = firebase
 
 ext.dep = dep
 ext.buildVersions = buildVersions

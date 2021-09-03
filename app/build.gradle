@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -47,9 +49,9 @@ dependencies {
     implementation dep.android.constraintLayout
     implementation dep.android.lifeCycleExtensions
     implementation project(path: ':data')
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    implementation dep.android.legacySupport
+    implementation dep.android.navFragKtx
+    implementation dep.android.navUiKtx
     testImplementation dep.test.jUnit
     androidTestImplementation dep.test.extJunit
     androidTestImplementation dep.test.espressoCore
@@ -88,4 +90,8 @@ dependencies {
 
     // Shimmer for Loading
     implementation dep.android.shimmer
+
+    // Firebase Crashlytics
+    implementation dep.firebase.crashlyticsKtx
+    implementation dep.firebase.analyticsKtx
 }
