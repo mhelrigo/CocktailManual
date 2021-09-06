@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.home
+package com.mhelrigo.cocktailmanual.ui.drink
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,9 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkListBinding
-import com.mhelrigo.cocktailmanual.ui.home.adapter.HorizontalDrinksRecyclerViewAdapter
-import com.mhelrigo.cocktailmanual.ui.home.adapter.OnItemClickListener
-import com.mhelrigo.cocktailmanual.ui.home.adapter.VerticalDrinksRecyclerViewAdapter
+import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.model.Drink
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
@@ -22,13 +20,13 @@ import timber.log.Timber
  * Users can toggle favorites on each Drink item inside said lists.
  */
 class DrinkListFragment : Fragment() {
-    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val drinksViewModel: DrinksViewModel by activityViewModels()
 
     private var drinkListBinding: FragmentDrinkListBinding? = null
 
-    private lateinit var popularDrinkAdapter: HorizontalDrinksRecyclerViewAdapter
-    private lateinit var latestDrinkAdapter: HorizontalDrinksRecyclerViewAdapter
-    private lateinit var randomDrinkAdapter: VerticalDrinksRecyclerViewAdapter
+    private lateinit var popularDrinkAdapter: DrinksRecyclerViewAdapter
+    private lateinit var latestDrinkAdapter: DrinksRecyclerViewAdapter
+    private lateinit var randomDrinkAdapter: DrinksRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,7 +44,7 @@ class DrinkListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         drinkListBinding?.imageViewRefresh?.setOnClickListener {
-            homeViewModel.requestForRandomDrinks()
+            drinksViewModel.requestForRandomDrinks()
         }
 
         setUpRecyclerViews()
@@ -71,10 +69,10 @@ class DrinkListFragment : Fragment() {
 
     private fun setUpLatestDrinkRecyclerView() {
         latestDrinkAdapter =
-            HorizontalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
+            DrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
                     when (val result =
-                        homeViewModel.toggleFavoriteOfADrink(item)) {
+                        drinksViewModel.toggleFavoriteOfADrink(item)) {
                         is ResultWrapper.Success -> {
                             latestDrinkAdapter.toggleFavoriteOfADrink(
                                 item.bindingAdapterPosition,
@@ -102,10 +100,10 @@ class DrinkListFragment : Fragment() {
 
     private fun setUpPopularDrinkRecyclerView() {
         popularDrinkAdapter =
-            HorizontalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
+            DrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
                     when (val result =
-                        homeViewModel.toggleFavoriteOfADrink(item)) {
+                        drinksViewModel.toggleFavoriteOfADrink(item)) {
                         is ResultWrapper.Success -> {
                             popularDrinkAdapter.toggleFavoriteOfADrink(
                                 item.bindingAdapterPosition,
@@ -133,10 +131,10 @@ class DrinkListFragment : Fragment() {
 
     private fun setUpRandomDrinkRecyclerView() {
         randomDrinkAdapter =
-            VerticalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
+            DrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
                     when (val result =
-                        homeViewModel.toggleFavoriteOfADrink(item)) {
+                        drinksViewModel.toggleFavoriteOfADrink(item)) {
                         is ResultWrapper.Success -> {
                             randomDrinkAdapter.toggleFavoriteOfADrink(
                                 item.bindingAdapterPosition,
@@ -163,7 +161,7 @@ class DrinkListFragment : Fragment() {
     }
 
     private fun handleLatestDrinks() {
-        homeViewModel.latestDrinks.observe(viewLifecycleOwner, {
+        drinksViewModel.latestDrinks.observe(viewLifecycleOwner, {
             when (it) {
                 is ResultWrapper.Success -> {
                     drinkListBinding?.recyclerViewLatestDrinks?.visibility = View.VISIBLE
@@ -188,7 +186,7 @@ class DrinkListFragment : Fragment() {
     }
 
     private fun handlePopularDrinks() {
-        homeViewModel.popularDrinks.observe(viewLifecycleOwner, {
+        drinksViewModel.popularDrinks.observe(viewLifecycleOwner, {
             when (it) {
                 is ResultWrapper.Success -> {
                     drinkListBinding?.recyclerViewPopularDrinks?.visibility = View.VISIBLE
@@ -213,7 +211,7 @@ class DrinkListFragment : Fragment() {
     }
 
     private fun handleRandomDrinks() {
-        homeViewModel.randomDrinks.observe(viewLifecycleOwner, {
+        drinksViewModel.randomDrinks.observe(viewLifecycleOwner, {
             when (it) {
                 is ResultWrapper.Success -> {
                     drinkListBinding?.textViewErrorRandom?.visibility = View.INVISIBLE
@@ -238,19 +236,19 @@ class DrinkListFragment : Fragment() {
     }
 
     private fun requestForLatestDrinks() {
-        homeViewModel.requestForLatestDrinks()
+        drinksViewModel.requestForLatestDrinks()
     }
 
     private fun requestForPopularDrinks() {
-        homeViewModel.requestForPopularDrinks()
+        drinksViewModel.requestForPopularDrinks()
     }
 
     private fun requestForRandomDrinks() {
-        homeViewModel.requestForRandomDrinks()
+        drinksViewModel.requestForRandomDrinks()
     }
 
     private fun expandDrinkDetails(drink: Drink) {
-        homeViewModel.expandDrinkDetails(drink)
+        drinksViewModel.expandDrinkDetails(drink)
         findNavController().navigate(R.id.action_drinkListFragment_to_drinkDetailsFragment)
     }
 }

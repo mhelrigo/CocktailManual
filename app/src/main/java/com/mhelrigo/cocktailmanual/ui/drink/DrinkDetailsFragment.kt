@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.home
+package com.mhelrigo.cocktailmanual.ui.drink
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,7 +21,7 @@ import timber.log.Timber
  */
 class DrinkDetailsFragment : Fragment() {
 
-    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val drinksViewModel: DrinksViewModel by activityViewModels()
 
     private lateinit var drinkDetailsBinding: FragmentDrinkDetailsBinding
 
@@ -50,9 +50,9 @@ class DrinkDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         drinkDetailsBinding.imageViewFavorite.setOnClickListener {
             when (val result =
-                homeViewModel.toggleFavoriteOfADrink(homeViewModel.expandedDrinkDetails.value!!)) {
+                drinksViewModel.toggleFavoriteOfADrink(drinksViewModel.expandedDrinkDetails.value!!)) {
                 is ResultWrapper.Success -> {
-                    homeViewModel.expandDrinkDetails(result.value)
+                    drinksViewModel.expandDrinkDetails(result.value)
                 }
                 is ResultWrapper.Error -> {
                     Timber.e("Something went wrong sport...")
@@ -75,7 +75,7 @@ class DrinkDetailsFragment : Fragment() {
     }
 
     private fun handleDrinkDetails() {
-        homeViewModel.expandedDrinkDetails.observe(viewLifecycleOwner, {
+        drinksViewModel.expandedDrinkDetails.observe(viewLifecycleOwner, {
             drinkDetailsBinding.textViewName.text = it.strDrink
             drinkDetailsBinding.textViewShortDesc.text =
                 "${it.strCategory} | ${it.strAlcoholic} | ${it.strGlass}"

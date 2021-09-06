@@ -6,8 +6,14 @@ enum class FromCollectionOf {
     LATEST,
     POPULAR,
     RANDOM,
+    FILTERED_BY_INGREDIENTS,
+    FAVORITE,
     NONE
 }
+
+const val SMALL = 0
+const val REGULAR = 1
+const val BIG = 2
 
 data class Drink(
     val dateModified: String?,
@@ -137,6 +143,24 @@ data class Drink(
             R.drawable.ic_favorite_red
         } else {
             R.drawable.ic_favorite_filled
+        }
+    }
+
+    fun returnViewHolderType(): Int {
+        return when (fromCollectionOf) {
+            FromCollectionOf.LATEST -> {
+                REGULAR
+            }
+            FromCollectionOf.POPULAR -> {
+                REGULAR
+            }
+            FromCollectionOf.RANDOM, FromCollectionOf.FAVORITE -> {
+                BIG
+            }
+            FromCollectionOf.FILTERED_BY_INGREDIENTS -> {
+                SMALL
+            }
+            else -> throw IllegalArgumentException()
         }
     }
 

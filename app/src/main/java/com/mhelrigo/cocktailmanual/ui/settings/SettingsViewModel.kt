@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.home
+package com.mhelrigo.cocktailmanual.ui.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
