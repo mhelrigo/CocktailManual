@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.home
+package com.mhelrigo.cocktailmanual.ui.settings
 
 import android.content.res.Configuration
 import android.os.Bundle

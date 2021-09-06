@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.home.adapter
+package com.mhelrigo.cocktailmanual.ui
 
 interface OnItemClickListener<T> {
     fun onClick(item: T)

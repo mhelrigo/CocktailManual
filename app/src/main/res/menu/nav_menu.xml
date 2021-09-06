@@ -4,6 +4,9 @@
         android:id="@+id/drinkListFragment"
         android:icon="@drawable/ic_home_black"
         android:title="@string/home" />
+    <item android:id="@+id/ingredientListFragment"
+        android:icon="@drawable/ic_view_list_black"
+        android:title="Ingredients" />
     <item
         android:id="@+id/favoritesFragment"
         android:icon="@drawable/ic_favorite_black"

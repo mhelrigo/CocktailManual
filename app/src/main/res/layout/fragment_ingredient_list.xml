@@ -4,17 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:padding="@dimen/base_8"
-    tools:context=".ui.drink.FavoritesFragment">
+    tools:context=".ui.ingredients.IngredientListFragment">
 
     <TextView
-        android:id="@+id/textViewFavoritesLabel"
+        android:id="@+id/textViewError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_light"
+        android:text="Whoops there seems to be a problem , try maybe later."
+        android:textAlignment="center"
+        android:textColor="?attr/colorOnPrimary"
+        android:textSize="@dimen/base_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewIngredients" />
+
+    <TextView
+        android:id="@+id/textViewIngredients"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/base_8"
         android:fontFamily="@font/roboto_light"
-        android:text="@string/your_favorites"
+        android:text="@string/ingredients"
         android:textColor="?attr/colorOnPrimary"
         android:textSize="@dimen/base_20"
         android:textStyle="bold"
@@ -22,30 +35,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewFavorites"
-        android:layout_width="match_parent"
+        android:id="@+id/recyclerViewIngredients"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/base_16"
-        android:paddingBottom="128dp"
         android:clipToPadding="false"
+        android:paddingBottom="128dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewFavoritesLabel"
+        app:layout_constraintTop_toBottomOf="@id/textViewIngredients"
         app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/textViewFavoritesError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_light"
-        android:text="Nothing to show at the moment"
-        android:textAlignment="center"
-        android:textColor="?attr/colorOnPrimary"
-        android:textSize="@dimen/base_16"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFavoritesLabel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

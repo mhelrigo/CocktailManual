@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "989543826963",
+    "project_id": "cocktail-manual",
+    "storage_bucket": "cocktail-manual.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989543826963:android:598ba04964fca8fff3e1e6",
+        "android_client_info": {
+          "package_name": "com.mhelrigo.cocktailmanual"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "989543826963-6dh2tm645jrhjt16jagpvr906hcf6861.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlnvwCmLHr2AANFMzruO1z0UTBl2ykYfs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "989543826963-6dh2tm645jrhjt16jagpvr906hcf6861.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.home
+package com.mhelrigo.cocktailmanual.ui
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -14,6 +14,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.ActivityHomeBinding
+import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
+import com.mhelrigo.cocktailmanual.ui.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -21,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
 
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val drinksViewModel: DrinksViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +65,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun handleInternetConnectionChanges() {
-        homeViewModel.isConnectedToInternet.observe(this, {
+        drinksViewModel.isConnectedToInternet.observe(this, {
             it?.let {
                 if (it) {
                     binding.linearLayoutNoInternetConnection.visibility = View.GONE
@@ -91,7 +93,7 @@ class HomeActivity : AppCompatActivity() {
                 getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val networkInfo = connectivityManager.activeNetworkInfo
 
-            homeViewModel.handleInternetConnectionChanges(networkInfo != null && networkInfo.isConnectedOrConnecting)
+            drinksViewModel.handleInternetConnectionChanges(networkInfo != null && networkInfo.isConnectedOrConnecting)
         }
     }
 }

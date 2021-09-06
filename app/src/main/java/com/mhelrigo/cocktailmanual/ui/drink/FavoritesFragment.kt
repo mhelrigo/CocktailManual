@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.home
+package com.mhelrigo.cocktailmanual.ui.drink
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentFavoritesBinding
-import com.mhelrigo.cocktailmanual.ui.home.adapter.OnItemClickListener
-import com.mhelrigo.cocktailmanual.ui.home.adapter.VerticalDrinksRecyclerViewAdapter
+import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.model.Drink
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
@@ -19,9 +18,9 @@ import timber.log.Timber
 class FavoritesFragment : Fragment() {
     private lateinit var fragmentFavoritesBinding: FragmentFavoritesBinding
 
-    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val drinksViewModel: DrinksViewModel by activityViewModels()
 
-    private lateinit var favoritesAdapter: VerticalDrinksRecyclerViewAdapter
+    private lateinit var favoritesAdapter: DrinksRecyclerViewAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,18 +35,18 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
 
-        homeViewModel.requestForFavoriteDrinks()
+        drinksViewModel.requestForFavoriteDrinks()
         handleFavorites()
     }
 
     private fun setUpRecyclerView() {
-        favoritesAdapter = VerticalDrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
+        favoritesAdapter = DrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
             override fun onClick(item: Drink) {
                 when (val result =
-                    homeViewModel.toggleFavoriteOfADrink(item)) {
+                    drinksViewModel.toggleFavoriteOfADrink(item)) {
                     is ResultWrapper.Success -> {
                         // It would be a lot easier to just request the whole list again.
-                        homeViewModel.requestForFavoriteDrinks()
+                        drinksViewModel.requestForFavoriteDrinks()
                     }
                     is ResultWrapper.Error -> {
                         Timber.e("Something went wrong sport...")
@@ -68,7 +67,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun handleFavorites() {
-        homeViewModel.favoriteDrinks.observe(viewLifecycleOwner, {
+        drinksViewModel.favoriteDrinks.observe(viewLifecycleOwner, {
             it?.let { result ->
                 when (result) {
                     is ResultWrapper.Success -> {
@@ -94,7 +93,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun expandDrinkDetails(drink: Drink) {
-        homeViewModel.expandDrinkDetails(drink)
+        drinksViewModel.expandDrinkDetails(drink)
         findNavController().navigate(R.id.action_favoritesFragment_to_drinkDetailsFragment)
     }
 }

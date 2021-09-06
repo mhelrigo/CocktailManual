@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:padding="@dimen/base_8"
-    tools:context=".ui.home.DrinkListFragment">
+    tools:context=".ui.drink.DrinkListFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -65,13 +65,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="clip_vertical">
 
-                <include layout="@layout/item_drink_1_shimmer" />
+                <include layout="@layout/item_drink_regular_shimmer" />
 
-                <include layout="@layout/item_drink_1_shimmer" />
+                <include layout="@layout/item_drink_regular_shimmer" />
 
-                <include layout="@layout/item_drink_1_shimmer" />
+                <include layout="@layout/item_drink_regular_shimmer" />
 
-                <include layout="@layout/item_drink_1_shimmer" />
+                <include layout="@layout/item_drink_regular_shimmer" />
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -128,13 +128,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="clip_vertical">
 
-                <include layout="@layout/item_drink_1_shimmer" />
+                <include layout="@layout/item_drink_regular_shimmer" />
 
-                <include layout="@layout/item_drink_1_shimmer" />
+                <include layout="@layout/item_drink_regular_shimmer" />
 
-                <include layout="@layout/item_drink_1_shimmer" />
+                <include layout="@layout/item_drink_regular_shimmer" />
 
-                <include layout="@layout/item_drink_1_shimmer" />
+                <include layout="@layout/item_drink_regular_shimmer" />
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
 
@@ -210,13 +210,13 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <include layout="@layout/item_drink_2_shimmer" />
+                <include layout="@layout/item_drink_big_shimmer" />
 
-                <include layout="@layout/item_drink_2_shimmer" />
+                <include layout="@layout/item_drink_big_shimmer" />
 
-                <include layout="@layout/item_drink_2_shimmer" />
+                <include layout="@layout/item_drink_big_shimmer" />
 
-                <include layout="@layout/item_drink_2_shimmer" />
+                <include layout="@layout/item_drink_big_shimmer" />
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

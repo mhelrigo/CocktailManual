@@ -5,7 +5,7 @@ buildscript {
 
     dependencies {
         classpath dep.gradle
-        classpath dep.kotlin.gradle
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30"
         classpath dep.firebase.googleServices
         classpath dep.firebase.crashlyticsGradle
         classpath dep.android.hiltGradle

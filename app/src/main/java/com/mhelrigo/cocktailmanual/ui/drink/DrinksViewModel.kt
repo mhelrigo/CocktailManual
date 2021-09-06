@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.home
+package com.mhelrigo.cocktailmanual.ui.drink
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,13 +16,14 @@ import javax.inject.Named
 import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class DrinksViewModel @Inject constructor(
     var popularDrinksUseCase: GetPopularDrinksUseCase,
     var latestDrinksUseCase: GetLatestDrinksUseCase,
     var randomDrinksUseCase: GetRandomDrinksUseCase,
     var addFavoriteUseCase: AddFavoriteUseCase,
     var selectAllFavoritesUseCase: SelectAllFavoritesUseCase,
     var removeFavoriteUseCase: RemoveFavoriteUseCase,
+    var searchDrinkByIngredientsUseCase: SearchDrinkByIngredientsUseCase,
     @Named("Dispatchers.IO") var mainCoroutineContext: CoroutineContext
 ) : ViewModel(),
     CoroutineScope {
@@ -48,6 +49,10 @@ class HomeViewModel @Inject constructor(
     private val _expandedDrinkDetails =
         MutableLiveData<com.mhelrigo.cocktailmanual.ui.model.Drink>()
     val expandedDrinkDetails: LiveData<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _expandedDrinkDetails
+
+    private val _drinksFilteredByIngredient =
+        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
+    val drinksFilteredByIngredient: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinksFilteredByIngredient
 
     private val _isConnectedToInternet = MutableLiveData(false)
     val isConnectedToInternet: LiveData<Boolean> get() = _isConnectedToInternet
@@ -106,6 +111,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun filterDrinksByIngredient(p0: String) = launch {
+        _drinksFilteredByIngredient.postValue(ResultWrapper.buildLoading())
+        when (val result = searchDrinkByIngredientsUseCase.buildExecutable(listOf(p0))) {
+            is ResultWrapper.Success -> {
+                _drinksFilteredByIngredient.postValue(ResultWrapper.build {
+                    beautifyDrinkResult(
+                        result.value,
+                        FromCollectionOf.FILTERED_BY_INGREDIENTS
+                    )
+                })
+            }
+            is ResultWrapper.Error -> {
+                FirebaseCrashlytics.getInstance().recordException(result.error)
+                _drinksFilteredByIngredient.postValue(ResultWrapper.build { throw Exception(result.error) })
+            }
+        }
+    }
+
     /**
      * What this does is it will make Drinks from remote into a presentable model that will be used
      * by the Views. It will do the following:
@@ -142,7 +165,7 @@ class HomeViewModel @Inject constructor(
      * @param [favorites] Comes from local source
      * @return [List<Drink>] Combine value of [toBeMerged] and [favorites] without duplication
      * */
-    private fun markAllFavorites(toBeMerged: List<Drink>, favorites: List<Drink>): List<Drink> {
+    private fun markAllFavorites(toBeMerged: List<Drink>, favorites: List<com.mhelrigo.cocktailmanual.ui.model.Drink>): List<Drink> {
         favorites.map { favorites ->
             toBeMerged.filter { latest ->
                 latest.idDrink == favorites.idDrink
@@ -160,7 +183,7 @@ class HomeViewModel @Inject constructor(
      *
      * @return [List<Drink] the collection of favorite drinks from a local source
      * */
-    fun requestForFavoriteDrinks(): List<Drink> {
+    fun requestForFavoriteDrinks(): List<com.mhelrigo.cocktailmanual.ui.model.Drink> {
         _favoriteDrinks.postValue(ResultWrapper.buildLoading())
 
         var result: ResultWrapper<Exception, List<Drink>>?
@@ -174,13 +197,17 @@ class HomeViewModel @Inject constructor(
 
         return when (result) {
             is ResultWrapper.Success -> {
+                val value = (result as ResultWrapper.Success<List<Drink>>).value.map {
+                    com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it)
+                }
                 _favoriteDrinks.postValue(ResultWrapper.build {
-                    (result as ResultWrapper.Success<List<Drink>>).value.map {
-                        com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it)
-                    }
+                    value
                 })
 
-                (result as ResultWrapper.Success<List<Drink>>).value
+                value.map {
+                    it.fromCollectionOf = FromCollectionOf.FAVORITE
+                    it
+                }
             }
 
             is ResultWrapper.Error -> {
@@ -245,9 +272,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun handleInternetConnectionChanges(p0: Boolean) {
-        requestForRandomDrinks()
-        requestForLatestDrinks()
-        requestForPopularDrinks()
+        if (p0) {
+            requestForRandomDrinks()
+            requestForLatestDrinks()
+            requestForPopularDrinks()
+        }
         _isConnectedToInternet.postValue(p0)
     }
 

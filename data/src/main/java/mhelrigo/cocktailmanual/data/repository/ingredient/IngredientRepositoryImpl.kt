@@ -5,12 +5,13 @@ import mhelrigo.cocktailmanual.data.repository.ingredient.remote.IngredientApi
 import mhelrigo.cocktailmanual.domain.model.Ingredients
 import mhelrigo.cocktailmanual.domain.repository.IngredientRepository
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
+import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
 
 @Singleton
-class IngredientRepositoryImpl constructor(
+class IngredientRepositoryImpl @Inject constructor(
     var ingredientApi: IngredientApi,
     @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
 ) : IngredientRepository {
