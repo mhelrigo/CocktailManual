@@ -12,158 +12,183 @@
         android:layout_height="match_parent"
         android:paddingBottom="64dp">
 
-        <ImageView
-            android:id="@+id/imageViewThumbnail"
-            android:layout_width="0dp"
-            android:layout_height="250dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutRootLoading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:visibility="gone">
 
-        <TextView
-            android:id="@+id/textViewName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_16"
-            android:layout_marginTop="@dimen/base_16"
-            android:layout_marginEnd="@dimen/base_4"
-            android:fontFamily="@font/roboto_light"
-            android:text="TextView"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_24"
-            app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewThumbnail" />
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageView
-            android:id="@+id/imageViewFavorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/base_16"
-            android:src="@drawable/ic_favorite_filled"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewName"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textViewName" />
-
-        <TextView
-            android:id="@+id/textViewShortDesc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_24"
-            android:layout_marginTop="@dimen/base_16"
-            android:layout_marginEnd="@dimen/base_16"
-            android:fontFamily="@font/roboto_light"
-            android:text="TextView"
-            android:textSize="@dimen/base_16"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewName" />
-
-        <TextView
-            android:id="@+id/textViewIngredient"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_16"
-            android:layout_marginTop="@dimen/base_24"
-            android:fontFamily="@font/roboto_light"
-            android:text="@string/ingredients"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_24"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewShortDesc" />
-
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/base_16"
-            android:src="@drawable/ic_fact_check_black"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewIngredient"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textViewIngredient"
-            app:tint="?attr/colorOnPrimary" />
-
-        <TextView
-            android:id="@+id/textViewMeasurements"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_24"
-            android:layout_marginTop="@dimen/base_16"
-            android:fontFamily="@font/roboto_light"
-            android:text="TextView"
-            android:textSize="@dimen/base_16"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewIngredient" />
-
-        <TextView
-            android:id="@+id/textViewIngredients"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_4"
-            android:layout_marginTop="@dimen/base_16"
-            android:fontFamily="@font/roboto_light"
-            android:text="TextView"
-            android:textSize="@dimen/base_16"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/textViewMeasurements"
-            app:layout_constraintTop_toBottomOf="@+id/textViewIngredient" />
-
-        <TextView
-            android:id="@+id/textViewInstructionLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_16"
-            android:layout_marginTop="@dimen/base_24"
-            android:layout_marginEnd="@dimen/base_16"
-            android:fontFamily="@font/roboto_light"
-            android:text="@string/instruction"
-            android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_24"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewMeasurements" />
-
-        <TextView
-            android:id="@+id/textViewInstruction"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/base_24"
-            android:layout_marginTop="@dimen/base_16"
-            android:layout_marginEnd="@dimen/base_16"
-            android:layout_marginBottom="@dimen/base_16"
-            android:fontFamily="@font/roboto_light"
-            android:text="TextView"
-            android:textSize="@dimen/base_16"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayoutRootSuccess"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewInstructionLabel"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/base_16"
-            android:src="@drawable/ic_article_black"
-            app:layout_constraintBottom_toBottomOf="@+id/textViewInstructionLabel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textViewInstructionLabel"
-            app:tint="?attr/colorOnPrimary" />
+            <ImageView
+                android:id="@+id/imageViewThumbnail"
+                android:layout_width="0dp"
+                android:layout_height="250dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageViewBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="?attr/colorPrimary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:padding="@dimen/base_16"/>
+            <TextView
+                android:id="@+id/textViewName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/base_16"
+                android:layout_marginTop="@dimen/base_16"
+                android:layout_marginEnd="@dimen/base_4"
+                android:fontFamily="@font/roboto_light"
+                android:text="TextView"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="@dimen/base_24"
+                app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewThumbnail" />
+
+            <ImageView
+                android:id="@+id/imageViewFavorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/base_16"
+                android:src="@drawable/ic_favorite_filled"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textViewName" />
+
+            <TextView
+                android:id="@+id/textViewShortDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/base_24"
+                android:layout_marginTop="@dimen/base_16"
+                android:layout_marginEnd="@dimen/base_16"
+                android:fontFamily="@font/roboto_light"
+                android:text="TextView"
+                android:textSize="@dimen/base_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewName" />
+
+            <TextView
+                android:id="@+id/textViewIngredient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/base_16"
+                android:layout_marginTop="@dimen/base_24"
+                android:fontFamily="@font/roboto_light"
+                android:text="@string/ingredients"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="@dimen/base_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewShortDesc" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/base_16"
+                android:src="@drawable/ic_fact_check_black"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewIngredient"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textViewIngredient"
+                app:tint="?attr/colorOnPrimary" />
+
+            <TextView
+                android:id="@+id/textViewMeasurements"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/base_24"
+                android:layout_marginTop="@dimen/base_16"
+                android:fontFamily="@font/roboto_light"
+                android:text="TextView"
+                android:textSize="@dimen/base_16"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewIngredient" />
+
+            <TextView
+                android:id="@+id/textViewIngredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/base_4"
+                android:layout_marginTop="@dimen/base_16"
+                android:fontFamily="@font/roboto_light"
+                android:text="TextView"
+                android:textSize="@dimen/base_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/textViewMeasurements"
+                app:layout_constraintTop_toBottomOf="@+id/textViewIngredient" />
+
+            <TextView
+                android:id="@+id/textViewInstructionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/base_16"
+                android:layout_marginTop="@dimen/base_24"
+                android:layout_marginEnd="@dimen/base_16"
+                android:fontFamily="@font/roboto_light"
+                android:text="@string/instruction"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="@dimen/base_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewMeasurements" />
+
+            <TextView
+                android:id="@+id/textViewInstruction"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/base_24"
+                android:layout_marginTop="@dimen/base_16"
+                android:layout_marginEnd="@dimen/base_16"
+                android:layout_marginBottom="@dimen/base_16"
+                android:fontFamily="@font/roboto_light"
+                android:text="TextView"
+                android:textSize="@dimen/base_16"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewInstructionLabel"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/base_16"
+                android:src="@drawable/ic_article_black"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewInstructionLabel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textViewInstructionLabel"
+                app:tint="?attr/colorOnPrimary" />
+
+            <ImageView
+                android:id="@+id/imageViewBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/base_16"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?attr/colorPrimary" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

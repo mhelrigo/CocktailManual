@@ -12,6 +12,7 @@ import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkListBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.model.Drink
+import com.mhelrigo.commons.ID
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
@@ -248,7 +249,8 @@ class DrinkListFragment : Fragment() {
     }
 
     private fun expandDrinkDetails(drink: Drink) {
-        drinksViewModel.expandDrinkDetails(drink)
-        findNavController().navigate(R.id.action_drinkListFragment_to_drinkDetailsFragment)
+        val bundle = Bundle()
+        bundle.putString(ID, drink.idDrink)
+        findNavController().navigate(R.id.action_drinkListFragment_to_drinkDetailsFragment, bundle)
     }
 }
