@@ -21,15 +21,18 @@
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_drink_list.xml" value="0.1" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_favorites.xml" value="0.264" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_ingredient_details.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_ingredient_list.xml" value="0.22554347826086957" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_ingredient_list.xml" value="0.1" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/fragment_setting.xml" value="0.264" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_1.xml" value="0.4" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_1_shimmer.xml" value="0.264" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_2.xml" value="0.4" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_2_shimmer.xml" value="0.23052536231884058" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_3.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_small.xml" value="0.536" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_regular_shimmer.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_small.xml" value="0.1" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_small_shimmer.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_ingredient.xml" value="0.22554347826086957" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_ingredient_shimmer.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_latest_drink.xml" value="0.6" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/menu/nav_menu.xml" value="0.25416666666666665" />
       </map>

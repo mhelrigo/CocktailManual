@@ -53,5 +53,9 @@
         android:id="@+id/ingredientDetailsFragment"
         android:name="com.mhelrigo.cocktailmanual.ui.ingredients.IngredientDetailsFragment"
         android:label="fragment_ingredient_details"
-        tools:layout="@layout/fragment_ingredient_details" />
+        tools:layout="@layout/fragment_ingredient_details" >
+        <action
+            android:id="@+id/action_ingredientDetailsFragment_to_drinkDetailsFragment"
+            app:destination="@id/drinkDetailsFragment" />
+    </fragment>
 </navigation>

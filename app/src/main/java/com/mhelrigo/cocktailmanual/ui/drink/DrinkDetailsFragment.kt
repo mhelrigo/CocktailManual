@@ -12,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkDetailsBinding
+import com.mhelrigo.cocktailmanual.ui.model.Drink
+import com.mhelrigo.commons.ID
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
@@ -49,13 +51,15 @@ class DrinkDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         drinkDetailsBinding.imageViewFavorite.setOnClickListener {
+            val drink = (drinksViewModel.drinkDetails.value as ResultWrapper.Success<List<Drink>>)
+
             when (val result =
-                drinksViewModel.toggleFavoriteOfADrink(drinksViewModel.expandedDrinkDetails.value!!)) {
+                drinksViewModel.toggleFavoriteOfADrink(drink.value[0])) {
                 is ResultWrapper.Success -> {
-                    drinksViewModel.expandDrinkDetails(result.value)
+                    requestForDrinkById()
                 }
                 is ResultWrapper.Error -> {
-                    Timber.e("Something went wrong sport...")
+                    Timber.e("Something went wrong sport... ${result.error}")
                 }
             }
         }
@@ -67,6 +71,7 @@ class DrinkDetailsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        requestForDrinkById()
         handleDrinkDetails()
     }
 
@@ -74,21 +79,42 @@ class DrinkDetailsFragment : Fragment() {
         findNavController().popBackStack()
     }
 
+    private fun requestForDrinkById() {
+        val id = arguments?.getString(ID)
+        drinksViewModel.requestForDrinkDetailsByName(id)
+    }
+
     private fun handleDrinkDetails() {
-        drinksViewModel.expandedDrinkDetails.observe(viewLifecycleOwner, {
-            drinkDetailsBinding.textViewName.text = it.strDrink
-            drinkDetailsBinding.textViewShortDesc.text =
-                "${it.strCategory} | ${it.strAlcoholic} | ${it.strGlass}"
-            drinkDetailsBinding.textViewMeasurements.text = it.returnMeasurements()
-            drinkDetailsBinding.textViewIngredients.text =
-                it.returnIngredients()
-            drinkDetailsBinding.textViewInstruction.text = it.strInstructions
+        drinksViewModel.drinkDetails.observe(viewLifecycleOwner, {
+            when (it) {
+                is ResultWrapper.Loading -> {
+                    drinkDetailsBinding.constraintLayoutRootLoading.visibility = View.VISIBLE
+                    drinkDetailsBinding.constraintLayoutRootSuccess.visibility = View.GONE
+                }
+                is ResultWrapper.Success -> {
+                    drinkDetailsBinding.constraintLayoutRootLoading.visibility = View.GONE
+                    drinkDetailsBinding.constraintLayoutRootSuccess.visibility = View.VISIBLE
+                    it.value[0]?.let { drink ->
+                        drinkDetailsBinding.textViewName.text = drink.strDrink
+                        drinkDetailsBinding.textViewShortDesc.text =
+                            "${drink.strCategory} | ${drink.strAlcoholic} | ${drink.strGlass}"
+                        drinkDetailsBinding.textViewMeasurements.text = drink.returnMeasurements()
+                        drinkDetailsBinding.textViewIngredients.text =
+                            drink.returnIngredients()
+                        drinkDetailsBinding.textViewInstruction.text = drink.strInstructions
 
-            Glide.with(requireContext()).load(it.strDrinkThumb).diskCacheStrategy(
-                DiskCacheStrategy.ALL
-            ).into(drinkDetailsBinding.imageViewThumbnail)
+                        Glide.with(requireContext()).load(drink.strDrinkThumb).diskCacheStrategy(
+                            DiskCacheStrategy.ALL
+                        ).into(drinkDetailsBinding.imageViewThumbnail)
 
-            setUpFavoriteIcon(it.returnIconForFavorite())
+                        setUpFavoriteIcon(drink.returnIconForFavorite())
+                    }
+                }
+                is ResultWrapper.Error -> {
+                    drinkDetailsBinding.constraintLayoutRootLoading.visibility = View.GONE
+                    drinkDetailsBinding.constraintLayoutRootSuccess.visibility = View.VISIBLE
+                }
+            }
         })
     }
 

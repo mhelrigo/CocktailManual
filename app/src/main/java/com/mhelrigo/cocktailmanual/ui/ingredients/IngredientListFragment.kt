@@ -61,15 +61,21 @@ class IngredientListFragment : Fragment() {
                 is ResultWrapper.Success -> {
                     ingredientListBinding.recyclerViewIngredients.visibility = View.VISIBLE
                     ingredientListBinding.textViewError.visibility = View.GONE
+                    ingredientListBinding.shimmerFrameLayout.visibility = View.GONE
+                    ingredientListBinding.shimmerFrameLayout.stopShimmer()
                     ingredientRecyclerViewAdapter.differ.submitList(it.value.drinks)
                 }
                 is ResultWrapper.Loading -> {
+                    ingredientListBinding.shimmerFrameLayout.visibility = View.VISIBLE
                     ingredientListBinding.textViewError.visibility = View.GONE
                     ingredientListBinding.recyclerViewIngredients.visibility = View.GONE
+                    ingredientListBinding.shimmerFrameLayout.startShimmer()
                 }
                 is ResultWrapper.Error -> {
                     ingredientListBinding.textViewError.visibility = View.VISIBLE
                     ingredientListBinding.recyclerViewIngredients.visibility = View.GONE
+                    ingredientListBinding.shimmerFrameLayout.visibility = View.GONE
+                    ingredientListBinding.shimmerFrameLayout.stopShimmer()
                 }
             }
         })

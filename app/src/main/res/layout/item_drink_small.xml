@@ -16,31 +16,33 @@
             android:layout_height="75dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="?attr/colorSecondaryVariant" />
 
         <ImageView
             android:id="@+id/imageViewFavorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="@dimen/base_8"
-            android:paddingBottom="@dimen/base_8"
+            android:padding="@dimen/base_16"
             android:src="@drawable/ic_favorite_filled"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textViewName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
-            android:layout_marginTop="@dimen/base_8"
             android:layout_marginEnd="@dimen/base_8"
             android:ellipsize="end"
             android:fontFamily="@font/roboto_light"
             android:singleLine="true"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_12"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/imageViewThumbnail"
             app:layout_constraintTop_toTopOf="parent" />

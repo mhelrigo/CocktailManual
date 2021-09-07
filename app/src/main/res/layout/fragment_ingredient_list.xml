@@ -19,7 +19,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewIngredients" />
+        app:layout_constraintTop_toBottomOf="@id/textViewIngredients"
+        tools:visibility="gone" />
 
     <TextView
         android:id="@+id/textViewIngredients"
@@ -46,5 +47,185 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewIngredients"
         app:layout_constraintVertical_bias="0.0" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerFrameLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/base_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewIngredients"
+        app:layout_constraintVertical_bias="0.0">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="3">
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+
+            <include
+                layout="@layout/item_ingredient"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="@dimen/base_8" />
+        </GridLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

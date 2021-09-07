@@ -6,13 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentIngredientDetailsBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.model.Drink
+import com.mhelrigo.commons.ID
 import com.mhelrigo.commons.NAME
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
@@ -63,7 +66,7 @@ class IngredientDetailsFragment : Fragment() {
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-
+                    expandDrinkDetails(item)
                 }
             })
         ingredientDetailsBinding.recyclerViewDrinks.apply {
@@ -81,6 +84,8 @@ class IngredientDetailsFragment : Fragment() {
             when (it) {
                 is ResultWrapper.Success -> {
                     ingredientDetailsBinding.textViewError.visibility = View.GONE
+                    ingredientDetailsBinding.shimmerFrameLayout.visibility = View.GONE
+                    ingredientDetailsBinding.shimmerFrameLayout.stopShimmer()
                     ingredientDetailsBinding.textViewName.visibility = View.VISIBLE
                     ingredientDetailsBinding.textViewDescription.visibility = View.VISIBLE
                     ingredientDetailsBinding.recyclerViewDrinks.visibility = View.VISIBLE
@@ -98,8 +103,12 @@ class IngredientDetailsFragment : Fragment() {
                     ingredientDetailsBinding.textViewName.visibility = View.GONE
                     ingredientDetailsBinding.textViewDescription.visibility = View.GONE
                     ingredientDetailsBinding.recyclerViewDrinks.visibility = View.GONE
+                    ingredientDetailsBinding.shimmerFrameLayout.visibility = View.GONE
+                    ingredientDetailsBinding.shimmerFrameLayout.stopShimmer()
                 }
                 is ResultWrapper.Loading -> {
+                    ingredientDetailsBinding.shimmerFrameLayout.visibility = View.VISIBLE
+                    ingredientDetailsBinding.shimmerFrameLayout.startShimmer()
                     ingredientDetailsBinding.imageViewThumbnail.visibility = View.GONE
                     ingredientDetailsBinding.textViewError.visibility = View.GONE
                     ingredientDetailsBinding.textViewName.visibility = View.GONE
@@ -125,5 +134,14 @@ class IngredientDetailsFragment : Fragment() {
                 }
             }
         })
+    }
+
+    private fun expandDrinkDetails(drink: Drink) {
+        val bundle = Bundle()
+        bundle.putString(ID, drink.idDrink)
+        findNavController().navigate(
+            R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment,
+            bundle
+        )
     }
 }

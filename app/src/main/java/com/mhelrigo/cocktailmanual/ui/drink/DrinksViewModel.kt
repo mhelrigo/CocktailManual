@@ -11,6 +11,7 @@ import mhelrigo.cocktailmanual.domain.model.Drink
 import mhelrigo.cocktailmanual.domain.model.Drinks
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import mhelrigo.cocktailmanual.domain.usecase.drink.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.coroutines.CoroutineContext
@@ -24,6 +25,7 @@ class DrinksViewModel @Inject constructor(
     var selectAllFavoritesUseCase: SelectAllFavoritesUseCase,
     var removeFavoriteUseCase: RemoveFavoriteUseCase,
     var searchDrinkByIngredientsUseCase: SearchDrinkByIngredientsUseCase,
+    var getDrinkDetailsUseCase: GetDrinkDetailsUseCase,
     @Named("Dispatchers.IO") var mainCoroutineContext: CoroutineContext
 ) : ViewModel(),
     CoroutineScope {
@@ -46,9 +48,9 @@ class DrinksViewModel @Inject constructor(
         MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
     val favoriteDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _favoriteDrinks
 
-    private val _expandedDrinkDetails =
-        MutableLiveData<com.mhelrigo.cocktailmanual.ui.model.Drink>()
-    val expandedDrinkDetails: LiveData<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _expandedDrinkDetails
+    private val _drinkDetails =
+        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
+    val drinkDetails: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinkDetails
 
     private val _drinksFilteredByIngredient =
         MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
@@ -165,7 +167,10 @@ class DrinksViewModel @Inject constructor(
      * @param [favorites] Comes from local source
      * @return [List<Drink>] Combine value of [toBeMerged] and [favorites] without duplication
      * */
-    private fun markAllFavorites(toBeMerged: List<Drink>, favorites: List<com.mhelrigo.cocktailmanual.ui.model.Drink>): List<Drink> {
+    private fun markAllFavorites(
+        toBeMerged: List<Drink>,
+        favorites: List<com.mhelrigo.cocktailmanual.ui.model.Drink>
+    ): List<Drink> {
         favorites.map { favorites ->
             toBeMerged.filter { latest ->
                 latest.idDrink == favorites.idDrink
@@ -267,8 +272,24 @@ class DrinksViewModel @Inject constructor(
         }
     }
 
-    fun expandDrinkDetails(drink: com.mhelrigo.cocktailmanual.ui.model.Drink) {
-        _expandedDrinkDetails.postValue(drink)
+    fun requestForDrinkDetailsByName(p0: String?) = launch {
+        _drinkDetails.postValue(ResultWrapper.buildLoading())
+
+        p0?.let { id ->
+            when (val result = getDrinkDetailsUseCase.buildExecutable(
+                listOf(id)
+            )) {
+                is ResultWrapper.Success -> {
+                    _drinkDetails.postValue(ResultWrapper.build {
+                        beautifyDrinkResult(result.value, FromCollectionOf.NONE)
+                    })
+                }
+                is ResultWrapper.Error -> {
+                    Timber.e("Error ${result.error}")
+                    _drinkDetails.postValue(ResultWrapper.build { throw Exception(result.error) })
+                }
+            }
+        }
     }
 
     fun handleInternetConnectionChanges(p0: Boolean) {
