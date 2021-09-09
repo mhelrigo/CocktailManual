@@ -6,5 +6,6 @@ enum class DrinkCollectionType {
     RANDOM,
     FILTERED_BY_INGREDIENTS,
     FAVORITE,
+    SEARCH_BY_NAME,
     NONE
 }

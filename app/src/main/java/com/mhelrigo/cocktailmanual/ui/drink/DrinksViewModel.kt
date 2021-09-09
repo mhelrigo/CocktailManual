@@ -8,6 +8,7 @@ import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.assignCollectionType
 import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.markAllFavorites
 import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.transformCollectionIntoPresentationObject
 import com.mhelrigo.cocktailmanual.ui.model.DrinkCollectionType
+import com.mhelrigo.commons.SEARCH_DELAY_IN_MILLIS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import mhelrigo.cocktailmanual.domain.model.Drink
@@ -28,11 +29,13 @@ class DrinksViewModel @Inject constructor(
     var removeFavoriteUseCase: RemoveFavoriteUseCase,
     var searchDrinkByIngredientsUseCase: SearchDrinkByIngredientsUseCase,
     var getDrinkDetailsUseCase: GetDrinkDetailsUseCase,
+    var searchDrinkByNameUseCase: SearchDrinkByNameUseCase,
     @Named("Dispatchers.IO") var mainCoroutineContext: CoroutineContext
 ) : ViewModel(),
     CoroutineScope {
 
     private val job = Job()
+    private var searchDrinkJob: Job = Job()
 
     private val _latestDrinks =
         MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
@@ -57,6 +60,9 @@ class DrinksViewModel @Inject constructor(
     private val _drinksFilteredByIngredient =
         MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
     val drinksFilteredByIngredient: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinksFilteredByIngredient
+
+    private val _drinkSearchedByName = MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
+    val drinkSearchedByName: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinkSearchedByName
 
     private val _isConnectedToInternet = MutableLiveData(false)
     val isConnectedToInternet: LiveData<Boolean> get() = _isConnectedToInternet
@@ -258,6 +264,33 @@ class DrinksViewModel @Inject constructor(
                 }
                 is ResultWrapper.Error -> {
                     _drinkDetails.postValue(ResultWrapper.build { throw Exception(result.error) })
+                }
+            }
+        }
+    }
+
+    fun searchForDrinkByName(p0: CharSequence) {
+        if (searchDrinkJob.isActive) {
+            searchDrinkJob.cancel(CancellationException())
+        }
+
+        searchDrinkJob = launch(mainCoroutineContext) {
+            delay(SEARCH_DELAY_IN_MILLIS)
+
+            _drinkSearchedByName.postValue(ResultWrapper.buildLoading())
+
+            when (val result = searchDrinkByNameUseCase.buildExecutable(listOf(p0.toString()))) {
+                is ResultWrapper.Success -> {
+                    _drinkSearchedByName.postValue(ResultWrapper.build {
+                        handleResult(
+                            result.value,
+                            DrinkCollectionType.SEARCH_BY_NAME
+                        )
+                    })
+                }
+                is ResultWrapper.Error -> {
+                    FirebaseCrashlytics.getInstance().recordException(result.error)
+                    _drinkSearchedByName.postValue(ResultWrapper.build { throw Exception(result.error) })
                 }
             }
         }

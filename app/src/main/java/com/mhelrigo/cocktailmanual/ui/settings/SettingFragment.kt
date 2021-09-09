@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.mhelrigo.cocktailmanual.BuildConfig
 import com.mhelrigo.cocktailmanual.databinding.FragmentSettingBinding
+import com.mhelrigo.cocktailmanual.ui.setUpDeviceBackNavigation
 
 class SettingFragment : Fragment() {
     private lateinit var settingBinding: FragmentSettingBinding
@@ -22,6 +23,11 @@ class SettingFragment : Fragment() {
         settingBinding = FragmentSettingBinding.inflate(inflater)
         // Inflate the layout for this fragment
         return settingBinding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setUpDeviceBackNavigation()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

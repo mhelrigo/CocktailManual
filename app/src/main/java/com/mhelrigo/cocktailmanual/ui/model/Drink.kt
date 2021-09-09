@@ -209,7 +209,7 @@ data class Drink(
             DrinkCollectionType.RANDOM, DrinkCollectionType.FAVORITE -> {
                 VIEW_HOLDER_BIG
             }
-            DrinkCollectionType.FILTERED_BY_INGREDIENTS -> {
+            DrinkCollectionType.FILTERED_BY_INGREDIENTS, DrinkCollectionType.SEARCH_BY_NAME -> {
                 VIEW_HOLDER_SMALL
             }
             else -> throw IllegalArgumentException()

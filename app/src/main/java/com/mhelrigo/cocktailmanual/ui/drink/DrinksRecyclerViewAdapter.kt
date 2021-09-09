@@ -13,10 +13,10 @@ import com.mhelrigo.cocktailmanual.ui.drink.viewholders.BaseViewHolder
 import com.mhelrigo.cocktailmanual.ui.drink.viewholders.BigViewHolder
 import com.mhelrigo.cocktailmanual.ui.drink.viewholders.RegularViewHolder
 import com.mhelrigo.cocktailmanual.ui.drink.viewholders.SmallViewHolder
-import com.mhelrigo.cocktailmanual.ui.model.BIG
 import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.cocktailmanual.ui.model.REGULAR
-import com.mhelrigo.cocktailmanual.ui.model.SMALL
+import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.VIEW_HOLDER_BIG
+import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.VIEW_HOLDER_REGULAR
+import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.VIEW_HOLDER_SMALL
 
 class DrinksRecyclerViewAdapter(
     var onFavoritesToggled: OnItemClickListener<Drink>,
@@ -45,7 +45,7 @@ class DrinksRecyclerViewAdapter(
         viewType: Int
     ): BaseViewHolder {
         return when (viewType) {
-            SMALL -> {
+            VIEW_HOLDER_SMALL -> {
                 SmallViewHolder(
                     ItemDrinkSmallBinding.inflate(
                         LayoutInflater.from(parent.context),
@@ -54,7 +54,7 @@ class DrinksRecyclerViewAdapter(
                     )
                 )
             }
-            REGULAR -> {
+            VIEW_HOLDER_REGULAR -> {
                 RegularViewHolder(
                     ItemDrinkRegularBinding.inflate(
                         LayoutInflater.from(parent.context),
@@ -63,7 +63,7 @@ class DrinksRecyclerViewAdapter(
                     )
                 )
             }
-            BIG -> {
+            VIEW_HOLDER_BIG -> {
                 BigViewHolder(
                     ItemDrinkBigBinding.inflate(
                         LayoutInflater.from(parent.context),
