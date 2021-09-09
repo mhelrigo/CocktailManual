@@ -2,19 +2,9 @@ package com.mhelrigo.cocktailmanual.ui.model
 
 import com.mhelrigo.cocktailmanual.R
 
-enum class FromCollectionOf {
-    LATEST,
-    POPULAR,
-    RANDOM,
-    FILTERED_BY_INGREDIENTS,
-    FAVORITE,
-    NONE
-}
-
-const val SMALL = 0
-const val REGULAR = 1
-const val BIG = 2
-
+/**
+ * Presentation version of [mhelrigo.cocktailmanual.domain.model.Drink]
+ * */
 data class Drink(
     val dateModified: String?,
     val idDrink: String?,
@@ -70,10 +60,19 @@ data class Drink(
     var isFavourite: Boolean,
     var backGroundColorDrawableColor: Int,
     var bindingAdapterPosition: Int,
-    var fromCollectionOf: FromCollectionOf
+    var drinkCollectionType: DrinkCollectionType
 ) {
     companion object Factory {
-        fun fromDrinkDomainModel(drink: mhelrigo.cocktailmanual.domain.model.Drink): Drink {
+        const val VIEW_HOLDER_SMALL = 0
+        const val VIEW_HOLDER_REGULAR = 1
+        const val VIEW_HOLDER_BIG = 2
+
+        /**
+         * Transform a [Drink] from domain into presentation [Drink]
+         *
+         * @param [toBeConverted] the list to be processed
+         * */
+        private fun fromDrinkDomainModel(drink: mhelrigo.cocktailmanual.domain.model.Drink): Drink {
             return Drink(
                 dateModified = drink.dateModified,
                 idDrink = drink.idDrink,
@@ -129,8 +128,61 @@ data class Drink(
                 isFavourite = drink.isFavourite,
                 bindingAdapterPosition = -1,
                 backGroundColorDrawableColor = 0,
-                fromCollectionOf = FromCollectionOf.NONE
+                drinkCollectionType = DrinkCollectionType.NONE
             )
+        }
+
+        /**
+         * Transform a collection of [Drink] from domain into a collection of presentation [Drink]
+         *
+         * @param [toBeConverted] the list to be processed
+         * */
+        fun transformCollectionIntoPresentationObject(toBeConverted: List<mhelrigo.cocktailmanual.domain.model.Drink>): List<Drink> {
+            return toBeConverted.run {
+                map {
+                    fromDrinkDomainModel(it)
+                }
+            }
+        }
+
+        /**
+         * Compares the list of favorites and another list of the same type by using their [idDrink].
+         * If [idDrink] exist in both collection only then it will make necessary adjustments.
+         *
+         * @param [toBeMarked] anything that is from a data source and of the same type that needs its item to be marked
+         * @param [listOfFavorites] list of favorites from the local database
+         * @return see @[transformCollectionIntoPresentationObject]
+         * */
+        fun markAllFavorites(
+            toBeMarked: List<mhelrigo.cocktailmanual.domain.model.Drink>,
+            listOfFavorites: List<Drink>
+        ): List<mhelrigo.cocktailmanual.domain.model.Drink> {
+            listOfFavorites.map { favorites ->
+                toBeMarked.filter { drinks ->
+                    drinks.idDrink == favorites.idDrink
+                }.map {
+                    it.markFavorite(true)
+                }
+            }
+
+            return toBeMarked
+        }
+
+        /**
+         * This will assign where the list of Drinks came from see @[DrinkCollectionType]
+         *
+         * @param [toBeAssigned] the list to be iterated so that the items are assigned a [DrinkCollectionType]
+         * @param [collectionType] the [DrinkCollectionType] to be assigned to the list
+         * */
+        fun assignCollectionType(
+            toBeAssigned: List<Drink>,
+            collectionType: DrinkCollectionType
+        ): List<Drink> {
+            return toBeAssigned.apply {
+                map {
+                    it.drinkCollectionType = collectionType
+                }
+            }
         }
     }
 
@@ -147,44 +199,20 @@ data class Drink(
     }
 
     fun returnViewHolderType(): Int {
-        return when (fromCollectionOf) {
-            FromCollectionOf.LATEST -> {
-                REGULAR
+        return when (drinkCollectionType) {
+            DrinkCollectionType.LATEST -> {
+                VIEW_HOLDER_REGULAR
             }
-            FromCollectionOf.POPULAR -> {
-                REGULAR
+            DrinkCollectionType.POPULAR -> {
+                VIEW_HOLDER_REGULAR
             }
-            FromCollectionOf.RANDOM, FromCollectionOf.FAVORITE -> {
-                BIG
+            DrinkCollectionType.RANDOM, DrinkCollectionType.FAVORITE -> {
+                VIEW_HOLDER_BIG
             }
-            FromCollectionOf.FILTERED_BY_INGREDIENTS -> {
-                SMALL
+            DrinkCollectionType.FILTERED_BY_INGREDIENTS -> {
+                VIEW_HOLDER_SMALL
             }
             else -> throw IllegalArgumentException()
-        }
-    }
-
-    fun assignDrawableColor() {
-        backGroundColorDrawableColor = when ((1..6).random()) {
-            1 -> {
-                R.color.red_100
-            }
-            2 -> {
-                R.color.pink_100
-            }
-            3 -> {
-                R.color.purple_100
-            }
-            4 -> {
-                R.color.yellow_50
-            }
-            5 -> {
-                R.color.amber_50
-            }
-            6 -> {
-                R.color.orange_50
-            }
-            else -> R.color.red_100
         }
     }
 
