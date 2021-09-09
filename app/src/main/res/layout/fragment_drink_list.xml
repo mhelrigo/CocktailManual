@@ -28,17 +28,45 @@
             app:layout_constraintTop_toBottomOf="@id/textViewLatest" />
 
         <TextView
+            android:id="@+id/textViewCocktailManual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_8"
+            android:layout_marginTop="@dimen/base_8"
+            android:fontFamily="@font/roboto_light"
+            android:text="Cocktail Manual"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="@dimen/base_24"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageViewSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/base_4"
+            android:src="@drawable/ic_search"
+            android:background="@drawable/search_icon_background"
+            app:layout_constraintBottom_toBottomOf="@+id/textViewCocktailManual"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/textViewCocktailManual"
+            app:layout_constraintTop_toTopOf="@+id/textViewCocktailManual" />
+
+        <TextView
             android:id="@+id/textViewLatest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
+            android:layout_marginTop="@dimen/base_8"
             android:fontFamily="@font/roboto_light"
             android:text="@string/trending"
             android:textColor="?attr/colorOnPrimary"
             android:textSize="@dimen/base_20"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewCocktailManual" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewLatestDrinks"
@@ -156,8 +184,8 @@
             android:id="@+id/textViewErrorRandom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/base_16"
             android:layout_marginTop="@dimen/base_16"
+            android:layout_marginBottom="@dimen/base_16"
             android:fontFamily="@font/roboto_light"
             android:paddingBottom="64dp"
             android:text="Whoops there seems to be a problem , try maybe later."

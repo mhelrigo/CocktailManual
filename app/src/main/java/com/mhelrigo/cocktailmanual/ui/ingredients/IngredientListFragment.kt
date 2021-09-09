@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentIngredientListBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
+import com.mhelrigo.cocktailmanual.ui.navigateWithBundle
+import com.mhelrigo.cocktailmanual.ui.setUpDeviceBackNavigation
 import com.mhelrigo.commons.NAME
 import mhelrigo.cocktailmanual.domain.model.Ingredient
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
@@ -30,6 +31,11 @@ class IngredientListFragment : Fragment() {
         return ingredientListBinding.root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setUpDeviceBackNavigation()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -42,7 +48,9 @@ class IngredientListFragment : Fragment() {
         ingredientRecyclerViewAdapter =
             IngredientsRecyclerViewAdapter(object : OnItemClickListener<Ingredient> {
                 override fun onClick(item: Ingredient) {
-                    expandIngredient(item.strIngredient1)
+                    navigateWithBundle(Bundle().apply {
+                        putString(NAME, item.strIngredient1)
+                    }, R.id.action_ingredientListFragment_to_ingredientDetailsFragment)
                 }
             })
         ingredientListBinding.recyclerViewIngredients.apply {
@@ -79,14 +87,5 @@ class IngredientListFragment : Fragment() {
                 }
             }
         })
-    }
-
-    private fun expandIngredient(p0: String) {
-        val bundle = Bundle()
-        bundle.putString(NAME, p0)
-        findNavController().navigate(
-            R.id.action_ingredientListFragment_to_ingredientDetailsFragment,
-            bundle
-        )
     }
 }

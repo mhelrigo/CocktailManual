@@ -12,6 +12,7 @@ import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkListBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.model.Drink
+import com.mhelrigo.cocktailmanual.ui.navigateWithBundle
 import com.mhelrigo.commons.ID
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
@@ -44,10 +45,7 @@ class DrinkListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        drinkListBinding?.imageViewRefresh?.setOnClickListener {
-            drinksViewModel.requestForRandomDrinks()
-        }
-
+        setUpButtonClickListeners()
         setUpRecyclerViews()
 
         handleLatestDrinks()
@@ -66,6 +64,16 @@ class DrinkListFragment : Fragment() {
         setUpLatestDrinkRecyclerView()
         setUpPopularDrinkRecyclerView()
         setUpRandomDrinkRecyclerView()
+    }
+
+    private fun setUpButtonClickListeners() {
+        drinkListBinding?.imageViewSearch?.setOnClickListener {
+            searchDrinks()
+        }
+
+        drinkListBinding?.imageViewRefresh?.setOnClickListener {
+            drinksViewModel.requestForRandomDrinks()
+        }
     }
 
     private fun setUpLatestDrinkRecyclerView() {
@@ -87,7 +95,9 @@ class DrinkListFragment : Fragment() {
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-                    expandDrinkDetails(item)
+                    navigateWithBundle(Bundle().apply {
+                        putString(ID, item.idDrink)
+                    }, R.id.action_drinkListFragment_to_drinkDetailsFragment)
                 }
             })
 
@@ -118,7 +128,9 @@ class DrinkListFragment : Fragment() {
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-                    expandDrinkDetails(item)
+                    navigateWithBundle(Bundle().apply {
+                        putString(ID, item.idDrink)
+                    }, R.id.action_drinkListFragment_to_drinkDetailsFragment)
                 }
             })
 
@@ -149,7 +161,9 @@ class DrinkListFragment : Fragment() {
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-                    expandDrinkDetails(item)
+                    navigateWithBundle(Bundle().apply {
+                        putString(ID, item.idDrink)
+                    }, R.id.action_drinkListFragment_to_drinkDetailsFragment)
                 }
             })
 
@@ -222,6 +236,7 @@ class DrinkListFragment : Fragment() {
                     drinkListBinding?.shimmerFrameLayoutRandomDrinks?.stopShimmer()
                 }
                 is ResultWrapper.Error -> {
+                    Timber.e("${it.error}")
                     drinkListBinding?.textViewErrorRandom?.visibility = View.VISIBLE
                     drinkListBinding?.recyclerViewRandomDrinks?.visibility = View.GONE
                     drinkListBinding?.shimmerFrameLayoutRandomDrinks?.visibility = View.GONE
@@ -248,9 +263,7 @@ class DrinkListFragment : Fragment() {
         drinksViewModel.requestForRandomDrinks()
     }
 
-    private fun expandDrinkDetails(drink: Drink) {
-        val bundle = Bundle()
-        bundle.putString(ID, drink.idDrink)
-        findNavController().navigate(R.id.action_drinkListFragment_to_drinkDetailsFragment, bundle)
+    private fun searchDrinks() {
+        findNavController().navigate(R.id.action_drinkListFragment_to_searchFragment)
     }
 }

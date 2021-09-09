@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.mhelrigo.cocktailmanual.R
@@ -15,6 +14,8 @@ import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.model.Drink
+import com.mhelrigo.cocktailmanual.ui.navigateWithBundle
+import com.mhelrigo.cocktailmanual.ui.setUpDeviceBackNavigation
 import com.mhelrigo.commons.ID
 import com.mhelrigo.commons.NAME
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
@@ -35,6 +36,12 @@ class IngredientDetailsFragment : Fragment() {
         ingredientDetailsBinding = FragmentIngredientDetailsBinding.inflate(inflater)
         // Inflate the layout for this fragment
         return ingredientDetailsBinding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setUpDeviceBackNavigation()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,7 +73,9 @@ class IngredientDetailsFragment : Fragment() {
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-                    expandDrinkDetails(item)
+                    navigateWithBundle(Bundle().apply {
+                        putString(ID, item.idDrink)
+                    }, R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment)
                 }
             })
         ingredientDetailsBinding.recyclerViewDrinks.apply {
@@ -134,14 +143,5 @@ class IngredientDetailsFragment : Fragment() {
                 }
             }
         })
-    }
-
-    private fun expandDrinkDetails(drink: Drink) {
-        val bundle = Bundle()
-        bundle.putString(ID, drink.idDrink)
-        findNavController().navigate(
-            R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment,
-            bundle
-        )
     }
 }
