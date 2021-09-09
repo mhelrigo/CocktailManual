@@ -4,14 +4,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.mhelrigo.cocktailmanual.ui.model.FromCollectionOf
+import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.assignCollectionType
+import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.markAllFavorites
+import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.transformCollectionIntoPresentationObject
+import com.mhelrigo.cocktailmanual.ui.model.DrinkCollectionType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import mhelrigo.cocktailmanual.domain.model.Drink
 import mhelrigo.cocktailmanual.domain.model.Drinks
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import mhelrigo.cocktailmanual.domain.usecase.drink.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.coroutines.CoroutineContext
@@ -64,9 +66,9 @@ class DrinksViewModel @Inject constructor(
         when (val result = latestDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
                 _latestDrinks.postValue(ResultWrapper.build {
-                    beautifyDrinkResult(
+                    handleResult(
                         result.value,
-                        FromCollectionOf.LATEST
+                        DrinkCollectionType.LATEST
                     )
                 })
             }
@@ -82,9 +84,9 @@ class DrinksViewModel @Inject constructor(
         when (val result = popularDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
                 _popularDrinks.postValue(ResultWrapper.build {
-                    beautifyDrinkResult(
+                    handleResult(
                         result.value,
-                        FromCollectionOf.POPULAR
+                        DrinkCollectionType.POPULAR
                     )
                 })
             }
@@ -100,9 +102,9 @@ class DrinksViewModel @Inject constructor(
         when (val result = randomDrinksUseCase.buildExecutable(null)) {
             is ResultWrapper.Success -> {
                 _randomDrinks.postValue(ResultWrapper.build {
-                    beautifyDrinkResult(
+                    handleResult(
                         result.value,
-                        FromCollectionOf.RANDOM
+                        DrinkCollectionType.RANDOM
                     )
                 })
             }
@@ -118,9 +120,9 @@ class DrinksViewModel @Inject constructor(
         when (val result = searchDrinkByIngredientsUseCase.buildExecutable(listOf(p0))) {
             is ResultWrapper.Success -> {
                 _drinksFilteredByIngredient.postValue(ResultWrapper.build {
-                    beautifyDrinkResult(
+                    handleResult(
                         result.value,
-                        FromCollectionOf.FILTERED_BY_INGREDIENTS
+                        DrinkCollectionType.FILTERED_BY_INGREDIENTS
                     )
                 })
             }
@@ -132,61 +134,32 @@ class DrinksViewModel @Inject constructor(
     }
 
     /**
-     * What this does is it will make Drinks from remote into a presentable model that will be used
-     * by the Views. It will do the following:
-     * 1. Call for the method [markAllFavorites] to match the local favorites with result from remote by [idDrink].
-     * 2. Assign a background color by using [assignDrawableColor].
-     * 3. Each Drink will be assigned an enum of [FromCollectionOf], the value depends on where the result came from(LATEST or POPULAR or RANDOM).
+     * This will make necessary adjustments on the result by doing the following:
+     * 1. [markAllFavorites] will mark all favorites in the result
+     * 2. [assignCollectionType] will assign what kind of collection the result is
+     * 3. [transformCollectionIntoPresentationObject] will transform the result into a presentation object
      *
-     * [FromCollectionOf] is needed for when updating specific Drink item from there respective Collections
+     * This adjustments are needed for transforming the domain object into a presentable data.
+     * [markAllFavorites] calls for [requestForFavoriteDrinks] as parameter to get the list of favorites.
      *
-     * @param [result] the return value from the remote request
-     * @param [fromCollectionOfValue] the type of request and the source of the return value
-     * @return [List<com.mhelrigo.cocktailmanual.ui.model.Drink>] the processed list that will be used by a View
+     * @param [result] the result
+     * @param [drinkCollectionTypeValue] tye of collection
      * */
-    private fun beautifyDrinkResult(
+    private fun handleResult(
         result: Drinks,
-        fromCollectionOfValue: FromCollectionOf
+        drinkCollectionTypeValue: DrinkCollectionType
     ): List<com.mhelrigo.cocktailmanual.ui.model.Drink> {
-        return markAllFavorites(result.drinks, requestForFavoriteDrinks()).map {
-            com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it).apply {
-                assignDrawableColor()
-                fromCollectionOf = fromCollectionOfValue
-            }
+        return markAllFavorites(result.drinks, requestForFavoriteDrinks()).run {
+            assignCollectionType(
+                transformCollectionIntoPresentationObject(this),
+                drinkCollectionTypeValue
+            )
         }
     }
 
     /**
-     * Basically, this method returns a List of Drinks while at the same time all favorites are marked.
-     * It does so by:
-     * 1. Maps the [favorites]
-     * 2. Then filters the [toBeMerged] to see the similarities with [favorites]
-     * 3. Once filtered, the result will be mapped then the items inside will process [markFavorite] with a value of [true]
-     *
-     * @param [toBeMerged] The latest drinks from remote source
-     * @param [favorites] Comes from local source
-     * @return [List<Drink>] Combine value of [toBeMerged] and [favorites] without duplication
-     * */
-    private fun markAllFavorites(
-        toBeMerged: List<Drink>,
-        favorites: List<com.mhelrigo.cocktailmanual.ui.model.Drink>
-    ): List<Drink> {
-        favorites.map { favorites ->
-            toBeMerged.filter { latest ->
-                latest.idDrink == favorites.idDrink
-            }.map {
-                it.markFavorite(true)
-            }
-        }
-
-        return toBeMerged
-    }
-
-    /**
-     * A method that will get favorite list from local source while at the same time will handle result
-     * by assigning said result to a MutableLiveData and returning said list.
-     *
-     * @return [List<Drink] the collection of favorite drinks from a local source
+     * Will request for the list of favorites from local source, and will also update [_favoriteDrinks].
+     * So every time this is called, [_favoriteDrinks] is updated.
      * */
     fun requestForFavoriteDrinks(): List<com.mhelrigo.cocktailmanual.ui.model.Drink> {
         _favoriteDrinks.postValue(ResultWrapper.buildLoading())
@@ -202,16 +175,15 @@ class DrinksViewModel @Inject constructor(
 
         return when (result) {
             is ResultWrapper.Success -> {
-                val value = (result as ResultWrapper.Success<List<Drink>>).value.map {
-                    com.mhelrigo.cocktailmanual.ui.model.Drink.fromDrinkDomainModel(it)
-                }
-                _favoriteDrinks.postValue(ResultWrapper.build {
-                    value
-                })
-
-                value.map {
-                    it.fromCollectionOf = FromCollectionOf.FAVORITE
-                    it
+                return (result as ResultWrapper.Success<List<Drink>>).value.run {
+                    assignCollectionType(
+                        transformCollectionIntoPresentationObject(this),
+                        DrinkCollectionType.FAVORITE
+                    )
+                }.also {
+                    _favoriteDrinks.postValue(ResultWrapper.build {
+                        it
+                    })
                 }
             }
 
@@ -281,11 +253,10 @@ class DrinksViewModel @Inject constructor(
             )) {
                 is ResultWrapper.Success -> {
                     _drinkDetails.postValue(ResultWrapper.build {
-                        beautifyDrinkResult(result.value, FromCollectionOf.NONE)
+                        handleResult(result.value, DrinkCollectionType.NONE)
                     })
                 }
                 is ResultWrapper.Error -> {
-                    Timber.e("Error ${result.error}")
                     _drinkDetails.postValue(ResultWrapper.build { throw Exception(result.error) })
                 }
             }
@@ -293,11 +264,6 @@ class DrinksViewModel @Inject constructor(
     }
 
     fun handleInternetConnectionChanges(p0: Boolean) {
-        if (p0) {
-            requestForRandomDrinks()
-            requestForLatestDrinks()
-            requestForPopularDrinks()
-        }
         _isConnectedToInternet.postValue(p0)
     }
 
