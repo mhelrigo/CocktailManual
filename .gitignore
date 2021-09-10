@@ -9,8 +9,10 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+/app/release
 /captures
 .externalNativeBuild
 .cxx
 local.properties
 cocktailmanual.properties
+
