@@ -61,7 +61,8 @@ class DrinksViewModel @Inject constructor(
         MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
     val drinksFilteredByIngredient: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinksFilteredByIngredient
 
-    private val _drinkSearchedByName = MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
+    private val _drinkSearchedByName =
+        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
     val drinkSearchedByName: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinkSearchedByName
 
     private val _isConnectedToInternet = MutableLiveData(false)

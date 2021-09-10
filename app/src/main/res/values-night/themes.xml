@@ -2,11 +2,11 @@
     <!-- Base application theme. -->
     <style name="Theme.CocktailManual" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/yellow_A200</item>
+        <item name="colorPrimary">@color/deep_orange_800</item>
         <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/yellow_A200</item>
+        <item name="colorSecondary">@color/deep_orange_800</item>
         <item name="colorSecondaryVariant">@color/gray_custom_2</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
