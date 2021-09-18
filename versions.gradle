@@ -56,6 +56,7 @@ android.gsonConverter = "com.squareup.retrofit2:converter-gson:$versions.retrofi
 android.hilt = "com.google.dagger:hilt-android:$versions.hilt"
 android.hiltCore = "com.google.dagger:hilt-core:$versions.hilt"
 android.hiltCompiler = "com.google.dagger:hilt-android-compiler:$versions.hilt"
+android.roomKtx = "androidx.room:room-ktx:$versions.room"
 android.roomRuntime = "androidx.room:room-runtime:$versions.room"
 android.roomCompiler = "androidx.room:room-compiler:$versions.room"
 android.paging = "androidx.paging:paging-runtime:$versions.paging"

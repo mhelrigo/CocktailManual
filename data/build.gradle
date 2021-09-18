@@ -82,5 +82,5 @@ dependencies {
     implementation dep.android.roomRuntime
     kapt dep.android.roomCompiler
 
-    implementation "androidx.room:room-ktx:2.3.0"
+    implementation dep.android.roomKtx
 }
