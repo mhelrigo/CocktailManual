@@ -5,42 +5,27 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentSearchBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
+import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.model.Drink
 import com.mhelrigo.cocktailmanual.ui.navigateWithBundle
-import com.mhelrigo.cocktailmanual.ui.setUpDeviceBackNavigation
 import com.mhelrigo.commons.ID
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
-class SearchFragment : Fragment() {
-    private lateinit var searchBinding: FragmentSearchBinding
+class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private val drinksViewModel: DrinksViewModel by activityViewModels()
 
     private lateinit var drinksRecyclerViewAdapter: DrinksRecyclerViewAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        searchBinding = FragmentSearchBinding.inflate(inflater)
-        // Inflate the layout for this fragment
-        return searchBinding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setUpDeviceBackNavigation()
-    }
+    override fun inflateLayout(inflater: LayoutInflater): FragmentSearchBinding =
+        FragmentSearchBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,7 +36,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun setUpTextWatcherForSearching() {
-        searchBinding.editTextSearch.addTextChangedListener(object : TextWatcher {
+        binding.editTextSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
@@ -91,7 +76,7 @@ class SearchFragment : Fragment() {
             }
         })
 
-        searchBinding.recyclerViewSearch.apply {
+        binding.recyclerViewSearch.apply {
             adapter = drinksRecyclerViewAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
@@ -99,22 +84,26 @@ class SearchFragment : Fragment() {
 
     private fun handleDrinks() {
         drinksViewModel.drinkSearchedByName.observe(viewLifecycleOwner, {
+            processLoadingState(
+                it.equals(ResultWrapper.Loading),
+                binding.imageViewSearchDrinkLoading
+            )
             when (it) {
                 is ResultWrapper.Success -> {
-                    searchBinding.recyclerViewSearch.visibility = View.VISIBLE
-                    searchBinding.shimmerFrameLayoutSearch.visibility = View.GONE
-                    searchBinding.textViewErrorSearch.visibility = View.GONE
+                    binding.recyclerViewSearch.visibility = View.VISIBLE
+                    binding.imageViewSearchDrinkLoading.visibility = View.GONE
+                    binding.textViewErrorSearch.visibility = View.GONE
                     drinksRecyclerViewAdapter.differ.submitList(it.value)
                 }
                 is ResultWrapper.Error -> {
-                    searchBinding.recyclerViewSearch.visibility = View.GONE
-                    searchBinding.shimmerFrameLayoutSearch.visibility = View.GONE
-                    searchBinding.textViewErrorSearch.visibility = View.VISIBLE
+                    binding.recyclerViewSearch.visibility = View.GONE
+                    binding.imageViewSearchDrinkLoading.visibility = View.GONE
+                    binding.textViewErrorSearch.visibility = View.VISIBLE
                 }
                 is ResultWrapper.Loading -> {
-                    searchBinding.recyclerViewSearch.visibility = View.GONE
-                    searchBinding.shimmerFrameLayoutSearch.visibility = View.VISIBLE
-                    searchBinding.textViewErrorSearch.visibility = View.GONE
+                    binding.recyclerViewSearch.visibility = View.GONE
+                    binding.imageViewSearchDrinkLoading.visibility = View.VISIBLE
+                    binding.textViewErrorSearch.visibility = View.GONE
                 }
             }
         })

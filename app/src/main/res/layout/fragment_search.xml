@@ -52,48 +52,16 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextSearch"
         app:layout_constraintVertical_bias="0.0" />
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmerFrameLayoutSearch"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/base_16"
-        android:layout_marginBottom="@dimen/base_16"
+    <ImageView
+        android:id="@+id/imageViewSearchDrinkLoading"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="@dimen/base_8"
+        android:src="@drawable/gear"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextSearch"
-        app:layout_constraintVertical_bias="0.0">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-
-            <include layout="@layout/item_drink_small" />
-        </LinearLayout>
-    </com.facebook.shimmer.ShimmerFrameLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

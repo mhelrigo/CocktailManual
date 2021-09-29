@@ -4,43 +4,28 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.mhelrigo.cocktailmanual.BuildConfig
 import com.mhelrigo.cocktailmanual.databinding.FragmentSettingBinding
-import com.mhelrigo.cocktailmanual.ui.setUpDeviceBackNavigation
+import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
 
-class SettingFragment : Fragment() {
-    private lateinit var settingBinding: FragmentSettingBinding
-
+class SettingFragment : BaseFragment<FragmentSettingBinding>() {
     private val settingsViewModel: SettingsViewModel by activityViewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        settingBinding = FragmentSettingBinding.inflate(inflater)
-        // Inflate the layout for this fragment
-        return settingBinding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setUpDeviceBackNavigation()
-    }
+    override fun inflateLayout(inflater: LayoutInflater): FragmentSettingBinding =
+        FragmentSettingBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        settingBinding.switchNightMode.setOnCheckedChangeListener { _, p1 ->
+        binding.switchNightMode.setOnCheckedChangeListener { _, p1 ->
             settingsViewModel.toggleNightMode(p1)
         }
 
         settingsViewModel.toggleNightMode(isNightMode(resources.configuration))
         settingsViewModel.isNightMode.observe(viewLifecycleOwner, {
             it?.let {
-                settingBinding.switchNightMode.isChecked = it
+                binding.switchNightMode.isChecked = it
             }
         })
 
@@ -60,6 +45,6 @@ class SettingFragment : Fragment() {
     }
 
     private fun displayApplicationVersion() {
-        settingBinding.textViewVersion.text = "version: ${BuildConfig.VERSION_NAME}"
+        binding.textViewVersion.text = "version: ${BuildConfig.VERSION_NAME}"
     }
 }

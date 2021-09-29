@@ -3,16 +3,14 @@ package com.mhelrigo.cocktailmanual.ui.drink
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkDetailsBinding
+import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
 import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.cocktailmanual.ui.setUpDeviceBackNavigation
 import com.mhelrigo.commons.ID
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
@@ -21,30 +19,15 @@ import timber.log.Timber
  * This fragment will expanded information about a Drink.
  * It also have a capability of toggling favorites of said Drink.
  */
-class DrinkDetailsFragment : Fragment() {
-
+class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
     private val drinksViewModel: DrinksViewModel by activityViewModels()
 
-    private lateinit var drinkDetailsBinding: FragmentDrinkDetailsBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        drinkDetailsBinding = FragmentDrinkDetailsBinding.inflate(inflater)
-        // Inflate the layout for this fragment
-        return drinkDetailsBinding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setUpDeviceBackNavigation()
-    }
+    override fun inflateLayout(inflater: LayoutInflater): FragmentDrinkDetailsBinding =
+        FragmentDrinkDetailsBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        drinkDetailsBinding.imageViewFavorite.setOnClickListener {
+        binding.imageViewFavorite.setOnClickListener {
             val drink = (drinksViewModel.drinkDetails.value as ResultWrapper.Success<List<Drink>>)
 
             when (val result =
@@ -58,7 +41,7 @@ class DrinkDetailsFragment : Fragment() {
             }
         }
 
-        drinkDetailsBinding.imageViewBack.setOnClickListener {
+        binding.imageViewBack.setOnClickListener {
             navigateBack()
         }
     }
@@ -80,40 +63,44 @@ class DrinkDetailsFragment : Fragment() {
 
     private fun handleDrinkDetails() {
         drinksViewModel.drinkDetails.observe(viewLifecycleOwner, {
+            processLoadingState(
+                it.equals(ResultWrapper.Loading),
+                binding.imageViewDrinkLoading
+            )
             when (it) {
                 is ResultWrapper.Loading -> {
-                    drinkDetailsBinding.constraintLayoutRootLoading.visibility = View.VISIBLE
-                    drinkDetailsBinding.constraintLayoutRootSuccess.visibility = View.GONE
+                    binding.imageViewDrinkLoading.visibility = View.VISIBLE
+                    binding.constraintLayoutRootSuccess.visibility = View.GONE
                 }
                 is ResultWrapper.Success -> {
-                    drinkDetailsBinding.constraintLayoutRootLoading.visibility = View.GONE
-                    drinkDetailsBinding.constraintLayoutRootSuccess.visibility = View.VISIBLE
+                    binding.imageViewDrinkLoading.visibility = View.GONE
+                    binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
                     it.value[0]?.let { drink ->
-                        drinkDetailsBinding.textViewName.text = drink.strDrink
-                        drinkDetailsBinding.textViewShortDesc.text =
+                        binding.textViewName.text = drink.strDrink
+                        binding.textViewShortDesc.text =
                             "${drink.strCategory} | ${drink.strAlcoholic} | ${drink.strGlass}"
-                        drinkDetailsBinding.textViewMeasurements.text = drink.returnMeasurements()
-                        drinkDetailsBinding.textViewIngredients.text =
+                        binding.textViewMeasurements.text = drink.returnMeasurements()
+                        binding.textViewIngredients.text =
                             drink.returnIngredients()
-                        drinkDetailsBinding.textViewInstruction.text = drink.strInstructions
+                        binding.textViewInstruction.text = drink.strInstructions
 
                         Glide.with(requireContext()).load(drink.strDrinkThumb).diskCacheStrategy(
                             DiskCacheStrategy.ALL
-                        ).into(drinkDetailsBinding.imageViewThumbnail)
+                        ).into(binding.imageViewThumbnail)
 
                         setUpFavoriteIcon(drink.returnIconForFavorite())
                     }
                 }
                 is ResultWrapper.Error -> {
-                    drinkDetailsBinding.constraintLayoutRootLoading.visibility = View.GONE
-                    drinkDetailsBinding.constraintLayoutRootSuccess.visibility = View.VISIBLE
+                    binding.imageViewDrinkLoading.visibility = View.GONE
+                    binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
                 }
             }
         })
     }
 
     private fun setUpFavoriteIcon(resourceDrawable: Int) {
-        drinkDetailsBinding.imageViewFavorite.setImageDrawable(
+        binding.imageViewFavorite.setImageDrawable(
             ResourcesCompat.getDrawable(
                 resources,
                 resourceDrawable,

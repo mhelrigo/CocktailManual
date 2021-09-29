@@ -6,8 +6,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_arrow_back.xml" value="0.2703125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_article_black.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_checklist_black.xml" value="0.2703125" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_fact_check_black.xml" value="0.2703125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_favorite_black.xml" value="0.2703125" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_favorite_border_black.xml" value="0.20208333333333334" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/drawable-anydpi/ic_favorite_filled.xml" value="0.20208333333333334" />
@@ -30,6 +32,8 @@
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_2.xml" value="0.4" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_2_shimmer.xml" value="0.23052536231884058" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_3.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_big.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_regular.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_regular_shimmer.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_small.xml" value="0.1" />
         <entry key="..\:/Users/Mhelrigo Regalado/AndroidStudioProjects/CocktailManual/app/src/main/res/layout/item_drink_small_shimmer.xml" value="0.25416666666666665" />

@@ -11,20 +11,21 @@
         android:id="@+id/linearLayoutNoInternetConnection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/red_A700"
         android:gravity="center"
+        android:padding="@dimen/base_4"
         android:visibility="gone"
-        android:padding="@dimen/base_4">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/base_8"
             android:fontFamily="@font/roboto_light"
+            android:text="No internet connection"
             android:textColor="@color/white"
-            android:text="No internet connection"/>
+            android:textSize="@dimen/base_8" />
     </LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView
@@ -43,14 +44,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/base_16"
-        android:background="@drawable/bottom_nav_background"
         android:alpha="0.90"
+        android:background="@drawable/bottom_nav_background"
         android:elevation="@dimen/base_8"
-        app:itemTextColor="@drawable/bottom_nav_selector"
         app:itemIconTint="@drawable/bottom_nav_selector"
+        app:itemTextColor="@drawable/bottom_nav_selector"
+        app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:labelVisibilityMode="unlabeled"
         app:menu="@menu/nav_menu" />
 </androidx.constraintlayout.widget.ConstraintLayout>

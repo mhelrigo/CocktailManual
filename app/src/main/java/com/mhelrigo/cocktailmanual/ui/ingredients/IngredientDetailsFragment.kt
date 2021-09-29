@@ -3,46 +3,30 @@ package com.mhelrigo.cocktailmanual.ui.ingredients
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentIngredientDetailsBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
+import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.model.Drink
 import com.mhelrigo.cocktailmanual.ui.navigateWithBundle
-import com.mhelrigo.cocktailmanual.ui.setUpDeviceBackNavigation
 import com.mhelrigo.commons.ID
 import com.mhelrigo.commons.NAME
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
-class IngredientDetailsFragment : Fragment() {
-    private lateinit var ingredientDetailsBinding: FragmentIngredientDetailsBinding
-
+class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>() {
     private val ingredientViewModel: IngredientsViewModel by activityViewModels()
     private val drinksViewModel: DrinksViewModel by activityViewModels()
 
     private lateinit var drinksRecyclerViewAdapter: DrinksRecyclerViewAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        ingredientDetailsBinding = FragmentIngredientDetailsBinding.inflate(inflater)
-        // Inflate the layout for this fragment
-        return ingredientDetailsBinding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setUpDeviceBackNavigation()
-    }
+    override fun inflateLayout(inflater: LayoutInflater): FragmentIngredientDetailsBinding =
+        FragmentIngredientDetailsBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -78,7 +62,7 @@ class IngredientDetailsFragment : Fragment() {
                     }, R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment)
                 }
             })
-        ingredientDetailsBinding.recyclerViewDrinks.apply {
+        binding.recyclerViewDrinks.apply {
             adapter = drinksRecyclerViewAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
@@ -90,39 +74,40 @@ class IngredientDetailsFragment : Fragment() {
 
     private fun handleIngredient() {
         ingredientViewModel.ingredient.observe(viewLifecycleOwner, {
+            processLoadingState(
+                it.equals(ResultWrapper.Loading),
+                binding.imageViewIngredientLoading
+            )
             when (it) {
                 is ResultWrapper.Success -> {
-                    ingredientDetailsBinding.textViewError.visibility = View.GONE
-                    ingredientDetailsBinding.shimmerFrameLayout.visibility = View.GONE
-                    ingredientDetailsBinding.shimmerFrameLayout.stopShimmer()
-                    ingredientDetailsBinding.textViewName.visibility = View.VISIBLE
-                    ingredientDetailsBinding.textViewDescription.visibility = View.VISIBLE
-                    ingredientDetailsBinding.recyclerViewDrinks.visibility = View.VISIBLE
-                    ingredientDetailsBinding.imageViewThumbnail.visibility = View.VISIBLE
-                    ingredientDetailsBinding.textViewName.text = it.value.strIngredient
-                    ingredientDetailsBinding.textViewDescription.text = it.value.strDescription
+                    binding.textViewError.visibility = View.GONE
+                    binding.imageViewIngredientLoading.visibility = View.GONE
+                    binding.textViewName.visibility = View.VISIBLE
+                    binding.textViewDescription.visibility = View.VISIBLE
+                    binding.recyclerViewDrinks.visibility = View.VISIBLE
+                    binding.imageViewThumbnail.visibility = View.VISIBLE
+                    binding.textViewName.text = it.value.strIngredient
+                    binding.textViewDescription.text = it.value.strDescription
                     Glide.with(requireContext()).load(it.value.thumbNail())
-                        .into(ingredientDetailsBinding.imageViewThumbnail)
+                        .into(binding.imageViewThumbnail)
 
                     drinksViewModel.filterDrinksByIngredient(it.value.strIngredient)
                 }
                 is ResultWrapper.Error -> {
-                    ingredientDetailsBinding.textViewError.visibility = View.VISIBLE
-                    ingredientDetailsBinding.imageViewThumbnail.visibility = View.GONE
-                    ingredientDetailsBinding.textViewName.visibility = View.GONE
-                    ingredientDetailsBinding.textViewDescription.visibility = View.GONE
-                    ingredientDetailsBinding.recyclerViewDrinks.visibility = View.GONE
-                    ingredientDetailsBinding.shimmerFrameLayout.visibility = View.GONE
-                    ingredientDetailsBinding.shimmerFrameLayout.stopShimmer()
+                    binding.textViewError.visibility = View.VISIBLE
+                    binding.imageViewThumbnail.visibility = View.GONE
+                    binding.textViewName.visibility = View.GONE
+                    binding.textViewDescription.visibility = View.GONE
+                    binding.recyclerViewDrinks.visibility = View.GONE
+                    binding.imageViewIngredientLoading.visibility = View.GONE
                 }
                 is ResultWrapper.Loading -> {
-                    ingredientDetailsBinding.shimmerFrameLayout.visibility = View.VISIBLE
-                    ingredientDetailsBinding.shimmerFrameLayout.startShimmer()
-                    ingredientDetailsBinding.imageViewThumbnail.visibility = View.GONE
-                    ingredientDetailsBinding.textViewError.visibility = View.GONE
-                    ingredientDetailsBinding.textViewName.visibility = View.GONE
-                    ingredientDetailsBinding.textViewDescription.visibility = View.GONE
-                    ingredientDetailsBinding.recyclerViewDrinks.visibility = View.GONE
+                    binding.imageViewIngredientLoading.visibility = View.VISIBLE
+                    binding.imageViewThumbnail.visibility = View.GONE
+                    binding.textViewError.visibility = View.GONE
+                    binding.textViewName.visibility = View.GONE
+                    binding.textViewDescription.visibility = View.GONE
+                    binding.recyclerViewDrinks.visibility = View.GONE
                 }
             }
         })
@@ -133,13 +118,13 @@ class IngredientDetailsFragment : Fragment() {
             when (it) {
                 is ResultWrapper.Success -> {
                     drinksRecyclerViewAdapter.differ.submitList(it.value)
-                    ingredientDetailsBinding.recyclerViewDrinks.visibility = View.VISIBLE
+                    binding.recyclerViewDrinks.visibility = View.VISIBLE
                 }
                 is ResultWrapper.Loading -> {
-                    ingredientDetailsBinding.recyclerViewDrinks.visibility = View.GONE
+                    binding.recyclerViewDrinks.visibility = View.GONE
                 }
                 is ResultWrapper.Error -> {
-                    ingredientDetailsBinding.recyclerViewDrinks.visibility = View.GONE
+                    binding.recyclerViewDrinks.visibility = View.GONE
                 }
             }
         })
