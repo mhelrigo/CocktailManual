@@ -242,6 +242,19 @@ data class Drink(
                 if (strIngredient10 == null) "" else "\n $strIngredient10"
     }
 
+    fun returnIngredientWithMeasurement(): String {
+        return (if (strMeasure1.isNullOrBlank()) "" else "$strMeasure1") + (if (strIngredient1.isNullOrBlank()) "" else "$strIngredient1") + "\n" +
+                (if (strMeasure2.isNullOrBlank()) "" else "$strMeasure2") + (if (strIngredient2.isNullOrBlank()) "" else "$strIngredient2") + "\n" +
+                (if (strMeasure3.isNullOrBlank()) "" else "$strMeasure3") + (if (strIngredient3.isNullOrBlank()) "" else "$strIngredient3") + "\n" +
+                (if (strMeasure4 == null) "" else "$strMeasure4") + (if (strIngredient4.isNullOrBlank()) "" else "$strIngredient4") + "\n" +
+                (if (strMeasure5 == null) "" else "$strMeasure5") + (if (strIngredient5 == null) "" else "$strIngredient5") + "\n" +
+                (if (strMeasure6 == null) "" else "$strMeasure6") + (if (strIngredient6 == null) "" else "$strIngredient6") + "\n" +
+                (if (strMeasure7 == null) "" else "$strMeasure7") + (if (strIngredient7 == null) "" else "$strIngredient7") + "\n" +
+                (if (strMeasure8 == null) "" else "$strMeasure8") + (if (strIngredient8 == null) "" else "$strIngredient8") + "\n" +
+                (if (strMeasure9 == null) "" else "$strMeasure9") + (if (strIngredient9 == null) "" else "$strIngredient9") + "\n" +
+                if (strMeasure10 == null) "" else "$strMeasure10" + if (strIngredient10 == null) "" else "$strIngredient10"
+    }
+
     fun toDrinkDomainModel(): mhelrigo.cocktailmanual.domain.model.Drink =
         mhelrigo.cocktailmanual.domain.model.Drink(
             dateModified,

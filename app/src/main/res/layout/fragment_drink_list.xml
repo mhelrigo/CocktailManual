@@ -36,7 +36,7 @@
             android:fontFamily="@font/roboto_light"
             android:text="Cocktail Manual"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_24"
+            android:textSize="24dp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -145,7 +145,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_8"
-            android:layout_marginTop="@dimen/base_32"
+            android:layout_marginTop="@dimen/base_12"
             android:fontFamily="@font/roboto_light"
             android:text="@string/discover_drinks"
             android:textColor="?attr/colorOnPrimary"

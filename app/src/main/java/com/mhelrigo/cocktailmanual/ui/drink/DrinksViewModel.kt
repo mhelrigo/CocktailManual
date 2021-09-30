@@ -11,6 +11,8 @@ import com.mhelrigo.cocktailmanual.ui.model.DrinkCollectionType
 import com.mhelrigo.commons.SEARCH_DELAY_IN_MILLIS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import mhelrigo.cocktailmanual.domain.model.Drink
 import mhelrigo.cocktailmanual.domain.model.Drinks
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
@@ -67,6 +69,12 @@ class DrinksViewModel @Inject constructor(
 
     private val _isConnectedToInternet = MutableLiveData(false)
     val isConnectedToInternet: LiveData<Boolean> get() = _isConnectedToInternet
+
+    private val _drinkToBeSearched = MutableLiveData<String>()
+    val drinkToBeSearched: LiveData<String> get() = _drinkToBeSearched
+
+    private val _toggledDrink = MutableSharedFlow<com.mhelrigo.cocktailmanual.ui.model.Drink>()
+    val toggledDrink: SharedFlow<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _toggledDrink
 
     fun requestForLatestDrinks() = launch {
         _latestDrinks.postValue(ResultWrapper.buildLoading())
@@ -299,6 +307,14 @@ class DrinksViewModel @Inject constructor(
 
     fun handleInternetConnectionChanges(p0: Boolean) {
         _isConnectedToInternet.postValue(p0)
+    }
+
+    fun setMealToBeSearched(p0: String) {
+        _drinkToBeSearched.postValue(p0)
+    }
+
+    fun setToggledDrink(p0: com.mhelrigo.cocktailmanual.ui.model.Drink) = launch {
+        _toggledDrink.emit(p0)
     }
 
     override val coroutineContext: CoroutineContext

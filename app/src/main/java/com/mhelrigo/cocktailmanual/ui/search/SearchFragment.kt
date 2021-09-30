@@ -6,23 +6,30 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentSearchBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
+import com.mhelrigo.cocktailmanual.ui.drink.DrinkNavigator
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.cocktailmanual.ui.navigateWithBundle
-import com.mhelrigo.commons.ID
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
-class SearchFragment : BaseFragment<FragmentSearchBinding>() {
+@AndroidEntryPoint
+class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
     private val drinksViewModel: DrinksViewModel by activityViewModels()
 
     private lateinit var drinksRecyclerViewAdapter: DrinksRecyclerViewAdapter
+
+    private lateinit var searchedDrinkTemp: CharSequence
 
     override fun inflateLayout(inflater: LayoutInflater): FragmentSearchBinding =
         FragmentSearchBinding.inflate(inflater)
@@ -33,6 +40,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         setUpTextWatcherForSearching()
         setUpRecyclerView()
         handleDrinks()
+
+        if (isTablet!!) {
+            refreshDrinksWhenItemToggled()
+        }
+    }
+
+    private fun searchForDrinkByName(p0: CharSequence) {
+        drinksViewModel.searchForDrinkByName(p0)
     }
 
     private fun setUpTextWatcherForSearching() {
@@ -42,7 +57,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 p0?.let {
-                    drinksViewModel.searchForDrinkByName(it)
+                    searchedDrinkTemp = it
+                    searchForDrinkByName(it)
                 }
             }
 
@@ -70,9 +86,13 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             }
         }, object : OnItemClickListener<Drink> {
             override fun onClick(item: Drink) {
-                navigateWithBundle(Bundle().apply {
-                    putString(ID, item.idDrink)
-                }, R.id.action_searchFragment_to_drinkDetailsFragment)
+                drinksViewModel.setMealToBeSearched(item.idDrink!!)
+                navigateToDrinkDetail(
+                    R.id.action_searchFragment_to_drinkDetailsFragment,
+                    null,
+                    findNavController(),
+                    isTablet!!
+                )
             }
         })
 
@@ -107,5 +127,16 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 }
             }
         })
+    }
+
+    /**
+     * Called to update the list of Meals on the left side of screen.
+     * */
+    private fun refreshDrinksWhenItemToggled() {
+        CoroutineScope(mainCoroutine).launch {
+            drinksViewModel.toggledDrink.collect {
+                searchForDrinkByName(searchedDrinkTemp)
+            }
+        }
     }
 }

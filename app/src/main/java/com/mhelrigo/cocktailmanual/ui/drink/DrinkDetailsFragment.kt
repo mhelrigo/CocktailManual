@@ -11,7 +11,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkDetailsBinding
 import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
 import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.commons.ID
+import dagger.hilt.android.AndroidEntryPoint
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
@@ -19,6 +19,7 @@ import timber.log.Timber
  * This fragment will expanded information about a Drink.
  * It also have a capability of toggling favorites of said Drink.
  */
+@AndroidEntryPoint
 class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
     private val drinksViewModel: DrinksViewModel by activityViewModels()
 
@@ -34,15 +35,12 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
                 drinksViewModel.toggleFavoriteOfADrink(drink.value[0])) {
                 is ResultWrapper.Success -> {
                     requestForDrinkById()
+                    refreshDataIfDeviceIsTablet(result.value)
                 }
                 is ResultWrapper.Error -> {
                     Timber.e("Something went wrong sport... ${result.error}")
                 }
             }
-        }
-
-        binding.imageViewBack.setOnClickListener {
-            navigateBack()
         }
     }
 
@@ -52,13 +50,10 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
         handleDrinkDetails()
     }
 
-    private fun navigateBack() {
-        findNavController().popBackStack()
-    }
-
     private fun requestForDrinkById() {
-        val id = arguments?.getString(ID)
-        drinksViewModel.requestForDrinkDetailsByName(id)
+        drinksViewModel.drinkToBeSearched.observe(viewLifecycleOwner, {
+            drinksViewModel.requestForDrinkDetailsByName(it)
+        })
     }
 
     private fun handleDrinkDetails() {
@@ -71,17 +66,18 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
                 is ResultWrapper.Loading -> {
                     binding.imageViewDrinkLoading.visibility = View.VISIBLE
                     binding.constraintLayoutRootSuccess.visibility = View.GONE
+                    binding.textViewEmptyDrink.visibility = View.GONE
                 }
                 is ResultWrapper.Success -> {
                     binding.imageViewDrinkLoading.visibility = View.GONE
                     binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
+                    binding.textViewEmptyDrink.visibility = View.GONE
                     it.value[0]?.let { drink ->
                         binding.textViewName.text = drink.strDrink
                         binding.textViewShortDesc.text =
                             "${drink.strCategory} | ${drink.strAlcoholic} | ${drink.strGlass}"
-                        binding.textViewMeasurements.text = drink.returnMeasurements()
                         binding.textViewIngredients.text =
-                            drink.returnIngredients()
+                            drink.returnIngredientWithMeasurement()
                         binding.textViewInstruction.text = drink.strInstructions
 
                         Glide.with(requireContext()).load(drink.strDrinkThumb).diskCacheStrategy(
@@ -89,11 +85,14 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
                         ).into(binding.imageViewThumbnail)
 
                         setUpFavoriteIcon(drink.returnIconForFavorite())
+                    } ?: run {
+                        binding.textViewEmptyDrink.visibility = View.GONE
                     }
                 }
                 is ResultWrapper.Error -> {
                     binding.imageViewDrinkLoading.visibility = View.GONE
                     binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
+                    binding.textViewEmptyDrink.visibility = View.GONE
                 }
             }
         })
@@ -107,5 +106,15 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
                 null
             )
         )
+    }
+
+    /**
+     * Called to update the list of Meals on the left side of screen.
+     * */
+    private fun refreshDataIfDeviceIsTablet(p0: Drink) {
+        if (isTablet!!) {
+            // For non-favorite screen
+            drinksViewModel.setToggledDrink(p0)
+        }
     }
 }

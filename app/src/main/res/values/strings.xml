@@ -12,4 +12,5 @@
     <string name="discover_drinks">Discover Drinks</string>
     <string name="your_favorites">Your favorites</string>
     <string name="enable_night_mode">Night Mode</string>
+    <string name="nothing_to_show_at_the_moment">Nothing to show at the moment.</string>
 </resources>

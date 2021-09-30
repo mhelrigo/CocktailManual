@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="base_2">4dp</dimen>
+    <dimen name="base_4">8dp</dimen>
+    <dimen name="base_12">24dp</dimen>
+    <dimen name="base_8">16dp</dimen>
+    <dimen name="base_16">32dp</dimen>
+    <dimen name="base_20">40dp</dimen>
+    <dimen name="base_24">48dp</dimen>
+    <dimen name="base_32">64dp</dimen>
+    <dimen name="base_50">100dp</dimen>
+    <dimen name="base_80">160dp</dimen>
+    <dimen name="base_150">300dp</dimen>
+    <dimen name="base_246">492dp</dimen>
+</resources>

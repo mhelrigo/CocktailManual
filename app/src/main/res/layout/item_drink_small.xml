@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="75dp"
     android:layout_marginBottom="@dimen/base_16"
-    app:cardCornerRadius="@dimen/base_16">
+    app:cardCornerRadius="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:id="@+id/imageViewFavorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/base_16"
+            android:layout_margin="16dp"
             android:src="@drawable/ic_favorite_filled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,7 +39,7 @@
             android:fontFamily="@font/roboto_light"
             android:singleLine="true"
             android:textColor="?attr/colorOnPrimary"
-            android:textSize="@dimen/base_12"
+            android:textSize="12dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageViewFavorite"

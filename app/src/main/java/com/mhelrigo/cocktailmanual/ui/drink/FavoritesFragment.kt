@@ -3,34 +3,27 @@ package com.mhelrigo.cocktailmanual.ui.drink
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentFavoritesBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
+import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
 import com.mhelrigo.cocktailmanual.ui.model.Drink
 import com.mhelrigo.commons.ID
+import dagger.hilt.android.AndroidEntryPoint
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
 
-class FavoritesFragment : Fragment() {
-    private lateinit var fragmentFavoritesBinding: FragmentFavoritesBinding
-
+@AndroidEntryPoint
+class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigator {
     private val drinksViewModel: DrinksViewModel by activityViewModels()
 
     private lateinit var favoritesAdapter: DrinksRecyclerViewAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        fragmentFavoritesBinding = FragmentFavoritesBinding.inflate(inflater)
-        // Inflate the layout for this fragment
-        return fragmentFavoritesBinding.root
-    }
+    override fun inflateLayout(inflater: LayoutInflater): FragmentFavoritesBinding =
+        FragmentFavoritesBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,8 +39,7 @@ class FavoritesFragment : Fragment() {
                 when (val result =
                     drinksViewModel.toggleFavoriteOfADrink(item)) {
                     is ResultWrapper.Success -> {
-                        // It would be a lot easier to just request the whole list again.
-                        drinksViewModel.requestForFavoriteDrinks()
+                        drinksViewModel.setMealToBeSearched(item.idDrink!!)
                     }
                     is ResultWrapper.Error -> {
                         Timber.e("Something went wrong sport...")
@@ -56,11 +48,17 @@ class FavoritesFragment : Fragment() {
             }
         }, object : OnItemClickListener<Drink> {
             override fun onClick(item: Drink) {
-                expandDrinkDetails(item)
+                drinksViewModel.setMealToBeSearched(item.idDrink!!)
+                navigateToDrinkDetail(
+                    R.id.action_favoritesFragment_to_drinkDetailsFragment,
+                    null,
+                    findNavController(),
+                    isTablet!!
+                )
             }
         })
 
-        fragmentFavoritesBinding.recyclerViewFavorites.apply {
+        binding.recyclerViewFavorites.apply {
             adapter = favoritesAdapter
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -74,28 +72,23 @@ class FavoritesFragment : Fragment() {
                     is ResultWrapper.Success -> {
                         favoritesAdapter.differ.submitList(result.value)
                         if (result.value.isNotEmpty()) {
-                            fragmentFavoritesBinding.recyclerViewFavorites.visibility = View.VISIBLE
-                            fragmentFavoritesBinding.textViewFavoritesError.visibility = View.GONE
+                            binding.recyclerViewFavorites.visibility = View.VISIBLE
+                            binding.textViewFavoritesError.visibility = View.GONE
                         } else {
-                            fragmentFavoritesBinding.textViewFavoritesError.visibility = View.VISIBLE
+                            binding.textViewFavoritesError.visibility =
+                                View.VISIBLE
                         }
                     }
                     is ResultWrapper.Error -> {
-                        fragmentFavoritesBinding.recyclerViewFavorites.visibility = View.GONE
-                        fragmentFavoritesBinding.textViewFavoritesError.visibility = View.VISIBLE
+                        binding.recyclerViewFavorites.visibility = View.GONE
+                        binding.textViewFavoritesError.visibility = View.VISIBLE
                     }
                     is ResultWrapper.Loading -> {
-                        fragmentFavoritesBinding.recyclerViewFavorites.visibility = View.GONE
-                        fragmentFavoritesBinding.textViewFavoritesError.visibility = View.GONE
+                        binding.recyclerViewFavorites.visibility = View.GONE
+                        binding.textViewFavoritesError.visibility = View.GONE
                     }
                 }
             }
         })
-    }
-
-    private fun expandDrinkDetails(drink: Drink) {
-        val bundle = Bundle()
-        bundle.putString(ID, drink.idDrink)
-        findNavController().navigate(R.id.action_favoritesFragment_to_drinkDetailsFragment, bundle)
     }
 }

@@ -14,9 +14,13 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.ActivityHomeBinding
+import com.mhelrigo.cocktailmanual.di.AppModule.IS_TABLET
+import com.mhelrigo.cocktailmanual.ui.drink.DrinkDetailsFragment
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import javax.inject.Named
 
 
 @AndroidEntryPoint
@@ -26,6 +30,10 @@ class HomeActivity : AppCompatActivity() {
     private val drinksViewModel: DrinksViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
 
+    @JvmField
+    @field:[Inject Named(IS_TABLET)]
+    var isTablet: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -34,6 +42,24 @@ class HomeActivity : AppCompatActivity() {
         setUpBottomNavigation()
 
         handleInternetConnectionChanges()
+
+        requestForRandomDrinks()
+
+        setUpViewForFragment(savedInstanceState)
+    }
+
+    private fun setUpViewForFragment(p0: Bundle?) {
+        if (isTablet) {
+            if (p0 == null) {
+                supportFragmentManager
+                    .beginTransaction()
+                    .add(
+                        R.id.frameLayoutDrinkDetail,
+                        DrinkDetailsFragment(),
+                        DrinkDetailsFragment::class.java.simpleName
+                    ).commit()
+            }
+        }
     }
 
     override fun onResume() {
@@ -95,5 +121,9 @@ class HomeActivity : AppCompatActivity() {
 
             drinksViewModel.handleInternetConnectionChanges(networkInfo != null && networkInfo.isConnectedOrConnecting)
         }
+    }
+
+    private fun requestForRandomDrinks() {
+        drinksViewModel.requestForRandomDrinks()
     }
 }

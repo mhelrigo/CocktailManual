@@ -24,10 +24,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/textViewEmptyDrink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_light"
+            android:text="@string/nothing_to_show_at_the_moment"
+            android:textAlignment="center"
+            android:textSize="@dimen/base_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayoutRootSuccess"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +85,7 @@
 
             <TextView
                 android:id="@+id/textViewShortDesc"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/base_24"
                 android:layout_marginTop="@dimen/base_16"
@@ -109,20 +123,8 @@
                 app:tint="?attr/colorOnPrimary" />
 
             <TextView
-                android:id="@+id/textViewMeasurements"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/base_24"
-                android:layout_marginTop="@dimen/base_16"
-                android:fontFamily="@font/roboto_light"
-                android:text="TextView"
-                android:textSize="@dimen/base_16"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewIngredient" />
-
-            <TextView
                 android:id="@+id/textViewIngredients"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/base_4"
                 android:layout_marginTop="@dimen/base_16"
@@ -131,7 +133,7 @@
                 android:textSize="@dimen/base_16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/textViewMeasurements"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewIngredient" />
 
             <TextView
@@ -146,7 +148,7 @@
                 android:textColor="?attr/colorOnPrimary"
                 android:textSize="@dimen/base_24"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewMeasurements" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewIngredients" />
 
             <TextView
                 android:id="@+id/textViewInstruction"
@@ -176,16 +178,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textViewInstructionLabel"
                 app:tint="?attr/colorOnPrimary" />
-
-            <ImageView
-                android:id="@+id/imageViewBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/base_16"
-                android:src="@drawable/ic_arrow_back"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="?attr/colorPrimary" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -4,22 +4,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentIngredientDetailsBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
+import com.mhelrigo.cocktailmanual.ui.drink.DrinkNavigator
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.cocktailmanual.ui.navigateWithBundle
-import com.mhelrigo.commons.ID
 import com.mhelrigo.commons.NAME
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Named
+import kotlin.coroutines.CoroutineContext
 
-class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>() {
+@AndroidEntryPoint
+class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>(), DrinkNavigator {
     private val ingredientViewModel: IngredientsViewModel by activityViewModels()
     private val drinksViewModel: DrinksViewModel by activityViewModels()
 
@@ -36,6 +44,10 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
         requestForIngredient(arguments?.getString(NAME)!!)
         handleIngredient()
         handleDrinksFilteredByIngredient()
+
+        if (isTablet!!) {
+            refreshDrinksWhenItemToggled()
+        }
     }
 
     private fun setUpRecyclerView() {
@@ -45,6 +57,7 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
                     when (val result =
                         drinksViewModel.toggleFavoriteOfADrink(item)) {
                         is ResultWrapper.Success -> {
+                            drinksViewModel.setMealToBeSearched(item.idDrink!!)
                             drinksRecyclerViewAdapter.toggleFavoriteOfADrink(
                                 item.bindingAdapterPosition,
                                 result.value
@@ -57,9 +70,13 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-                    navigateWithBundle(Bundle().apply {
-                        putString(ID, item.idDrink)
-                    }, R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment)
+                    drinksViewModel.setMealToBeSearched(item.idDrink!!)
+                    navigateToDrinkDetail(
+                        R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment,
+                        null,
+                        findNavController(),
+                        isTablet!!
+                    )
                 }
             })
         binding.recyclerViewDrinks.apply {
@@ -128,5 +145,16 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
                 }
             }
         })
+    }
+
+    /**
+     * Called to update the list of Meals on the left side of screen.
+     * */
+    private fun refreshDrinksWhenItemToggled() {
+        CoroutineScope(mainCoroutine).launch {
+            drinksViewModel.toggledDrink.collect {
+                requestForIngredient(arguments?.getString(NAME)!!)
+            }
+        }
     }
 }

@@ -11,16 +11,22 @@ import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkListBinding
 import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
 import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.cocktailmanual.ui.navigateWithBundle
-import com.mhelrigo.commons.ID
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Named
+import kotlin.coroutines.CoroutineContext
 
 /**
  * This fragment showcase list of Drinks in terms of popularity and time uploaded.
  * Users can toggle favorites on each Drink item inside said lists.
  */
-class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
+@AndroidEntryPoint
+class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigator {
     private val drinksViewModel: DrinksViewModel by activityViewModels()
 
     private lateinit var popularDrinkAdapter: DrinksRecyclerViewAdapter
@@ -39,13 +45,13 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
         handleLatestDrinks()
         handlePopularDrinks()
         handleRandomDrinks()
-    }
 
-    override fun onResume() {
-        super.onResume()
         requestForLatestDrinks()
         requestForPopularDrinks()
-        requestForRandomDrinks()
+
+        if (isTablet!!) {
+            refreshDrinksWhenItemToggled()
+        }
     }
 
     private fun setUpRecyclerViews() {
@@ -71,6 +77,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                     when (val result =
                         drinksViewModel.toggleFavoriteOfADrink(item)) {
                         is ResultWrapper.Success -> {
+                            drinksViewModel.setMealToBeSearched(item.idDrink!!)
                             latestDrinkAdapter.toggleFavoriteOfADrink(
                                 item.bindingAdapterPosition,
                                 result.value
@@ -83,9 +90,13 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-                    navigateWithBundle(Bundle().apply {
-                        putString(ID, item.idDrink)
-                    }, R.id.action_drinkListFragment_to_drinkDetailsFragment)
+                    drinksViewModel.setMealToBeSearched(item.idDrink!!)
+                    navigateToDrinkDetail(
+                        R.id.action_drinkListFragment_to_drinkDetailsFragment,
+                        null,
+                        findNavController(),
+                        isTablet!!
+                    )
                 }
             })
 
@@ -104,6 +115,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                     when (val result =
                         drinksViewModel.toggleFavoriteOfADrink(item)) {
                         is ResultWrapper.Success -> {
+                            drinksViewModel.setMealToBeSearched(item.idDrink!!)
                             popularDrinkAdapter.toggleFavoriteOfADrink(
                                 item.bindingAdapterPosition,
                                 result.value
@@ -116,9 +128,13 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-                    navigateWithBundle(Bundle().apply {
-                        putString(ID, item.idDrink)
-                    }, R.id.action_drinkListFragment_to_drinkDetailsFragment)
+                    drinksViewModel.setMealToBeSearched(item.idDrink!!)
+                    navigateToDrinkDetail(
+                        R.id.action_drinkListFragment_to_drinkDetailsFragment,
+                        null,
+                        findNavController(),
+                        isTablet!!
+                    )
                 }
             })
 
@@ -137,6 +153,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                     when (val result =
                         drinksViewModel.toggleFavoriteOfADrink(item)) {
                         is ResultWrapper.Success -> {
+                            drinksViewModel.setMealToBeSearched(item.idDrink!!)
                             randomDrinkAdapter.toggleFavoriteOfADrink(
                                 item.bindingAdapterPosition,
                                 result.value
@@ -149,9 +166,13 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                 }
             }, object : OnItemClickListener<Drink> {
                 override fun onClick(item: Drink) {
-                    navigateWithBundle(Bundle().apply {
-                        putString(ID, item.idDrink)
-                    }, R.id.action_drinkListFragment_to_drinkDetailsFragment)
+                    drinksViewModel.setMealToBeSearched(item.idDrink!!)
+                    navigateToDrinkDetail(
+                        R.id.action_drinkListFragment_to_drinkDetailsFragment,
+                        null,
+                        findNavController(),
+                        isTablet!!
+                    )
                 }
             })
 
@@ -178,13 +199,13 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                 }
                 is ResultWrapper.Error -> {
                     binding?.textViewErrorLatest?.visibility = View.VISIBLE
-                    binding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
+                    binding?.recyclerViewLatestDrinks?.visibility = View.GONE
                     binding?.imageViewLatestDrinkLoading?.visibility = View.INVISIBLE
                 }
                 is ResultWrapper.Loading -> {
+                    latestDrinkAdapter.differ.submitList(empty())
                     binding?.imageViewLatestDrinkLoading?.visibility = View.VISIBLE
                     binding?.textViewErrorLatest?.visibility = View.INVISIBLE
-                    binding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
                 }
             }
         })
@@ -205,13 +226,13 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                 }
                 is ResultWrapper.Error -> {
                     binding?.textViewErrorPopular?.visibility = View.VISIBLE
-                    binding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
+                    binding?.recyclerViewPopularDrinks?.visibility = View.GONE
                     binding?.imageViewPopularDrinkLoading?.visibility = View.INVISIBLE
                 }
                 is ResultWrapper.Loading -> {
+                    popularDrinkAdapter.differ.submitList(empty())
                     binding?.imageViewPopularDrinkLoading?.visibility = View.VISIBLE
                     binding?.textViewErrorPopular?.visibility = View.INVISIBLE
-                    binding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
                 }
             }
         })
@@ -236,6 +257,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
                     binding?.imageViewRandomDrinkLoading?.visibility = View.GONE
                 }
                 is ResultWrapper.Loading -> {
+                    randomDrinkAdapter.differ.submitList(empty())
                     binding?.imageViewRandomDrinkLoading?.visibility = View.VISIBLE
                     binding?.textViewErrorRandom?.visibility = View.INVISIBLE
                 }
@@ -251,11 +273,23 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>() {
         drinksViewModel.requestForPopularDrinks()
     }
 
-    private fun requestForRandomDrinks() {
-        drinksViewModel.requestForRandomDrinks()
-    }
-
     private fun searchDrinks() {
         findNavController().navigate(R.id.action_drinkListFragment_to_searchFragment)
     }
+
+    /**
+     * Called to update the list of Meals on the left side of screen.
+     * */
+    private fun refreshDrinksWhenItemToggled() {
+        CoroutineScope(mainCoroutine).launch {
+            drinksViewModel.toggledDrink.collect {
+                requestForLatestDrinks()
+                requestForPopularDrinks()
+
+                drinksViewModel.requestForRandomDrinks()
+            }
+        }
+    }
+
+    private fun empty() : Nothing? = null
 }
