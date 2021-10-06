@@ -92,4 +92,7 @@ dependencies {
     // Firebase Crashlytics
     implementation dep.firebase.crashlyticsKtx
     implementation dep.firebase.analyticsKtx
+
+    // KTX for Lifecycle runtime
+    implementation dep.android.lifeCycleRuntime
 }

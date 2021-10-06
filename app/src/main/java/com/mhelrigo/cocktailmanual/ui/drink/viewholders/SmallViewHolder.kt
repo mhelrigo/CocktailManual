@@ -4,14 +4,17 @@ import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.ItemDrinkSmallBinding
-import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
-import com.mhelrigo.cocktailmanual.ui.model.Drink
+import com.mhelrigo.cocktailmanual.model.DrinkModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 class SmallViewHolder(var view: ItemDrinkSmallBinding) : BaseViewHolder(view.root) {
     override fun bind(
-        drink: Drink,
-        onFavoritesToggled: OnItemClickListener<Drink>,
-        onItemClicked: OnItemClickListener<Drink>
+        drink: DrinkModel,
+        toggleFavorite: MutableSharedFlow<DrinkModel>,
+        expandItem: MutableSharedFlow<DrinkModel>
     ) {
         drink.bindingAdapterPosition = bindingAdapterPosition
 
@@ -24,11 +27,15 @@ class SmallViewHolder(var view: ItemDrinkSmallBinding) : BaseViewHolder(view.roo
         setUpFavoriteIcon(drink.returnIconForFavorite())
 
         view.imageViewFavorite.setOnClickListener {
-            onFavoritesToggled.onClick(drink)
+            CoroutineScope(Dispatchers.IO).launch {
+                toggleFavorite.emit(drink)
+            }
         }
 
         view.root.setOnClickListener {
-            onItemClicked.onClick(drink)
+            CoroutineScope(Dispatchers.IO).launch {
+                expandItem.emit(drink)
+            }
         }
     }
 

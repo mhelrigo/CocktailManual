@@ -7,7 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.gson.Gson
 import com.mhelrigo.commons.MockFileReader
 import kotlinx.coroutines.runBlocking
-import mhelrigo.cocktailmanual.data.model.Drink
+import mhelrigo.cocktailmanual.data.mapper.DrinkEntityMapper
+import mhelrigo.cocktailmanual.data.model.DrinkEntity
 import mhelrigo.cocktailmanual.data.repository.CocktailDatabase
 import mhelrigo.cocktailmanual.data.repository.drink.local.DrinkDao
 import mhelrigo.cocktailmanual.domain.model.Drinks
@@ -28,9 +29,12 @@ class DrinkRepositoryLocalTest {
     private lateinit var drinkDao: DrinkDao
     private lateinit var cockTailDatabase: CocktailDatabase
 
+    private lateinit var drinkEntityMapper: DrinkEntityMapper
+
     @Before
     fun init() {
         mockRoom()
+        drinkEntityMapper =  DrinkEntityMapper()
     }
 
     @After
@@ -45,10 +49,10 @@ class DrinkRepositoryLocalTest {
         val drinks: Drinks = Gson().fromJson(rawData, Drinks::class.java)
 
         drinkDao.insert(
-            Drink.fromDrinkDomainModel(drinks.drinks[0])
+            drinkEntityMapper.transform(drinks.drinks[0])
         )
 
-        assertEquals(drinks.drinks[0].idDrink, drinkDao.selectById(drinks.drinks[0].idDrink!!).toDrinkUseCase().idDrink)
+        assertEquals(drinks.drinks[0].idDrink, drinkEntityMapper.transform(drinkDao.selectById(drinks.drinks[0].idDrink!!)).idDrink)
     }
 
     @Test
@@ -58,11 +62,11 @@ class DrinkRepositoryLocalTest {
         val drinks: Drinks = Gson().fromJson(rawData, Drinks::class.java)
 
         drinkDao.insert(
-            Drink.fromDrinkDomainModel(drinks.drinks[0])
+            drinkEntityMapper.transform(drinks.drinks[0])
         )
 
         drinkDao.delete(
-            Drink.fromDrinkDomainModel(drinks.drinks[0])
+            drinkEntityMapper.transform(drinks.drinks[0])
         )
 
         assertEquals(null, drinkDao.selectById(drinks.drinks[0].idDrink!!))

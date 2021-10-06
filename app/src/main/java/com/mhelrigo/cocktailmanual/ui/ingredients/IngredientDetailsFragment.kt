@@ -4,28 +4,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentIngredientDetailsBinding
-import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
-import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
+import com.mhelrigo.cocktailmanual.ui.commons.ViewStateWrapper
+import com.mhelrigo.cocktailmanual.ui.commons.base.BaseFragment
 import com.mhelrigo.cocktailmanual.ui.drink.DrinkNavigator
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
-import com.mhelrigo.cocktailmanual.ui.model.Drink
 import com.mhelrigo.commons.NAME
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Named
-import kotlin.coroutines.CoroutineContext
 
+/**
+ * This will show a detailed info of an ingredient with the list of all related drinks
+ * */
 @AndroidEntryPoint
 class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>(), DrinkNavigator {
     private val ingredientViewModel: IngredientsViewModel by activityViewModels()
@@ -41,7 +43,6 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
 
         setUpRecyclerView()
 
-        requestForIngredient(arguments?.getString(NAME)!!)
         handleIngredient()
         handleDrinksFilteredByIngredient()
 
@@ -51,34 +52,39 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
     }
 
     private fun setUpRecyclerView() {
-        drinksRecyclerViewAdapter =
-            DrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
-                override fun onClick(item: Drink) {
-                    when (val result =
-                        drinksViewModel.toggleFavoriteOfADrink(item)) {
-                        is ResultWrapper.Success -> {
-                            drinksViewModel.setMealToBeSearched(item.idDrink!!)
-                            drinksRecyclerViewAdapter.toggleFavoriteOfADrink(
-                                item.bindingAdapterPosition,
-                                result.value
-                            )
-                        }
-                        is ResultWrapper.Error -> {
-                            Timber.e("${result.error}")
-                        }
+        drinksRecyclerViewAdapter = DrinksRecyclerViewAdapter()
+
+        drinksRecyclerViewAdapter.expandItem
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { drink ->
+                drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                navigateToDrinkDetail(
+                    R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment,
+                    null,
+                    findNavController(),
+                    isTablet!!
+                )
+
+            }
+            .launchIn(lifecycleScope)
+
+        drinksRecyclerViewAdapter.toggleFavorite
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { drink ->
+                drinksViewModel.toggleFavoriteOfADrink(drink)
+                    .catch { throwable ->
+                        Timber.e("Something went wrong sport... ${throwable.message}")
                     }
-                }
-            }, object : OnItemClickListener<Drink> {
-                override fun onClick(item: Drink) {
-                    drinksViewModel.setMealToBeSearched(item.idDrink!!)
-                    navigateToDrinkDetail(
-                        R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment,
-                        null,
-                        findNavController(),
-                        isTablet!!
-                    )
-                }
-            })
+                    .collect {
+                        drinksViewModel.setDrinkToBeSearched(it.idDrink!!)
+                        drinksRecyclerViewAdapter.toggleFavoriteOfADrink(
+                            it.bindingAdapterPosition,
+                            it
+                        )
+                    }
+            }
+            .launchIn(lifecycleScope)
+
         binding.recyclerViewDrinks.apply {
             adapter = drinksRecyclerViewAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -90,71 +96,84 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
     }
 
     private fun handleIngredient() {
-        ingredientViewModel.ingredient.observe(viewLifecycleOwner, {
-            processLoadingState(
-                it.equals(ResultWrapper.Loading),
-                binding.imageViewIngredientLoading
-            )
-            when (it) {
-                is ResultWrapper.Success -> {
-                    binding.textViewError.visibility = View.GONE
-                    binding.imageViewIngredientLoading.visibility = View.GONE
-                    binding.textViewName.visibility = View.VISIBLE
-                    binding.textViewDescription.visibility = View.VISIBLE
-                    binding.recyclerViewDrinks.visibility = View.VISIBLE
-                    binding.imageViewThumbnail.visibility = View.VISIBLE
-                    binding.textViewName.text = it.value.strIngredient
-                    binding.textViewDescription.text = it.value.strDescription
-                    Glide.with(requireContext()).load(it.value.thumbNail())
-                        .into(binding.imageViewThumbnail)
+        ingredientViewModel.ingredient
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                processLoadingState(
+                    state is ViewStateWrapper.Loading,
+                    binding.imageViewIngredientLoading
+                )
 
-                    drinksViewModel.filterDrinksByIngredient(it.value.strIngredient)
-                }
-                is ResultWrapper.Error -> {
-                    binding.textViewError.visibility = View.VISIBLE
-                    binding.imageViewThumbnail.visibility = View.GONE
-                    binding.textViewName.visibility = View.GONE
-                    binding.textViewDescription.visibility = View.GONE
-                    binding.recyclerViewDrinks.visibility = View.GONE
-                    binding.imageViewIngredientLoading.visibility = View.GONE
-                }
-                is ResultWrapper.Loading -> {
-                    binding.imageViewIngredientLoading.visibility = View.VISIBLE
-                    binding.imageViewThumbnail.visibility = View.GONE
-                    binding.textViewError.visibility = View.GONE
-                    binding.textViewName.visibility = View.GONE
-                    binding.textViewDescription.visibility = View.GONE
-                    binding.recyclerViewDrinks.visibility = View.GONE
+                when (state) {
+                    is ViewStateWrapper.Loading -> {
+                        binding.imageViewIngredientLoading.visibility = View.VISIBLE
+                        binding.imageViewThumbnail.visibility = View.GONE
+                        binding.textViewError.visibility = View.GONE
+                        binding.textViewName.visibility = View.GONE
+                        binding.textViewDescription.visibility = View.GONE
+                        binding.recyclerViewDrinks.visibility = View.GONE
+                    }
+                    is ViewStateWrapper.Error -> {
+                        binding.textViewError.visibility = View.VISIBLE
+                        binding.imageViewThumbnail.visibility = View.GONE
+                        binding.textViewName.visibility = View.GONE
+                        binding.textViewDescription.visibility = View.GONE
+                        binding.recyclerViewDrinks.visibility = View.GONE
+                        binding.imageViewIngredientLoading.visibility = View.GONE
+                    }
+                    is ViewStateWrapper.Success -> {
+                        binding.textViewError.visibility = View.GONE
+                        binding.imageViewIngredientLoading.visibility = View.GONE
+                        binding.textViewName.visibility = View.VISIBLE
+                        binding.textViewDescription.visibility = View.VISIBLE
+                        binding.recyclerViewDrinks.visibility = View.VISIBLE
+                        binding.imageViewThumbnail.visibility = View.VISIBLE
+                        binding.textViewName.text = state.data.strIngredient
+                        binding.textViewDescription.text = state.data.strDescription
+                        Glide.with(requireContext()).load(state.data.thumbNail())
+                            .into(binding.imageViewThumbnail)
+
+                        drinksViewModel.filterDrinksByIngredient(state.data.strIngredient)
+                    }
                 }
             }
-        })
+            .launchIn(lifecycleScope)
     }
 
     private fun handleDrinksFilteredByIngredient() {
-        drinksViewModel.drinksFilteredByIngredient.observe(viewLifecycleOwner, {
-            when (it) {
-                is ResultWrapper.Success -> {
-                    drinksRecyclerViewAdapter.differ.submitList(it.value)
-                    binding.recyclerViewDrinks.visibility = View.VISIBLE
-                }
-                is ResultWrapper.Loading -> {
-                    binding.recyclerViewDrinks.visibility = View.GONE
-                }
-                is ResultWrapper.Error -> {
-                    binding.recyclerViewDrinks.visibility = View.GONE
+        drinksViewModel.drinksFilteredByIngredient
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                when (state) {
+                    is ViewStateWrapper.Loading -> {
+                        binding.recyclerViewDrinks.visibility = View.GONE
+                    }
+                    is ViewStateWrapper.Error -> {
+                        binding.recyclerViewDrinks.visibility = View.GONE
+                    }
+                    is ViewStateWrapper.Success -> {
+                        drinksRecyclerViewAdapter.differ.submitList(state.data)
+                        binding.recyclerViewDrinks.visibility = View.VISIBLE
+                    }
                 }
             }
-        })
+            .launchIn(lifecycleScope)
     }
 
     /**
      * Called to update the list of Meals on the left side of screen.
      * */
     private fun refreshDrinksWhenItemToggled() {
-        CoroutineScope(mainCoroutine).launch {
-            drinksViewModel.toggledDrink.collect {
+        drinksViewModel.toggledDrink
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach {
                 requestForIngredient(arguments?.getString(NAME)!!)
             }
-        }
+            .launchIn(lifecycleScope)
+    }
+
+    override fun requestData() {
+        super.requestData()
+        requestForIngredient(arguments?.getString(NAME)!!)
     }
 }

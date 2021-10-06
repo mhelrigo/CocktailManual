@@ -8,10 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.ItemIngredientBinding
-import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import mhelrigo.cocktailmanual.domain.model.Ingredient
 
-class IngredientsRecyclerViewAdapter(val onIngredientClick: OnItemClickListener<Ingredient>) :
+class IngredientsRecyclerViewAdapter() :
     RecyclerView.Adapter<IngredientsRecyclerViewAdapter.ViewHolder>() {
 
     private val differCallback = object : DiffUtil.ItemCallback<Ingredient>() {
@@ -25,6 +29,9 @@ class IngredientsRecyclerViewAdapter(val onIngredientClick: OnItemClickListener<
     }
 
     val differ = AsyncListDiffer(this, differCallback)
+
+    private val _expandItem = MutableSharedFlow<Ingredient>()
+    val expandItem : SharedFlow<Ingredient> get() = _expandItem
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -54,7 +61,9 @@ class IngredientsRecyclerViewAdapter(val onIngredientClick: OnItemClickListener<
                 .into(itemIngredientBinding.imageViewThumbnail)
 
             itemIngredientBinding.root.setOnClickListener {
-                onIngredientClick.onClick(ingredient)
+                CoroutineScope(Dispatchers.IO).launch {
+                    _expandItem.emit(ingredient)
+                }
             }
         }
     }

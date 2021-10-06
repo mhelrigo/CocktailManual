@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.base
+package com.mhelrigo.cocktailmanual.ui.commons.exception
 
 class NotAllowedToNavigateException :
     Throwable("Not allowed to navigate", null, false, false) {

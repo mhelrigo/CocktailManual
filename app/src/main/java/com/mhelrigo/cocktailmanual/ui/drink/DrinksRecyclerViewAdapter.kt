@@ -8,26 +8,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mhelrigo.cocktailmanual.databinding.ItemDrinkBigBinding
 import com.mhelrigo.cocktailmanual.databinding.ItemDrinkRegularBinding
 import com.mhelrigo.cocktailmanual.databinding.ItemDrinkSmallBinding
-import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
 import com.mhelrigo.cocktailmanual.ui.drink.viewholders.BaseViewHolder
 import com.mhelrigo.cocktailmanual.ui.drink.viewholders.BigViewHolder
 import com.mhelrigo.cocktailmanual.ui.drink.viewholders.RegularViewHolder
 import com.mhelrigo.cocktailmanual.ui.drink.viewholders.SmallViewHolder
-import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.VIEW_HOLDER_BIG
-import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.VIEW_HOLDER_REGULAR
-import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.VIEW_HOLDER_SMALL
+import com.mhelrigo.cocktailmanual.model.DrinkModel
+import com.mhelrigo.cocktailmanual.model.DrinkModel.Factory.VIEW_HOLDER_BIG
+import com.mhelrigo.cocktailmanual.model.DrinkModel.Factory.VIEW_HOLDER_REGULAR
+import com.mhelrigo.cocktailmanual.model.DrinkModel.Factory.VIEW_HOLDER_SMALL
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 class DrinksRecyclerViewAdapter(
-    var onFavoritesToggled: OnItemClickListener<Drink>,
-    var onItemClicked: OnItemClickListener<Drink>,
 ) : RecyclerView.Adapter<BaseViewHolder>() {
-    private val differCallback = object : DiffUtil.ItemCallback<Drink>() {
-        override fun areItemsTheSame(oldItem: Drink, newItem: Drink): Boolean {
+    private val differCallback = object : DiffUtil.ItemCallback<DrinkModel>() {
+        override fun areItemsTheSame(oldItem: DrinkModel, newItem: DrinkModel): Boolean {
             return oldItem.idDrink?.toInt() == newItem.idDrink?.toInt()
         }
 
-        override fun areContentsTheSame(oldItem: Drink, newItem: Drink): Boolean {
+        override fun areContentsTheSame(oldItem: DrinkModel, newItem: DrinkModel): Boolean {
             return oldItem.strDrink == newItem.strDrink && oldItem.idDrink?.toInt() == newItem.idDrink?.toInt() && oldItem.isFavourite == newItem.isFavourite
         }
 
@@ -35,7 +34,13 @@ class DrinksRecyclerViewAdapter(
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    fun toggleFavoriteOfADrink(position: Int, drink: Drink) {
+    private val _expandItem = MutableSharedFlow<DrinkModel>()
+    val expandItem: SharedFlow<DrinkModel> get() = _expandItem
+
+    private val _toggleFavorite = MutableSharedFlow<DrinkModel>()
+    val toggleFavorite: SharedFlow<DrinkModel> get() = _toggleFavorite
+
+    fun toggleFavoriteOfADrink(position: Int, drink: DrinkModel) {
         differ.currentList.find { a -> a.idDrink == drink.idDrink }?.isFavourite = drink.isFavourite
         notifyItemChanged(position)
     }
@@ -82,8 +87,8 @@ class DrinksRecyclerViewAdapter(
     ) {
         holder.bind(
             differ.currentList[position],
-            onFavoritesToggled,
-            onItemClicked
+            _toggleFavorite,
+            _expandItem
         )
     }
 

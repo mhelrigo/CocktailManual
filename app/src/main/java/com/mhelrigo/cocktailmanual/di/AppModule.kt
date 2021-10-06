@@ -2,6 +2,8 @@ package com.mhelrigo.cocktailmanual.di
 
 import android.content.Context
 import com.mhelrigo.cocktailmanual.R
+import com.mhelrigo.commons.DISPATCHERS_IO
+import com.mhelrigo.commons.DISPATCHERS_MAIN
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,17 +18,15 @@ import kotlin.coroutines.CoroutineContext
 @InstallIn(SingletonComponent::class)
 object AppModule {
     const val IS_TABLET = "IS_TABLET"
-    const val DISPATCHERS_IO = "DISPATCHERS_IO"
-    const val DISPATCHERS_MAIN = "DISPATCHERS_MAIN"
 
     @Singleton
     @Provides
-    @Named("Dispatchers.IO")
+    @Named(DISPATCHERS_IO)
     fun provideIOCoroutineContext(): CoroutineContext = Dispatchers.IO
 
     @Singleton
     @Provides
-    @Named("Dispatchers.Main")
+    @Named(DISPATCHERS_MAIN)
     fun provideUICoroutineContext(): CoroutineContext = Dispatchers.Main
 
     @Provides

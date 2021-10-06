@@ -1,9 +1,9 @@
 package mhelrigo.cocktailmanual.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import mhelrigo.cocktailmanual.domain.model.Ingredients
-import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
 
 interface IngredientRepository {
-    suspend fun getAll() : ResultWrapper<Exception, Ingredients>
-    suspend fun getDetails(name: String) : ResultWrapper<Exception, Ingredients>
+    suspend fun getAll() : Flow<Ingredients>
+    suspend fun getDetails(name: String) : Flow<Ingredients>
 }

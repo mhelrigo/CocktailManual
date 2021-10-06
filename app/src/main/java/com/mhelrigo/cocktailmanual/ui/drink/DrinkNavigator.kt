@@ -2,8 +2,8 @@ package com.mhelrigo.cocktailmanual.ui.drink
 
 import android.os.Bundle
 import androidx.navigation.NavController
-import com.mhelrigo.cocktailmanual.ui.base.NotAllowedToNavigateException
-import com.mhelrigo.cocktailmanual.ui.base.NotAllowedToNavigateException.Factory.checkIfAllowedToNavigate
+import com.mhelrigo.cocktailmanual.ui.commons.exception.NotAllowedToNavigateException
+import com.mhelrigo.cocktailmanual.ui.commons.exception.NotAllowedToNavigateException.Factory.checkIfAllowedToNavigate
 import timber.log.Timber
 
 /**

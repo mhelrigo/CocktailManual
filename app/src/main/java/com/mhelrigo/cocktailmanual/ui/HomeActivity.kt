@@ -10,15 +10,24 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.ActivityHomeBinding
 import com.mhelrigo.cocktailmanual.di.AppModule.IS_TABLET
+import com.mhelrigo.cocktailmanual.ui.commons.ViewStateWrapper
 import com.mhelrigo.cocktailmanual.ui.drink.DrinkDetailsFragment
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -91,15 +100,16 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun handleInternetConnectionChanges() {
-        drinksViewModel.isConnectedToInternet.observe(this, {
-            it?.let {
-                if (it) {
+        settingsViewModel.isNetworkAvailable
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach { data ->
+                if (data) {
                     binding.linearLayoutNoInternetConnection.visibility = View.GONE
                 } else {
                     binding.linearLayoutNoInternetConnection.visibility = View.VISIBLE
                 }
             }
-        })
+            .launchIn(lifecycleScope)
     }
 
     private fun registerConnectivityListener() {
@@ -119,7 +129,7 @@ class HomeActivity : AppCompatActivity() {
                 getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val networkInfo = connectivityManager.activeNetworkInfo
 
-            drinksViewModel.handleInternetConnectionChanges(networkInfo != null && networkInfo.isConnectedOrConnecting)
+            settingsViewModel.changeNetworkAvailability(networkInfo != null && networkInfo.isConnectedOrConnecting)
         }
     }
 

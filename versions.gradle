@@ -9,6 +9,7 @@ versions.appCompat = "1.3.0"
 versions.material = "1.3.0"
 versions.constraintLayout = "2.0.4"
 versions.lifeCycleExtensions = "2.2.0"
+versions.lifeCycleRuntime = "2.4.0-rc01"
 versions.jUnit = "4.+"
 versions.extJunit = "1.1.2"
 versions.espressoCore = "3.3.0"
@@ -47,6 +48,7 @@ android.appCompat = "androidx.appcompat:appcompat:$versions.appCompat"
 android.material = "com.google.android.material:material:$versions.material"
 android.constraintLayout = "androidx.constraintlayout:constraintlayout:$versions.constraintLayout"
 android.lifeCycleExtensions = "androidx.lifecycle:lifecycle-extensions:$versions.lifeCycleExtensions"
+android.lifeCycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifeCycleRuntime"
 android.coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutinesAndroid"
 android.lifeCycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifeCycleViewModelKtx"
 android.timber = "com.jakewharton.timber:timber:$versions.timber"
@@ -92,7 +94,7 @@ firebase.analyticsKtx = "com.google.firebase:firebase-analytics-ktx:$versions.an
 
 
 def buildVersions = [:]
-buildVersions.compileSdkVersion = 30
+buildVersions.compileSdkVersion = 31
 buildVersions.minSdkVersion = 23
 buildVersions.targetSdkVersion = 30
 buildVersions.versionCode = 2

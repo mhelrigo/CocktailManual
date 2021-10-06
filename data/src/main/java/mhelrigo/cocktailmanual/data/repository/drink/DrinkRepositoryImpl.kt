@@ -1,7 +1,9 @@
 package mhelrigo.cocktailmanual.data.repository.drink
 
+import com.mhelrigo.commons.DISPATCHERS_IO
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
-import mhelrigo.cocktailmanual.data.model.Drink
+import mhelrigo.cocktailmanual.data.mapper.DrinkEntityMapper
 import mhelrigo.cocktailmanual.data.repository.drink.local.DrinkDao
 import mhelrigo.cocktailmanual.data.repository.drink.remote.DrinkApi
 import mhelrigo.cocktailmanual.domain.model.Drinks
@@ -16,39 +18,63 @@ import kotlin.coroutines.CoroutineContext
 class DrinkRepositoryImpl @Inject constructor(
     var drinkApi: DrinkApi,
     var drinkDao: DrinkDao,
-    @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
+    var drinkEntityMapper: DrinkEntityMapper,
+    @Named(DISPATCHERS_IO) var ioCoroutineContext: CoroutineContext
 ) : DrinkRepository {
-    override suspend fun getRandomly(): ResultWrapper<Exception, Drinks> =
-        withContext(ioCoroutineContext) {
-            ResultWrapper.build { drinkApi.getRandomly() }
-        }
+    override suspend fun getRandomly(): Flow<List<mhelrigo.cocktailmanual.domain.model.Drink>> =
+        flow {
+            emit(drinkApi.getRandomly())
+        }.zip(selectAllFavorite()) { t1, t2 ->
+            Pair(
+                t1,
+                t2
+            )
+        }.map { collection -> markFavorites(collection) }
 
-    override suspend fun getByPopularity(): ResultWrapper<Exception, Drinks> =
-        withContext(ioCoroutineContext) {
-            ResultWrapper.build { drinkApi.getByPopularity() }
-        }
+    override suspend fun getByPopularity(): Flow<List<mhelrigo.cocktailmanual.domain.model.Drink>> =
+        flow {
+            emit(drinkApi.getByPopularity())
+        }.zip(selectAllFavorite()) { t1, t2 ->
+            Pair(
+                t1,
+                t2
+            )
+        }.map { collection -> markFavorites(collection) }
 
-    override suspend fun getLatest(): ResultWrapper<Exception, Drinks> =
-        withContext(ioCoroutineContext) {
-            ResultWrapper.build {
-                drinkApi.getLatest()
-            }
-        }
+    override suspend fun getLatest(): Flow<List<mhelrigo.cocktailmanual.domain.model.Drink>> =
+        flow {
+            emit(drinkApi.getLatest())
+        }.zip(selectAllFavorite()) { t1, t2 ->
+            Pair(
+                t1,
+                t2
+            )
+        }.map { collection -> markFavorites(collection) }
 
     override suspend fun searchByFirstLetter(firstLetter: String): ResultWrapper<Exception, Drinks> =
         withContext(ioCoroutineContext) {
             ResultWrapper.build { drinkApi.searchByFirstLetter(firstLetter) }
         }
 
-    override suspend fun searchByName(name: String): ResultWrapper<Exception, Drinks> =
-        withContext(ioCoroutineContext) {
-            ResultWrapper.build { drinkApi.searchByName(name) }
-        }
+    override suspend fun searchByName(name: String): Flow<List<mhelrigo.cocktailmanual.domain.model.Drink>> =
+        flow {
+            emit(drinkApi.searchByName(name))
+        }.zip(selectAllFavorite()) { t1, t2 ->
+            Pair(
+                t1,
+                t2
+            )
+        }.map { collection -> markFavorites(collection) }
 
-    override suspend fun searchByIngredient(ingredient: String): ResultWrapper<Exception, Drinks> =
-        withContext(ioCoroutineContext) {
-            ResultWrapper.build { drinkApi.searchByIngredient(ingredient) }
-        }
+    override suspend fun searchByIngredient(ingredient: String): Flow<List<mhelrigo.cocktailmanual.domain.model.Drink>> =
+        flow {
+            emit(drinkApi.searchByIngredient(ingredient))
+        }.zip(selectAllFavorite()) { t1, t2 ->
+            Pair(
+                t1,
+                t2
+            )
+        }.map { collection -> markFavorites(collection) }
 
     override suspend fun searchByDrinkType(drinkType: String): ResultWrapper<Exception, Drinks> =
         withContext(ioCoroutineContext) {
@@ -65,52 +91,39 @@ class DrinkRepositoryImpl @Inject constructor(
             ResultWrapper.build { drinkApi.searchByGlass(glass) }
         }
 
-    override suspend fun getDetails(id: String): ResultWrapper<Exception, Drinks> =
-        withContext(ioCoroutineContext) {
-            ResultWrapper.build { drinkApi.getDetails(id) }
-        }
+    override suspend fun getDetails(id: String): Flow<List<mhelrigo.cocktailmanual.domain.model.Drink>> =
+        flow {
+            emit(drinkApi.getDetails(id))
+        }.zip(selectAllFavorite()) { t1, t2 ->
+            Pair(
+                t1,
+                t2
+            )
+        }.map { collection -> markFavorites(collection) }
 
-    override suspend fun addFavoriteById(drink: mhelrigo.cocktailmanual.domain.model.Drink): ResultWrapper<Exception, Unit> {
-        return try {
-            withContext(ioCoroutineContext) {
-                ResultWrapper.build { drinkDao.insert(Drink.fromDrinkDomainModel(drink)) }
-            }
-        } catch (e: Exception) {
-            ResultWrapper.build { throw Exception("Insert failed") }
-        }
+    override suspend fun addFavoriteById(drink: mhelrigo.cocktailmanual.domain.model.Drink) {
+        drinkDao.insert(drinkEntityMapper.transform(drink))
     }
 
-    override suspend fun removeFavoriteById(drink: mhelrigo.cocktailmanual.domain.model.Drink): ResultWrapper<Exception, Unit> {
-        return try {
-            withContext(ioCoroutineContext) {
-                ResultWrapper.build { drinkDao.delete(Drink.fromDrinkDomainModel(drink)) }
-            }
-        } catch (e: Exception) {
-            ResultWrapper.build { throw Exception("Insert failed") }
-        }
+    override suspend fun removeFavoriteById(drink: mhelrigo.cocktailmanual.domain.model.Drink) {
+        drinkDao.delete(drinkEntityMapper.transform(drink))
     }
 
-    override suspend fun selectFavoriteById(id: String): ResultWrapper<Exception, mhelrigo.cocktailmanual.domain.model.Drink> {
-        return try {
-            withContext(ioCoroutineContext) {
-                ResultWrapper.build { drinkDao.selectById(id).toDrinkUseCase() }
-            }
-        } catch (e: Exception) {
-            ResultWrapper.build { throw Exception("Insert failed") }
+    override suspend fun selectAllFavorite(): Flow<List<mhelrigo.cocktailmanual.domain.model.Drink>> =
+        flow {
+            emit(drinkDao.selectAllFavorites().map { drinkEntityMapper.transform(it)})
         }
-    }
 
-    override suspend fun selectAllFavorite(): ResultWrapper<Exception, List<mhelrigo.cocktailmanual.domain.model.Drink>> {
-        return try {
-            withContext(ioCoroutineContext) {
-                ResultWrapper.build {
-                    drinkDao.selectAllFavorites().map {
-                        it.toDrinkUseCase()
-                    }
-                }
+    private fun markFavorites(collection: Pair<Drinks, List<mhelrigo.cocktailmanual.domain.model.Drink>>): List<mhelrigo.cocktailmanual.domain.model.Drink> {
+        val toBeMarked = collection.first.drinks
+        val favorites = collection.second
+
+        favorites.map { v0 ->
+            toBeMarked.filter { v1 -> v0.idDrink.equals(v1.idDrink) }.map {
+                it.markFavorite(true)
             }
-        } catch (e: Exception) {
-            ResultWrapper.build { throw Exception("Failed Operation") }
         }
+
+        return toBeMarked
     }
 }

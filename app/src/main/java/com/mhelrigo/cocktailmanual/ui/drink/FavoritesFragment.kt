@@ -4,18 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.FragmentFavoritesBinding
-import com.mhelrigo.cocktailmanual.ui.OnItemClickListener
-import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
-import com.mhelrigo.cocktailmanual.ui.model.Drink
-import com.mhelrigo.commons.ID
+import com.mhelrigo.cocktailmanual.ui.commons.ViewStateWrapper
+import com.mhelrigo.cocktailmanual.ui.commons.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
-import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
+/**
+ * FavoritesFragment will show the list of all favorite drinks.
+ * */
 @AndroidEntryPoint
 class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigator {
     private val drinksViewModel: DrinksViewModel by activityViewModels()
@@ -34,21 +41,12 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigat
     }
 
     private fun setUpRecyclerView() {
-        favoritesAdapter = DrinksRecyclerViewAdapter(object : OnItemClickListener<Drink> {
-            override fun onClick(item: Drink) {
-                when (val result =
-                    drinksViewModel.toggleFavoriteOfADrink(item)) {
-                    is ResultWrapper.Success -> {
-                        drinksViewModel.setMealToBeSearched(item.idDrink!!)
-                    }
-                    is ResultWrapper.Error -> {
-                        Timber.e("Something went wrong sport...")
-                    }
-                }
-            }
-        }, object : OnItemClickListener<Drink> {
-            override fun onClick(item: Drink) {
-                drinksViewModel.setMealToBeSearched(item.idDrink!!)
+        favoritesAdapter = DrinksRecyclerViewAdapter()
+
+        favoritesAdapter.expandItem
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { drink ->
+                drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
                 navigateToDrinkDetail(
                     R.id.action_favoritesFragment_to_drinkDetailsFragment,
                     null,
@@ -56,7 +54,21 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigat
                     isTablet!!
                 )
             }
-        })
+            .launchIn(lifecycleScope)
+
+        favoritesAdapter.toggleFavorite
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { drink ->
+                drinksViewModel.toggleFavoriteOfADrink(drink)
+                    .catch { throwable ->
+                        Timber.e("Something went wrong sport... ${throwable.message}")
+                    }
+                    .collect { drink ->
+                        drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                        drinksViewModel.requestForFavoriteDrinks()
+                    }
+            }
+            .launchIn(lifecycleScope)
 
         binding.recyclerViewFavorites.apply {
             adapter = favoritesAdapter
@@ -66,12 +78,21 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigat
     }
 
     private fun handleFavorites() {
-        drinksViewModel.favoriteDrinks.observe(viewLifecycleOwner, {
-            it?.let { result ->
-                when (result) {
-                    is ResultWrapper.Success -> {
-                        favoritesAdapter.differ.submitList(result.value)
-                        if (result.value.isNotEmpty()) {
+        drinksViewModel.favoriteDrinks
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                when (state) {
+                    is ViewStateWrapper.Loading -> {
+                        binding.recyclerViewFavorites.visibility = View.GONE
+                        binding.textViewFavoritesError.visibility = View.GONE
+                    }
+                    is ViewStateWrapper.Error -> {
+                        binding.recyclerViewFavorites.visibility = View.GONE
+                        binding.textViewFavoritesError.visibility = View.VISIBLE
+                    }
+                    is ViewStateWrapper.Success -> {
+                        favoritesAdapter.differ.submitList(state.data)
+                        if (state.data.isNotEmpty()) {
                             binding.recyclerViewFavorites.visibility = View.VISIBLE
                             binding.textViewFavoritesError.visibility = View.GONE
                         } else {
@@ -79,16 +100,8 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigat
                                 View.VISIBLE
                         }
                     }
-                    is ResultWrapper.Error -> {
-                        binding.recyclerViewFavorites.visibility = View.GONE
-                        binding.textViewFavoritesError.visibility = View.VISIBLE
-                    }
-                    is ResultWrapper.Loading -> {
-                        binding.recyclerViewFavorites.visibility = View.GONE
-                        binding.textViewFavoritesError.visibility = View.GONE
-                    }
                 }
             }
-        })
+            .launchIn(lifecycleScope)
     }
 }

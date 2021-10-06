@@ -1,5 +1,6 @@
 package mhelrigo.cocktailmanual.data.repository.glass
 
+import com.mhelrigo.commons.DISPATCHERS_IO
 import kotlinx.coroutines.withContext
 import mhelrigo.cocktailmanual.data.repository.glass.remote.GlassApi
 import mhelrigo.cocktailmanual.domain.model.Glasses
@@ -12,7 +13,7 @@ import kotlin.coroutines.CoroutineContext
 @Singleton
 class GlassRepositoryImpl constructor(
     var glassApi: GlassApi,
-    @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
+    @Named(DISPATCHERS_IO) var ioCoroutineContext: CoroutineContext
 ) : GlassRepository {
     override suspend fun getAll(): ResultWrapper<Exception, Glasses> =
         withContext(ioCoroutineContext) {

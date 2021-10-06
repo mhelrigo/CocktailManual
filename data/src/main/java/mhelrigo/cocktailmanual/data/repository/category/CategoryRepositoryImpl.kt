@@ -1,5 +1,6 @@
 package mhelrigo.cocktailmanual.data.repository.category
 
+import com.mhelrigo.commons.DISPATCHERS_IO
 import kotlinx.coroutines.withContext
 import mhelrigo.cocktailmanual.data.repository.category.remote.CategoryApi
 import mhelrigo.cocktailmanual.domain.model.Categories
@@ -12,7 +13,7 @@ import kotlin.coroutines.CoroutineContext
 @Singleton
 class CategoryRepositoryImpl constructor(
     var categoryApi: CategoryApi,
-    @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
+    @Named(DISPATCHERS_IO) var ioCoroutineContext: CoroutineContext
 ) : CategoryRepository {
     override suspend fun getAll(): ResultWrapper<Exception, Categories> =
         withContext(ioCoroutineContext) {

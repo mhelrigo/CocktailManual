@@ -1,4 +1,4 @@
-package com.mhelrigo.cocktailmanual.ui.model
+package com.mhelrigo.cocktailmanual.model
 
 enum class DrinkCollectionType {
     LATEST,

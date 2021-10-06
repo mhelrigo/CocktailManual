@@ -7,7 +7,7 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.mhelrigo.cocktailmanual.BuildConfig
 import com.mhelrigo.cocktailmanual.databinding.FragmentSettingBinding
-import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
+import com.mhelrigo.cocktailmanual.ui.commons.base.BaseFragment
 
 class SettingFragment : BaseFragment<FragmentSettingBinding>() {
     private val settingsViewModel: SettingsViewModel by activityViewModels()

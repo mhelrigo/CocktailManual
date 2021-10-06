@@ -5,19 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkDetailsBinding
-import com.mhelrigo.cocktailmanual.ui.base.BaseFragment
-import com.mhelrigo.cocktailmanual.ui.model.Drink
+import com.mhelrigo.cocktailmanual.ui.commons.ViewStateWrapper
+import com.mhelrigo.cocktailmanual.ui.commons.base.BaseFragment
+import com.mhelrigo.cocktailmanual.model.DrinkModel
 import dagger.hilt.android.AndroidEntryPoint
-import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 
 /**
- * This fragment will expanded information about a Drink.
- * It also have a capability of toggling favorites of said Drink.
+ * This fragment will show information about a Drink.
  */
 @AndroidEntryPoint
 class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
@@ -28,74 +30,82 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.imageViewFavorite.setOnClickListener {
-            val drink = (drinksViewModel.drinkDetails.value as ResultWrapper.Success<List<Drink>>)
 
-            when (val result =
-                drinksViewModel.toggleFavoriteOfADrink(drink.value[0])) {
-                is ResultWrapper.Success -> {
-                    requestForDrinkById()
-                    refreshDataIfDeviceIsTablet(result.value)
-                }
-                is ResultWrapper.Error -> {
-                    Timber.e("Something went wrong sport... ${result.error}")
-                }
-            }
+        setUpToggleFavoriteButton()
+
+        handleDrinkDetails()
+        requestForDrinkById()
+    }
+
+    private fun setUpToggleFavoriteButton() {
+        binding.imageViewFavorite.setOnClickListener {
+            val drink = (drinksViewModel.drinkDetails.value as ViewStateWrapper.Success)
+            drinksViewModel.toggleFavoriteOfADrink(drink.data[0])
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED)
+                .onEach { data ->
+                    drinksViewModel.requestForDrinkDetailsByName(data.idDrink!!)
+                    refreshDataIfDeviceIsTablet(data)
+                }.catch { throwable ->
+                    Timber.e("Something went wrong sport... ${throwable.message}")
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        requestForDrinkById()
-        handleDrinkDetails()
-    }
-
     private fun requestForDrinkById() {
-        drinksViewModel.drinkToBeSearched.observe(viewLifecycleOwner, {
-            drinksViewModel.requestForDrinkDetailsByName(it)
-        })
+        drinksViewModel.drinkToBeSearched
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED)
+            .onEach { data ->
+                drinksViewModel.requestForDrinkDetailsByName(data)
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun handleDrinkDetails() {
-        drinksViewModel.drinkDetails.observe(viewLifecycleOwner, {
-            processLoadingState(
-                it.equals(ResultWrapper.Loading),
-                binding.imageViewDrinkLoading
-            )
-            when (it) {
-                is ResultWrapper.Loading -> {
-                    binding.imageViewDrinkLoading.visibility = View.VISIBLE
-                    binding.constraintLayoutRootSuccess.visibility = View.GONE
-                    binding.textViewEmptyDrink.visibility = View.GONE
-                }
-                is ResultWrapper.Success -> {
-                    binding.imageViewDrinkLoading.visibility = View.GONE
-                    binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
-                    binding.textViewEmptyDrink.visibility = View.GONE
-                    it.value[0]?.let { drink ->
-                        binding.textViewName.text = drink.strDrink
-                        binding.textViewShortDesc.text =
-                            "${drink.strCategory} | ${drink.strAlcoholic} | ${drink.strGlass}"
-                        binding.textViewIngredients.text =
-                            drink.returnIngredientWithMeasurement()
-                        binding.textViewInstruction.text = drink.strInstructions
+        drinksViewModel.drinkDetails
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { state ->
+                processLoadingState(
+                    state is ViewStateWrapper.Loading,
+                    binding.imageViewDrinkLoading
+                )
 
-                        Glide.with(requireContext()).load(drink.strDrinkThumb).diskCacheStrategy(
-                            DiskCacheStrategy.ALL
-                        ).into(binding.imageViewThumbnail)
-
-                        setUpFavoriteIcon(drink.returnIconForFavorite())
-                    } ?: run {
+                when (state) {
+                    is ViewStateWrapper.Init -> {
+                        binding.textViewEmptyDrink.visibility = View.VISIBLE
+                    }
+                    is ViewStateWrapper.Loading -> {
+                        binding.imageViewDrinkLoading.visibility = View.VISIBLE
+                        binding.constraintLayoutRootSuccess.visibility = View.GONE
                         binding.textViewEmptyDrink.visibility = View.GONE
                     }
-                }
-                is ResultWrapper.Error -> {
-                    binding.imageViewDrinkLoading.visibility = View.GONE
-                    binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
-                    binding.textViewEmptyDrink.visibility = View.GONE
+                    is ViewStateWrapper.Error -> {
+                        binding.imageViewDrinkLoading.visibility = View.GONE
+                        binding.constraintLayoutRootSuccess.visibility = View.GONE
+                        binding.textViewEmptyDrink.visibility = View.VISIBLE
+                    }
+                    is ViewStateWrapper.Success -> {
+                        binding.imageViewDrinkLoading.visibility = View.GONE
+                        binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
+                        binding.textViewEmptyDrink.visibility = View.GONE
+                        state.data[0].let { drink ->
+                            binding.textViewName.text = drink.strDrink
+                            binding.textViewShortDesc.text =
+                                "${drink.strCategory} | ${drink.strAlcoholic} | ${drink.strGlass}"
+                            binding.textViewIngredients.text =
+                                drink.returnIngredientWithMeasurement()
+                            binding.textViewInstruction.text = drink.strInstructions
+
+                            Glide.with(requireContext()).load(drink.strDrinkThumb)
+                                .diskCacheStrategy(
+                                    DiskCacheStrategy.ALL
+                                ).into(binding.imageViewThumbnail)
+
+                            setUpFavoriteIcon(drink.returnIconForFavorite())
+                        }
+                    }
                 }
             }
-        })
+            .launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun setUpFavoriteIcon(resourceDrawable: Int) {
@@ -111,10 +121,18 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
     /**
      * Called to update the list of Meals on the left side of screen.
      * */
-    private fun refreshDataIfDeviceIsTablet(p0: Drink) {
+    private fun refreshDataIfDeviceIsTablet(p0: DrinkModel) {
         if (isTablet!!) {
             // For non-favorite screen
             drinksViewModel.setToggledDrink(p0)
+
+            // For favorites screen
+            drinksViewModel.requestForFavoriteDrinks()
         }
+    }
+
+    override fun requestData() {
+        super.requestData()
+        drinksViewModel.requestForDrinkDetailsByName(drinksViewModel.drinkToBeSearched.value)
     }
 }

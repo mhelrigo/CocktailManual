@@ -1,22 +1,18 @@
 package com.mhelrigo.cocktailmanual.ui.drink
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.assignCollectionType
-import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.markAllFavorites
-import com.mhelrigo.cocktailmanual.ui.model.Drink.Factory.transformCollectionIntoPresentationObject
-import com.mhelrigo.cocktailmanual.ui.model.DrinkCollectionType
+import com.mhelrigo.cocktailmanual.mapper.DrinkModelMapper
+import com.mhelrigo.cocktailmanual.model.DrinkModel
+import com.mhelrigo.cocktailmanual.ui.commons.ViewStateWrapper
+import com.mhelrigo.cocktailmanual.model.DrinkModel.Factory.assignCollectionType
+import com.mhelrigo.cocktailmanual.model.DrinkCollectionType
+import com.mhelrigo.commons.DISPATCHERS_IO
 import com.mhelrigo.commons.SEARCH_DELAY_IN_MILLIS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import mhelrigo.cocktailmanual.domain.model.Drink
-import mhelrigo.cocktailmanual.domain.model.Drinks
-import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
+import kotlinx.coroutines.flow.*
 import mhelrigo.cocktailmanual.domain.usecase.drink.*
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.coroutines.CoroutineContext
@@ -32,7 +28,8 @@ class DrinksViewModel @Inject constructor(
     var searchDrinkByIngredientsUseCase: SearchDrinkByIngredientsUseCase,
     var getDrinkDetailsUseCase: GetDrinkDetailsUseCase,
     var searchDrinkByNameUseCase: SearchDrinkByNameUseCase,
-    @Named("Dispatchers.IO") var mainCoroutineContext: CoroutineContext
+    var drinkModelMapper: DrinkModelMapper,
+    @Named(DISPATCHERS_IO) var mainCoroutineContext: CoroutineContext
 ) : ViewModel(),
     CoroutineScope {
 
@@ -40,241 +37,171 @@ class DrinksViewModel @Inject constructor(
     private var searchDrinkJob: Job = Job()
 
     private val _latestDrinks =
-        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
-    val latestDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _latestDrinks
+        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+            ViewStateWrapper.Loading(0)
+        )
+    val latestDrinks: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _latestDrinks
 
     private val _popularDrinks =
-        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
-    val popularDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _popularDrinks
+        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+            ViewStateWrapper.Loading(0)
+        )
+    val popularDrinks: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _popularDrinks
 
     private val _randomDrinks =
-        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
-    val randomDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _randomDrinks
+        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+            ViewStateWrapper.Loading(0)
+        )
+    val randomDrinks: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _randomDrinks
 
     private val _favoriteDrinks =
-        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
-    val favoriteDrinks: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _favoriteDrinks
+        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+            ViewStateWrapper.Loading(0)
+        )
+    val favoriteDrinks: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _favoriteDrinks
 
     private val _drinkDetails =
-        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
-    val drinkDetails: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinkDetails
+        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+            ViewStateWrapper.Init
+        )
+    val drinkDetails: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _drinkDetails
 
     private val _drinksFilteredByIngredient =
-        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
-    val drinksFilteredByIngredient: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinksFilteredByIngredient
+        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+            ViewStateWrapper.Loading(0)
+        )
+    val drinksFilteredByIngredient: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _drinksFilteredByIngredient
 
     private val _drinkSearchedByName =
-        MutableLiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>>()
-    val drinkSearchedByName: LiveData<ResultWrapper<Exception, List<com.mhelrigo.cocktailmanual.ui.model.Drink>>> get() = _drinkSearchedByName
+        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+            ViewStateWrapper.Success(listOf())
+        )
+    val drinkSearchedByName: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _drinkSearchedByName
 
-    private val _isConnectedToInternet = MutableLiveData(false)
-    val isConnectedToInternet: LiveData<Boolean> get() = _isConnectedToInternet
+    private val _drinkToBeSearched =
+        MutableStateFlow<String>("")
+    val drinkToBeSearched: StateFlow<String>
+        get() = _drinkToBeSearched
 
-    private val _drinkToBeSearched = MutableLiveData<String>()
-    val drinkToBeSearched: LiveData<String> get() = _drinkToBeSearched
-
-    private val _toggledDrink = MutableSharedFlow<com.mhelrigo.cocktailmanual.ui.model.Drink>()
-    val toggledDrink: SharedFlow<com.mhelrigo.cocktailmanual.ui.model.Drink> get() = _toggledDrink
+    private val _toggledDrink = MutableSharedFlow<DrinkModel>()
+    val toggledDrink: SharedFlow<DrinkModel> get() = _toggledDrink
 
     fun requestForLatestDrinks() = launch {
-        _latestDrinks.postValue(ResultWrapper.buildLoading())
-        when (val result = latestDrinksUseCase.buildExecutable(null)) {
-            is ResultWrapper.Success -> {
-                _latestDrinks.postValue(ResultWrapper.build {
-                    handleResult(
-                        result.value,
-                        DrinkCollectionType.LATEST
-                    )
-                })
+        latestDrinksUseCase.buildExecutable(null)
+            .onStart { _latestDrinks.value = ViewStateWrapper.Loading(0) }
+            .map { drink ->
+                assignCollectionType(
+                    drinkModelMapper.transform(drink),
+                    DrinkCollectionType.LATEST
+                )
             }
-            is ResultWrapper.Error -> {
-                FirebaseCrashlytics.getInstance().recordException(result.error)
-                _latestDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
+            .catch { throwable ->
+                _latestDrinks.value = ViewStateWrapper.Error(throwable)
+            }.collect { data ->
+                _latestDrinks.value = ViewStateWrapper.Success(data)
             }
-        }
     }
 
     fun requestForPopularDrinks() = launch {
-        _popularDrinks.postValue(ResultWrapper.buildLoading())
-        when (val result = popularDrinksUseCase.buildExecutable(null)) {
-            is ResultWrapper.Success -> {
-                _popularDrinks.postValue(ResultWrapper.build {
-                    handleResult(
-                        result.value,
-                        DrinkCollectionType.POPULAR
-                    )
-                })
+        popularDrinksUseCase.buildExecutable(null)
+            .onStart { _popularDrinks.value = ViewStateWrapper.Loading(0) }
+            .map { drink ->
+                assignCollectionType(
+                    drinkModelMapper.transform(drink),
+                    DrinkCollectionType.POPULAR
+                )
             }
-            is ResultWrapper.Error -> {
-                FirebaseCrashlytics.getInstance().recordException(result.error)
-                _popularDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
+            .catch { throwable ->
+                _popularDrinks.value = ViewStateWrapper.Error(throwable)
+                Timber.e("requestForPopularDrinks ${throwable.message}")
+
             }
-        }
+            .collect { data ->
+                _popularDrinks.value = ViewStateWrapper.Success(data)
+            }
     }
 
     fun requestForRandomDrinks() = launch {
-        _randomDrinks.postValue(ResultWrapper.buildLoading())
-        when (val result = randomDrinksUseCase.buildExecutable(null)) {
-            is ResultWrapper.Success -> {
-                _randomDrinks.postValue(ResultWrapper.build {
-                    handleResult(
-                        result.value,
-                        DrinkCollectionType.RANDOM
-                    )
-                })
+        randomDrinksUseCase.buildExecutable(null)
+            .onStart { _randomDrinks.value = ViewStateWrapper.Loading(0) }
+            .map { drink ->
+                assignCollectionType(
+                    drinkModelMapper.transform(drink),
+                    DrinkCollectionType.RANDOM
+                )
             }
-            is ResultWrapper.Error -> {
-                FirebaseCrashlytics.getInstance().recordException(result.error)
-                _randomDrinks.postValue(ResultWrapper.build { throw Exception(result.error) })
+            .catch { throwable -> _randomDrinks.value = ViewStateWrapper.Error(throwable) }
+            .collect { data ->
+                _randomDrinks.value = ViewStateWrapper.Success(data)
             }
-        }
     }
 
     fun filterDrinksByIngredient(p0: String) = launch {
-        _drinksFilteredByIngredient.postValue(ResultWrapper.buildLoading())
-        when (val result = searchDrinkByIngredientsUseCase.buildExecutable(listOf(p0))) {
-            is ResultWrapper.Success -> {
-                _drinksFilteredByIngredient.postValue(ResultWrapper.build {
-                    handleResult(
-                        result.value,
-                        DrinkCollectionType.FILTERED_BY_INGREDIENTS
-                    )
-                })
+        searchDrinkByIngredientsUseCase.buildExecutable(listOf(p0))
+            .onStart { _drinksFilteredByIngredient.value = ViewStateWrapper.Loading(0) }
+            .map { drink ->
+                assignCollectionType(
+                    drinkModelMapper.transform(drink),
+                    DrinkCollectionType.FILTERED_BY_INGREDIENTS
+                )
             }
-            is ResultWrapper.Error -> {
-                FirebaseCrashlytics.getInstance().recordException(result.error)
-                _drinksFilteredByIngredient.postValue(ResultWrapper.build { throw Exception(result.error) })
+            .catch { throwable ->
+                _drinksFilteredByIngredient.value = ViewStateWrapper.Error(throwable)
             }
-        }
+            .collect { data ->
+                _drinksFilteredByIngredient.value = ViewStateWrapper.Success(
+                    data
+                )
+            }
     }
 
-    /**
-     * This will make necessary adjustments on the result by doing the following:
-     * 1. [markAllFavorites] will mark all favorites in the result
-     * 2. [assignCollectionType] will assign what kind of collection the result is
-     * 3. [transformCollectionIntoPresentationObject] will transform the result into a presentation object
-     *
-     * This adjustments are needed for transforming the domain object into a presentable data.
-     * [markAllFavorites] calls for [requestForFavoriteDrinks] as parameter to get the list of favorites.
-     *
-     * @param [result] the result
-     * @param [drinkCollectionTypeValue] tye of collection
-     * */
-    private fun handleResult(
-        result: Drinks,
-        drinkCollectionTypeValue: DrinkCollectionType
-    ): List<com.mhelrigo.cocktailmanual.ui.model.Drink> {
-        return markAllFavorites(result.drinks, requestForFavoriteDrinks()).run {
+    fun requestForFavoriteDrinks() = launch {
+        selectAllFavoritesUseCase.buildExecutable(null).onStart {
+            _favoriteDrinks.value = ViewStateWrapper.Loading(0)
+        }.map {
             assignCollectionType(
-                transformCollectionIntoPresentationObject(this),
-                drinkCollectionTypeValue
+                drinkModelMapper.transform(it),
+                DrinkCollectionType.FAVORITE
             )
-        }
+        }.catch { throwable ->
+            _favoriteDrinks.value = ViewStateWrapper.Error(throwable)
+        }.collect { data -> _favoriteDrinks.value = ViewStateWrapper.Success(data) }
     }
 
-    /**
-     * Will request for the list of favorites from local source, and will also update [_favoriteDrinks].
-     * So every time this is called, [_favoriteDrinks] is updated.
-     * */
-    fun requestForFavoriteDrinks(): List<com.mhelrigo.cocktailmanual.ui.model.Drink> {
-        _favoriteDrinks.postValue(ResultWrapper.buildLoading())
-
-        var result: ResultWrapper<Exception, List<Drink>>?
-        val deferredResult = async {
-            selectAllFavoritesUseCase.buildExecutable()
-        }
-
-        runBlocking {
-            result = deferredResult.await()
-        }
-
-        return when (result) {
-            is ResultWrapper.Success -> {
-                return (result as ResultWrapper.Success<List<Drink>>).value.run {
-                    assignCollectionType(
-                        transformCollectionIntoPresentationObject(this),
-                        DrinkCollectionType.FAVORITE
-                    )
-                }.also {
-                    _favoriteDrinks.postValue(ResultWrapper.build {
-                        it
-                    })
-                }
-            }
-
-            is ResultWrapper.Error -> {
-                emptyList()
-            }
-            else -> {
-                emptyList()
-            }
-        }
-    }
-
-    /**
-     * Removes or Adds a Drink from Favorites
-     * 1. [deferredResult] it runs asyncly to wait for the operation's result so it can be processed by the View
-     * 2. although inside of [runBlocking] the actual operations runs in Dispatchers.IO see @[DrinkRepositoryImpl]
-     * 3. If operation a success, it assign [isFavourite] a negated value of itself
-     * 4. then results are returned to be processed by the view
-     *
-     * @param [drink] The Drink to be processed
-     * @return [ResultWrapper<Exception, Drink>?] View will handle operation's result
-     * */
-    fun toggleFavoriteOfADrink(drink: com.mhelrigo.cocktailmanual.ui.model.Drink): ResultWrapper<Exception, com.mhelrigo.cocktailmanual.ui.model.Drink>? {
-        var result: ResultWrapper<Exception, Unit>?
-
-        val deferredResult = async {
+    fun toggleFavoriteOfADrink(drink: DrinkModel): Flow<DrinkModel> =
+        flow {
             if (drink.isFavourite) {
                 drink.apply {
                     markFavorite(false)
                 }
 
-                removeFavoriteUseCase.buildExecutable(listOf(drink.toDrinkDomainModel()))
+                removeFavoriteUseCase.buildExecutable(listOf(drinkModelMapper.transform(drink)))
             } else {
                 drink.apply {
                     markFavorite(true)
                 }
 
-                addFavoriteUseCase.buildExecutable(listOf(drink.toDrinkDomainModel()))
+                addFavoriteUseCase.buildExecutable(listOf(drinkModelMapper.transform(drink)))
             }
-        }
 
-        runBlocking {
-            result = deferredResult.await()
+            emit(drink)
         }
-
-        return when (result) {
-            is ResultWrapper.Success -> ResultWrapper.build {
-                drink
-            }
-            is ResultWrapper.Error -> {
-                ResultWrapper.build { throw Exception((result as ResultWrapper.Error<Exception>).error) }
-            }
-            else -> {
-                ResultWrapper.build {
-                    drink
-                }
-            }
-        }
-    }
 
     fun requestForDrinkDetailsByName(p0: String?) = launch {
-        _drinkDetails.postValue(ResultWrapper.buildLoading())
-
         p0?.let { id ->
-            when (val result = getDrinkDetailsUseCase.buildExecutable(
-                listOf(id)
-            )) {
-                is ResultWrapper.Success -> {
-                    _drinkDetails.postValue(ResultWrapper.build {
-                        handleResult(result.value, DrinkCollectionType.NONE)
-                    })
+            getDrinkDetailsUseCase.buildExecutable(listOf(id))
+                .onStart { _drinkDetails.value = ViewStateWrapper.Loading(0) }
+                .map { drink ->
+                    assignCollectionType(
+                        drinkModelMapper.transform(drink),
+                        DrinkCollectionType.NONE
+                    )
                 }
-                is ResultWrapper.Error -> {
-                    _drinkDetails.postValue(ResultWrapper.build { throw Exception(result.error) })
+                .catch { throwable -> _drinkDetails.value = ViewStateWrapper.Error(throwable) }
+                .collect { data ->
+                    _drinkDetails.value =
+                        ViewStateWrapper.Success(data)
                 }
-            }
         }
     }
 
@@ -286,34 +213,28 @@ class DrinksViewModel @Inject constructor(
         searchDrinkJob = launch(mainCoroutineContext) {
             delay(SEARCH_DELAY_IN_MILLIS)
 
-            _drinkSearchedByName.postValue(ResultWrapper.buildLoading())
-
-            when (val result = searchDrinkByNameUseCase.buildExecutable(listOf(p0.toString()))) {
-                is ResultWrapper.Success -> {
-                    _drinkSearchedByName.postValue(ResultWrapper.build {
-                        handleResult(
-                            result.value,
-                            DrinkCollectionType.SEARCH_BY_NAME
-                        )
-                    })
+            searchDrinkByNameUseCase.buildExecutable(listOf(p0.toString()))
+                .onStart { _drinkSearchedByName.value = ViewStateWrapper.Loading(0) }
+                .map { drink ->
+                    assignCollectionType(
+                        drinkModelMapper.transform(drink),
+                        DrinkCollectionType.SEARCH_BY_NAME
+                    )
                 }
-                is ResultWrapper.Error -> {
-                    FirebaseCrashlytics.getInstance().recordException(result.error)
-                    _drinkSearchedByName.postValue(ResultWrapper.build { throw Exception(result.error) })
+                .catch { throwable ->
+                    _drinkSearchedByName.value = ViewStateWrapper.Error(throwable)
                 }
-            }
+                .collect { data ->
+                    _drinkSearchedByName.value = ViewStateWrapper.Success(data)
+                }
         }
     }
 
-    fun handleInternetConnectionChanges(p0: Boolean) {
-        _isConnectedToInternet.postValue(p0)
+    fun setDrinkToBeSearched(p0: String) = launch {
+        _drinkToBeSearched.value = p0
     }
 
-    fun setMealToBeSearched(p0: String) {
-        _drinkToBeSearched.postValue(p0)
-    }
-
-    fun setToggledDrink(p0: com.mhelrigo.cocktailmanual.ui.model.Drink) = launch {
+    fun setToggledDrink(p0: DrinkModel) = launch {
         _toggledDrink.emit(p0)
     }
 

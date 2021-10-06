@@ -1,19 +1,19 @@
 package mhelrigo.cocktailmanual.data.repository.drink.local
 
 import androidx.room.*
-import mhelrigo.cocktailmanual.data.model.Drink
+import mhelrigo.cocktailmanual.data.model.DrinkEntity
 
 @Dao
 interface DrinkDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(drink: Drink)
+    suspend fun insert(drinkEntity: DrinkEntity)
 
     @Delete
-    fun delete(drink: Drink)
+    suspend fun delete(drinkEntity: DrinkEntity)
 
-    @Query("SELECT * FROM Drink WHERE idDrink = :idDrink")
-    fun selectById(idDrink: String): Drink
+    @Query("SELECT * FROM DrinkEntity WHERE idDrink = :idDrink")
+    fun selectById(idDrink: String): DrinkEntity
 
-    @Query("SELECT * FROM Drink")
-    fun selectAllFavorites(): List<Drink>
+    @Query("SELECT * FROM DrinkEntity")
+    fun selectAllFavorites(): List<DrinkEntity>
 }

@@ -1,5 +1,6 @@
 package mhelrigo.cocktailmanual.data.repository.drinktype
 
+import com.mhelrigo.commons.DISPATCHERS_IO
 import kotlinx.coroutines.withContext
 import mhelrigo.cocktailmanual.data.repository.drinktype.remote.DrinkTypeApi
 import mhelrigo.cocktailmanual.domain.model.DrinkTypes
@@ -12,7 +13,7 @@ import kotlin.coroutines.CoroutineContext
 @Singleton
 class DrinkTypeRepositoryImpl constructor(
     var drinkTypeApi: DrinkTypeApi,
-    @Named("Dispatchers.IO") var ioCoroutineContext: CoroutineContext
+    @Named(DISPATCHERS_IO) var ioCoroutineContext: CoroutineContext
 ) :
     DrinkTypeRepository {
     override suspend fun getAll(): ResultWrapper<Exception, DrinkTypes> =
