@@ -82,7 +82,7 @@ class IngredientListFragment : BaseFragment<FragmentIngredientListBinding>() {
                         binding.recyclerViewIngredients.visibility = View.VISIBLE
                         binding.textViewError.visibility = View.GONE
                         binding.imageViewIngredientsLoading.visibility = View.GONE
-                        ingredientRecyclerViewAdapter.differ.submitList(state.data.drinks)
+                        ingredientRecyclerViewAdapter.differ.submitList(state.data.ingredients)
                     }
                 }
             }

@@ -1,73 +1,19 @@
 package mhelrigo.cocktailmanual.data.mapper
 
-import mhelrigo.cocktailmanual.data.model.DrinkEntity
+import mhelrigo.cocktailmanual.data.entity.drink.DrinkDatabaseEntity
+import mhelrigo.cocktailmanual.data.entity.drink.DrinksApiEntity
+import mhelrigo.cocktailmanual.domain.entity.DrinksEntity
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DrinkEntityMapper @Inject constructor() {
-    fun transform(drink: mhelrigo.cocktailmanual.domain.model.Drink): DrinkEntity {
-        return DrinkEntity(
-            dateModified = drink.dateModified,
-            idDrink = drink.idDrink?.toInt()!!,
-            uid = drink.idDrink?.toInt()!!,
-            strAlcoholic = drink.strAlcoholic,
-            strCategory = drink.strCategory,
-            strCreativeCommonsConfirmed = drink.strCreativeCommonsConfirmed,
-            strDrink = drink.strDrink,
-            strDrinkAlternate = drink.strDrinkAlternate,
-            strDrinkThumb = drink.strDrinkThumb,
-            strGlass = drink.strGlass,
-            strIBA = drink.strIBA,
-            strImageAttribution = drink.strImageAttribution,
-            strImageSource = drink.strImageSource,
-            strIngredient1 = drink.strIngredient1,
-            strIngredient10 = drink.strIngredient10,
-            strIngredient11 = drink.strIngredient11,
-            strIngredient12 = drink.strIngredient12,
-            strIngredient13 = drink.strIngredient13,
-            strIngredient14 = drink.strIngredient14,
-            strIngredient15 = drink.strIngredient15,
-            strIngredient2 = drink.strIngredient2,
-            strIngredient3 = drink.strIngredient3,
-            strIngredient4 = drink.strIngredient4,
-            strIngredient5 = drink.strIngredient5,
-            strIngredient6 = drink.strIngredient6,
-            strIngredient7 = drink.strIngredient7,
-            strIngredient8 = drink.strIngredient8,
-            strIngredient9 = drink.strIngredient9,
-            strInstructions = drink.strInstructions,
-            strInstructionsDE = drink.strInstructionsDE,
-            strInstructionsES = drink.strInstructionsES,
-            strInstructionsFR = drink.strInstructionsFR,
-            strInstructionsIT = drink.strInstructionsIT,
-            strInstructionsZH_HANS = drink.strInstructionsZH_HANS,
-            strInstructionsZH_HANT = drink.strInstructionsZH_HANT,
-            strMeasure1 = drink.strMeasure1,
-            strMeasure10 = drink.strMeasure10,
-            strMeasure11 = drink.strMeasure11,
-            strMeasure12 = drink.strMeasure12,
-            strMeasure13 = drink.strMeasure13,
-            strMeasure14 = drink.strMeasure14,
-            strMeasure15 = drink.strMeasure15,
-            strMeasure2 = drink.strMeasure2,
-            strMeasure3 = drink.strMeasure3,
-            strMeasure4 = drink.strMeasure4,
-            strMeasure5 = drink.strMeasure5,
-            strMeasure6 = drink.strMeasure6,
-            strMeasure7 = drink.strMeasure7,
-            strMeasure8 = drink.strMeasure8,
-            strMeasure9 = drink.strMeasure9,
-            strTags = drink.strTags,
-            strVideo = drink.strVideo,
-            isFavourite = drink.isFavourite
-        )
-    }
+public class DrinkEntityMapper @Inject constructor() {
 
-    fun transform(drinkEntity: DrinkEntity): mhelrigo.cocktailmanual.domain.model.Drink {
-        return mhelrigo.cocktailmanual.domain.model.Drink(
+    fun transform(drinkEntity: mhelrigo.cocktailmanual.domain.entity.DrinkEntity): DrinkDatabaseEntity {
+        return DrinkDatabaseEntity(
             dateModified = drinkEntity.dateModified,
-            idDrink = drinkEntity.idDrink.toString(),
+            idDrink = drinkEntity.idDrink?.toInt()!!,
+            uid = drinkEntity.idDrink?.toInt()!!,
             strAlcoholic = drinkEntity.strAlcoholic,
             strCategory = drinkEntity.strCategory,
             strCreativeCommonsConfirmed = drinkEntity.strCreativeCommonsConfirmed,
@@ -119,5 +65,66 @@ class DrinkEntityMapper @Inject constructor() {
             strVideo = drinkEntity.strVideo,
             isFavourite = drinkEntity.isFavourite
         )
+    }
+
+    fun transform(drinkDatabaseEntity: DrinkDatabaseEntity): mhelrigo.cocktailmanual.domain.entity.DrinkEntity {
+        return mhelrigo.cocktailmanual.domain.entity.DrinkEntity(
+            dateModified = drinkDatabaseEntity.dateModified,
+            idDrink = drinkDatabaseEntity.idDrink.toString(),
+            strAlcoholic = drinkDatabaseEntity.strAlcoholic,
+            strCategory = drinkDatabaseEntity.strCategory,
+            strCreativeCommonsConfirmed = drinkDatabaseEntity.strCreativeCommonsConfirmed,
+            strDrink = drinkDatabaseEntity.strDrink,
+            strDrinkAlternate = drinkDatabaseEntity.strDrinkAlternate,
+            strDrinkThumb = drinkDatabaseEntity.strDrinkThumb,
+            strGlass = drinkDatabaseEntity.strGlass,
+            strIBA = drinkDatabaseEntity.strIBA,
+            strImageAttribution = drinkDatabaseEntity.strImageAttribution,
+            strImageSource = drinkDatabaseEntity.strImageSource,
+            strIngredient1 = drinkDatabaseEntity.strIngredient1,
+            strIngredient10 = drinkDatabaseEntity.strIngredient10,
+            strIngredient11 = drinkDatabaseEntity.strIngredient11,
+            strIngredient12 = drinkDatabaseEntity.strIngredient12,
+            strIngredient13 = drinkDatabaseEntity.strIngredient13,
+            strIngredient14 = drinkDatabaseEntity.strIngredient14,
+            strIngredient15 = drinkDatabaseEntity.strIngredient15,
+            strIngredient2 = drinkDatabaseEntity.strIngredient2,
+            strIngredient3 = drinkDatabaseEntity.strIngredient3,
+            strIngredient4 = drinkDatabaseEntity.strIngredient4,
+            strIngredient5 = drinkDatabaseEntity.strIngredient5,
+            strIngredient6 = drinkDatabaseEntity.strIngredient6,
+            strIngredient7 = drinkDatabaseEntity.strIngredient7,
+            strIngredient8 = drinkDatabaseEntity.strIngredient8,
+            strIngredient9 = drinkDatabaseEntity.strIngredient9,
+            strInstructions = drinkDatabaseEntity.strInstructions,
+            strInstructionsDE = drinkDatabaseEntity.strInstructionsDE,
+            strInstructionsES = drinkDatabaseEntity.strInstructionsES,
+            strInstructionsFR = drinkDatabaseEntity.strInstructionsFR,
+            strInstructionsIT = drinkDatabaseEntity.strInstructionsIT,
+            strInstructionsZH_HANS = drinkDatabaseEntity.strInstructionsZH_HANS,
+            strInstructionsZH_HANT = drinkDatabaseEntity.strInstructionsZH_HANT,
+            strMeasure1 = drinkDatabaseEntity.strMeasure1,
+            strMeasure10 = drinkDatabaseEntity.strMeasure10,
+            strMeasure11 = drinkDatabaseEntity.strMeasure11,
+            strMeasure12 = drinkDatabaseEntity.strMeasure12,
+            strMeasure13 = drinkDatabaseEntity.strMeasure13,
+            strMeasure14 = drinkDatabaseEntity.strMeasure14,
+            strMeasure15 = drinkDatabaseEntity.strMeasure15,
+            strMeasure2 = drinkDatabaseEntity.strMeasure2,
+            strMeasure3 = drinkDatabaseEntity.strMeasure3,
+            strMeasure4 = drinkDatabaseEntity.strMeasure4,
+            strMeasure5 = drinkDatabaseEntity.strMeasure5,
+            strMeasure6 = drinkDatabaseEntity.strMeasure6,
+            strMeasure7 = drinkDatabaseEntity.strMeasure7,
+            strMeasure8 = drinkDatabaseEntity.strMeasure8,
+            strMeasure9 = drinkDatabaseEntity.strMeasure9,
+            strTags = drinkDatabaseEntity.strTags,
+            strVideo = drinkDatabaseEntity.strVideo,
+            isFavourite = drinkDatabaseEntity.isFavourite
+        )
+    }
+
+    fun transform(drinksApiEntity: DrinksApiEntity): DrinksEntity {
+        return DrinksEntity(drinksApiEntity.drinkEntities)
     }
 }

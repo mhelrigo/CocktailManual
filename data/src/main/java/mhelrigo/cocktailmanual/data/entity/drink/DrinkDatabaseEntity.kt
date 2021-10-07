@@ -1,10 +1,10 @@
-package mhelrigo.cocktailmanual.data.model
+package mhelrigo.cocktailmanual.data.entity.drink
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class DrinkEntity(
+data class DrinkDatabaseEntity(
     @PrimaryKey val uid: Int, val idDrink: Int, val dateModified: String? = "",
     val strAlcoholic: String? = "",
     val strCategory: String? = "",

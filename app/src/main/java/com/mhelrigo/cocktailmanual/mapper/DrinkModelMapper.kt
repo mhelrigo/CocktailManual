@@ -2,7 +2,6 @@ package com.mhelrigo.cocktailmanual.mapper
 
 import com.mhelrigo.cocktailmanual.model.DrinkCollectionType
 import com.mhelrigo.cocktailmanual.model.DrinkModel
-import mhelrigo.cocktailmanual.domain.model.Drink
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,68 +12,68 @@ class DrinkModelMapper @Inject constructor() {
      *
      * @param [toBeConverted] the list to be processed
      * */
-    private fun transform(drink: mhelrigo.cocktailmanual.domain.model.Drink): DrinkModel {
+    private fun transform(drinkEntity: mhelrigo.cocktailmanual.domain.entity.DrinkEntity): DrinkModel {
         return DrinkModel(
-            dateModified = drink.dateModified,
-            idDrink = drink.idDrink,
-            strAlcoholic = drink.strAlcoholic,
-            strCategory = drink.strCategory,
-            strCreativeCommonsConfirmed = drink.strCreativeCommonsConfirmed,
-            strDrink = drink.strDrink,
-            strDrinkAlternate = drink.strDrinkAlternate,
-            strDrinkThumb = drink.strDrinkThumb,
-            strGlass = drink.strGlass,
-            strIBA = drink.strIBA,
-            strImageAttribution = drink.strImageAttribution,
-            strImageSource = drink.strImageSource,
-            strIngredient1 = drink.strIngredient1,
-            strIngredient10 = drink.strIngredient10,
-            strIngredient11 = drink.strIngredient11,
-            strIngredient12 = drink.strIngredient12,
-            strIngredient13 = drink.strIngredient13,
-            strIngredient14 = drink.strIngredient14,
-            strIngredient15 = drink.strIngredient15,
-            strIngredient2 = drink.strIngredient2,
-            strIngredient3 = drink.strIngredient3,
-            strIngredient4 = drink.strIngredient4,
-            strIngredient5 = drink.strIngredient5,
-            strIngredient6 = drink.strIngredient6,
-            strIngredient7 = drink.strIngredient7,
-            strIngredient8 = drink.strIngredient8,
-            strIngredient9 = drink.strIngredient9,
-            strInstructions = drink.strInstructions,
-            strInstructionsDE = drink.strInstructionsDE,
-            strInstructionsES = drink.strInstructionsES,
-            strInstructionsFR = drink.strInstructionsFR,
-            strInstructionsIT = drink.strInstructionsIT,
-            strInstructionsZH_HANS = drink.strInstructionsZH_HANS,
-            strInstructionsZH_HANT = drink.strInstructionsZH_HANT,
-            strMeasure1 = drink.strMeasure1,
-            strMeasure10 = drink.strMeasure10,
-            strMeasure11 = drink.strMeasure11,
-            strMeasure12 = drink.strMeasure12,
-            strMeasure13 = drink.strMeasure13,
-            strMeasure14 = drink.strMeasure14,
-            strMeasure15 = drink.strMeasure15,
-            strMeasure2 = drink.strMeasure2,
-            strMeasure3 = drink.strMeasure3,
-            strMeasure4 = drink.strMeasure4,
-            strMeasure5 = drink.strMeasure5,
-            strMeasure6 = drink.strMeasure6,
-            strMeasure7 = drink.strMeasure7,
-            strMeasure8 = drink.strMeasure8,
-            strMeasure9 = drink.strMeasure9,
-            strTags = drink.strTags,
-            strVideo = drink.strVideo,
-            isFavourite = drink.isFavourite,
+            dateModified = drinkEntity.dateModified,
+            idDrink = drinkEntity.idDrink,
+            strAlcoholic = drinkEntity.strAlcoholic,
+            strCategory = drinkEntity.strCategory,
+            strCreativeCommonsConfirmed = drinkEntity.strCreativeCommonsConfirmed,
+            strDrink = drinkEntity.strDrink,
+            strDrinkAlternate = drinkEntity.strDrinkAlternate,
+            strDrinkThumb = drinkEntity.strDrinkThumb,
+            strGlass = drinkEntity.strGlass,
+            strIBA = drinkEntity.strIBA,
+            strImageAttribution = drinkEntity.strImageAttribution,
+            strImageSource = drinkEntity.strImageSource,
+            strIngredient1 = drinkEntity.strIngredient1,
+            strIngredient10 = drinkEntity.strIngredient10,
+            strIngredient11 = drinkEntity.strIngredient11,
+            strIngredient12 = drinkEntity.strIngredient12,
+            strIngredient13 = drinkEntity.strIngredient13,
+            strIngredient14 = drinkEntity.strIngredient14,
+            strIngredient15 = drinkEntity.strIngredient15,
+            strIngredient2 = drinkEntity.strIngredient2,
+            strIngredient3 = drinkEntity.strIngredient3,
+            strIngredient4 = drinkEntity.strIngredient4,
+            strIngredient5 = drinkEntity.strIngredient5,
+            strIngredient6 = drinkEntity.strIngredient6,
+            strIngredient7 = drinkEntity.strIngredient7,
+            strIngredient8 = drinkEntity.strIngredient8,
+            strIngredient9 = drinkEntity.strIngredient9,
+            strInstructions = drinkEntity.strInstructions,
+            strInstructionsDE = drinkEntity.strInstructionsDE,
+            strInstructionsES = drinkEntity.strInstructionsES,
+            strInstructionsFR = drinkEntity.strInstructionsFR,
+            strInstructionsIT = drinkEntity.strInstructionsIT,
+            strInstructionsZH_HANS = drinkEntity.strInstructionsZH_HANS,
+            strInstructionsZH_HANT = drinkEntity.strInstructionsZH_HANT,
+            strMeasure1 = drinkEntity.strMeasure1,
+            strMeasure10 = drinkEntity.strMeasure10,
+            strMeasure11 = drinkEntity.strMeasure11,
+            strMeasure12 = drinkEntity.strMeasure12,
+            strMeasure13 = drinkEntity.strMeasure13,
+            strMeasure14 = drinkEntity.strMeasure14,
+            strMeasure15 = drinkEntity.strMeasure15,
+            strMeasure2 = drinkEntity.strMeasure2,
+            strMeasure3 = drinkEntity.strMeasure3,
+            strMeasure4 = drinkEntity.strMeasure4,
+            strMeasure5 = drinkEntity.strMeasure5,
+            strMeasure6 = drinkEntity.strMeasure6,
+            strMeasure7 = drinkEntity.strMeasure7,
+            strMeasure8 = drinkEntity.strMeasure8,
+            strMeasure9 = drinkEntity.strMeasure9,
+            strTags = drinkEntity.strTags,
+            strVideo = drinkEntity.strVideo,
+            isFavourite = drinkEntity.isFavourite,
             bindingAdapterPosition = -1,
             backGroundColorDrawableColor = 0,
             drinkCollectionType = DrinkCollectionType.NONE
         )
     }
 
-    fun transform(drinkModel: DrinkModel): mhelrigo.cocktailmanual.domain.model.Drink =
-        mhelrigo.cocktailmanual.domain.model.Drink(
+    fun transform(drinkModel: DrinkModel): mhelrigo.cocktailmanual.domain.entity.DrinkEntity =
+        mhelrigo.cocktailmanual.domain.entity.DrinkEntity(
             drinkModel.dateModified,
             drinkModel.idDrink,
             drinkModel.strAlcoholic,
@@ -134,7 +133,7 @@ class DrinkModelMapper @Inject constructor() {
      *
      * @param [toBeConverted] the list to be processed
      * */
-    fun transform(toBeConverted: List<mhelrigo.cocktailmanual.domain.model.Drink>): List<DrinkModel> {
+    fun transform(toBeConverted: List<mhelrigo.cocktailmanual.domain.entity.DrinkEntity>): List<DrinkModel> {
         return toBeConverted.run {
             map {
                 transform(it)

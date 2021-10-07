@@ -1,76 +1,59 @@
 package mhelrigo.cocktailmanual.data.repository
 
-import com.google.gson.Gson
-import com.mhelrigo.commons.MockFileReader
-import junit.framework.Assert.assertEquals
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.runBlocking
+import mhelrigo.cocktailmanual.data.entity.ingredient.IngredientsApiEntity
+import mhelrigo.cocktailmanual.data.mapper.IngredientMapper
 import mhelrigo.cocktailmanual.data.repository.ingredient.IngredientRepositoryImpl
 import mhelrigo.cocktailmanual.data.repository.ingredient.remote.IngredientApi
-import mhelrigo.cocktailmanual.data.util.MockRetrofit
-import mhelrigo.cocktailmanual.domain.model.Ingredients
-import mhelrigo.cocktailmanual.domain.usecase.base.ResultWrapper
-import okhttp3.mockwebserver.MockResponse
-import okhttp3.mockwebserver.MockWebServer
-import org.hamcrest.CoreMatchers.isA
-import org.hamcrest.MatcherAssert
 import org.junit.Before
 import org.junit.Test
-import retrofit2.Retrofit
+import org.junit.runner.RunWith
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.verifyNoMoreInteractions
+import org.mockito.Mock
+import org.mockito.Mockito.verify
+import org.mockito.junit.MockitoJUnitRunner
 
 const val GET_DETAILS_PARAM = "Vodka"
 
+@RunWith(MockitoJUnitRunner::class)
 class IngredientRepositoryTest {
-    private val mockWebServer = MockWebServer()
-    private lateinit var retrofit: Retrofit
     private lateinit var ingredientsRepositoryImpl: IngredientRepositoryImpl
+
+    @Mock
+    private lateinit var ingredientApi: IngredientApi
+
+    @Mock
+    private lateinit var ingredientMapper: IngredientMapper
+
+    @Mock
+    private lateinit var ingredientsApiEntity: IngredientsApiEntity
 
     @Before
     fun init() {
-        mockRetrofit()
+        ingredientMapper = IngredientMapper()
         ingredientsRepositoryImpl = IngredientRepositoryImpl(
-            retrofit.create(IngredientApi::class.java),
-            Dispatchers.Unconfined
+            ingredientApi,
+            ingredientMapper
         )
     }
 
     @Test
     fun getAll_Success() = runBlocking {
-        mockWebServer.enqueue(MockResponse().setBody(Gson().toJson(MockFileReader("GetAllIngredientMockResult.json"))))
-
-        when (val result: ResultWrapper<Exception, Ingredients> =
-            ingredientsRepositoryImpl.getAll()) {
-            is ResultWrapper.Success -> {
-                assertEquals(result.value.drinks.isNotEmpty(), true)
-            }
-            is ResultWrapper.Error -> {
-                MatcherAssert.assertThat(result.error, `isA`(Exception::class.java))
-            }
+        given(ingredientApi.getAll()).willReturn(ingredientsApiEntity)
+        ingredientsRepositoryImpl.getAll().collect {
+            verify(ingredientApi).getAll()
+            verifyNoMoreInteractions(ingredientApi)
         }
     }
 
     @Test
     fun getDetails_Success() = runBlocking {
-        mockWebServer.enqueue(MockResponse().setBody(Gson().toJson(MockFileReader("GetDetailsIngredientMockResult.json").content)))
-        
-        when (val result: ResultWrapper<Exception, Ingredients> =
-            ingredientsRepositoryImpl.getDetails(GET_DETAILS_PARAM)) {
-            is ResultWrapper.Success -> {
-                assertEquals(
-                    result.value.ingredients[0].strIngredient,
-                    GET_DETAILS_PARAM
-                )
-            }
-            is ResultWrapper.Error -> {
-                MatcherAssert.assertThat(result.error, `isA`(Exception::class.java))
-            }
-        }
-    }
-
-    private fun mockRetrofit() {
-        retrofit = MockRetrofit.let {
-            it.mockWebServer = mockWebServer
-            it.mockRetrofit()
+        given(ingredientApi.getDetails(GET_DETAILS_PARAM)).willReturn(ingredientsApiEntity)
+        ingredientsRepositoryImpl.getDetails(GET_DETAILS_PARAM).collect {
+            verify(ingredientApi).getDetails(GET_DETAILS_PARAM)
+            verifyNoMoreInteractions(ingredientApi)
         }
     }
 }

@@ -55,8 +55,9 @@ dependencies {
     testImplementation dep.test.jUnit
     androidTestImplementation dep.test.extJunit
     androidTestImplementation dep.test.espressoCore
-    testImplementation dep.test.mockitoCore
+    implementation dep.test.mockitoCore
     testImplementation dep.test.mockWebServer
+    testImplementation dep.test.mockitoInline
 
     // Retrofit
     implementation dep.android.retrofit

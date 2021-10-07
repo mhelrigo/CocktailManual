@@ -1,6 +1,6 @@
-package mhelrigo.cocktailmanual.domain.model
+package mhelrigo.cocktailmanual.domain.entity
 
-data class Ingredient(
+data class IngredientEntity(
     val idIngredient: String,
     val strABV: String,
     val strAlcohol: String,

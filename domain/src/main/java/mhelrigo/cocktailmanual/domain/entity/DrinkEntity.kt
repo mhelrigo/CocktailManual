@@ -1,6 +1,6 @@
-package mhelrigo.cocktailmanual.domain.model
+package mhelrigo.cocktailmanual.domain.entity
 
-data class Drink(
+data class DrinkEntity(
     val dateModified: String?,
     val idDrink: String?,
     val strAlcoholic: String?,

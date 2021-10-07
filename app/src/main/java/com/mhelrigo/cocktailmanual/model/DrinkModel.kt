@@ -3,7 +3,7 @@ package com.mhelrigo.cocktailmanual.model
 import com.mhelrigo.cocktailmanual.R
 
 /**
- * Presentation version of [mhelrigo.cocktailmanual.domain.model.Drink]
+ * Presentation version of [mhelrigo.cocktailmanual.domain.entity.DrinkEntity]
  * */
 data class DrinkModel(
     val dateModified: String?,

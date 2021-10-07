@@ -1,37 +1,26 @@
 package mhelrigo.cocktailmanual.data.repository.drink.remote
 
-import mhelrigo.cocktailmanual.domain.model.Drinks
+import mhelrigo.cocktailmanual.data.entity.drink.DrinksApiEntity
+import mhelrigo.cocktailmanual.domain.entity.DrinksEntity
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface DrinkApi {
     @GET("randomselection.php")
-    suspend fun getRandomly(): Drinks
+    suspend fun getRandomly(): DrinksApiEntity
 
     @GET("popular.php")
-    suspend fun getByPopularity(): Drinks
+    suspend fun getByPopularity(): DrinksApiEntity
 
     @GET("latest.php")
-    suspend fun getLatest(): Drinks
+    suspend fun getLatest(): DrinksApiEntity
 
     @GET("search.php")
-    suspend fun searchByFirstLetter(@Query("f") s: String): Drinks
-
-    @GET("search.php")
-    suspend fun searchByName(@Query("s") s: String): Drinks
+    suspend fun searchByName(@Query("s") s: String): DrinksApiEntity
 
     @GET("filter.php")
-    suspend fun searchByIngredient(@Query("i") s: String): Drinks
-
-    @GET("filter.php")
-    suspend fun searchByDrinkType(@Query("a") s: String): Drinks
-
-    @GET("filter.php")
-    suspend fun searchByCategory(@Query("c") s: String): Drinks
-
-    @GET("filter.php")
-    suspend fun searchByGlass(@Query("g") s: String): Drinks
+    suspend fun searchByIngredient(@Query("i") s: String): DrinksApiEntity
 
     @GET("lookup.php")
-    suspend fun getDetails(@Query("i") s: String): Drinks
+    suspend fun getDetails(@Query("i") s: String): DrinksApiEntity
 }

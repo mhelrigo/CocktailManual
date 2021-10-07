@@ -8,8 +8,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import mhelrigo.cocktailmanual.domain.model.Ingredient
-import mhelrigo.cocktailmanual.domain.model.Ingredients
+import mhelrigo.cocktailmanual.domain.entity.IngredientEntity
+import mhelrigo.cocktailmanual.domain.entity.IngredientsEntity
 import mhelrigo.cocktailmanual.domain.usecase.ingredients.GetAllIngredientUseCase
 import mhelrigo.cocktailmanual.domain.usecase.ingredients.GetIngredientDetailUseCase
 import javax.inject.Inject
@@ -25,16 +25,16 @@ class IngredientsViewModel @Inject constructor(
     private val job = Job()
 
     private val _ingredients =
-        MutableStateFlow<ViewStateWrapper<Ingredients>>(ViewStateWrapper.Loading(0))
-    val ingredients: StateFlow<ViewStateWrapper<Ingredients>> get() = _ingredients
+        MutableStateFlow<ViewStateWrapper<IngredientsEntity>>(ViewStateWrapper.Loading(0))
+    val ingredients: StateFlow<ViewStateWrapper<IngredientsEntity>> get() = _ingredients
 
     private val _ingredient =
-        MutableStateFlow<ViewStateWrapper<Ingredient>>(ViewStateWrapper.Loading(0))
-    val ingredient: StateFlow<ViewStateWrapper<Ingredient>> get() = _ingredient
+        MutableStateFlow<ViewStateWrapper<IngredientEntity>>(ViewStateWrapper.Loading(0))
+    val ingredient: StateFlow<ViewStateWrapper<IngredientEntity>> get() = _ingredient
 
 
     fun requestForIngredients() = launch {
-        getAllIngredientUseCase.buildExecutable(listOf())
+        getAllIngredientUseCase.buildExecutable(GetAllIngredientUseCase.Params())
             .onStart {
                 _ingredients.value = ViewStateWrapper.Loading(0)
             }.catch { throwable ->
@@ -45,13 +45,13 @@ class IngredientsViewModel @Inject constructor(
     }
 
     fun requestForIngredient(p0: String) = launch {
-        getIngredientDetailUseCase.buildExecutable(listOf(p0))
+        getIngredientDetailUseCase.buildExecutable(GetIngredientDetailUseCase.Params(p0))
             .onStart {
                 _ingredient.value = ViewStateWrapper.Loading(0)
             }.catch { throwable ->
                 _ingredient.value = ViewStateWrapper.Error(throwable)
             }.collect { data ->
-                _ingredient.value = ViewStateWrapper.Success(data.ingredients[0])
+                _ingredient.value = ViewStateWrapper.Success(data.ingredient[0])
             }
     }
 

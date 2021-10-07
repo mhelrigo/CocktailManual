@@ -87,7 +87,7 @@ class DrinksViewModel @Inject constructor(
     val toggledDrink: SharedFlow<DrinkModel> get() = _toggledDrink
 
     fun requestForLatestDrinks() = launch {
-        latestDrinksUseCase.buildExecutable(null)
+        latestDrinksUseCase.buildExecutable(GetLatestDrinksUseCase.Params())
             .onStart { _latestDrinks.value = ViewStateWrapper.Loading(0) }
             .map { drink ->
                 assignCollectionType(
@@ -103,7 +103,7 @@ class DrinksViewModel @Inject constructor(
     }
 
     fun requestForPopularDrinks() = launch {
-        popularDrinksUseCase.buildExecutable(null)
+        popularDrinksUseCase.buildExecutable(GetPopularDrinksUseCase.Params())
             .onStart { _popularDrinks.value = ViewStateWrapper.Loading(0) }
             .map { drink ->
                 assignCollectionType(
@@ -122,7 +122,7 @@ class DrinksViewModel @Inject constructor(
     }
 
     fun requestForRandomDrinks() = launch {
-        randomDrinksUseCase.buildExecutable(null)
+        randomDrinksUseCase.buildExecutable(GetRandomDrinksUseCase.Params())
             .onStart { _randomDrinks.value = ViewStateWrapper.Loading(0) }
             .map { drink ->
                 assignCollectionType(
@@ -137,7 +137,7 @@ class DrinksViewModel @Inject constructor(
     }
 
     fun filterDrinksByIngredient(p0: String) = launch {
-        searchDrinkByIngredientsUseCase.buildExecutable(listOf(p0))
+        searchDrinkByIngredientsUseCase.buildExecutable(SearchDrinkByIngredientsUseCase.Params(p0))
             .onStart { _drinksFilteredByIngredient.value = ViewStateWrapper.Loading(0) }
             .map { drink ->
                 assignCollectionType(
@@ -156,7 +156,7 @@ class DrinksViewModel @Inject constructor(
     }
 
     fun requestForFavoriteDrinks() = launch {
-        selectAllFavoritesUseCase.buildExecutable(null).onStart {
+        selectAllFavoritesUseCase.buildExecutable(SelectAllFavoritesUseCase.Params()).onStart {
             _favoriteDrinks.value = ViewStateWrapper.Loading(0)
         }.map {
             assignCollectionType(
@@ -175,13 +175,13 @@ class DrinksViewModel @Inject constructor(
                     markFavorite(false)
                 }
 
-                removeFavoriteUseCase.buildExecutable(listOf(drinkModelMapper.transform(drink)))
+                removeFavoriteUseCase.buildExecutable(RemoveFavoriteUseCase.Params(drinkModelMapper.transform(drink)))
             } else {
                 drink.apply {
                     markFavorite(true)
                 }
 
-                addFavoriteUseCase.buildExecutable(listOf(drinkModelMapper.transform(drink)))
+                addFavoriteUseCase.buildExecutable(AddFavoriteUseCase.Params(drinkModelMapper.transform(drink)))
             }
 
             emit(drink)
@@ -189,7 +189,7 @@ class DrinksViewModel @Inject constructor(
 
     fun requestForDrinkDetailsByName(p0: String?) = launch {
         p0?.let { id ->
-            getDrinkDetailsUseCase.buildExecutable(listOf(id))
+            getDrinkDetailsUseCase.buildExecutable(GetDrinkDetailsUseCase.Params(id))
                 .onStart { _drinkDetails.value = ViewStateWrapper.Loading(0) }
                 .map { drink ->
                     assignCollectionType(
@@ -213,7 +213,7 @@ class DrinksViewModel @Inject constructor(
         searchDrinkJob = launch(mainCoroutineContext) {
             delay(SEARCH_DELAY_IN_MILLIS)
 
-            searchDrinkByNameUseCase.buildExecutable(listOf(p0.toString()))
+            searchDrinkByNameUseCase.buildExecutable(SearchDrinkByNameUseCase.Params(p0.toString()))
                 .onStart { _drinkSearchedByName.value = ViewStateWrapper.Loading(0) }
                 .map { drink ->
                     assignCollectionType(

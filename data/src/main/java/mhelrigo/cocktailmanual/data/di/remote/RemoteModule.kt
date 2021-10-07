@@ -5,10 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import mhelrigo.cocktailmanual.data.BuildConfig
-import mhelrigo.cocktailmanual.data.repository.category.remote.CategoryApi
 import mhelrigo.cocktailmanual.data.repository.drink.remote.DrinkApi
-import mhelrigo.cocktailmanual.data.repository.drinktype.remote.DrinkTypeApi
-import mhelrigo.cocktailmanual.data.repository.glass.remote.GlassApi
 import mhelrigo.cocktailmanual.data.repository.ingredient.remote.IngredientApi
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -26,19 +23,6 @@ object RemoteModule {
     @Singleton
     @Provides
     fun provideDrinkApi(retrofit: Retrofit): DrinkApi = retrofit.create(DrinkApi::class.java)
-
-    @Singleton
-    @Provides
-    fun provideCategoryApi(retrofit: Retrofit): CategoryApi =
-        retrofit.create(CategoryApi::class.java)
-
-    @Singleton
-    @Provides
-    fun provideDrinkTypeApi(retrofit: Retrofit) : DrinkTypeApi = retrofit.create(DrinkTypeApi::class.java)
-
-    @Singleton
-    @Provides
-    fun provideGlassApi(retrofit: Retrofit) : GlassApi = retrofit.create(GlassApi::class.java)
 
     @Singleton
     @Provides

@@ -13,25 +13,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import mhelrigo.cocktailmanual.domain.model.Ingredient
+import mhelrigo.cocktailmanual.domain.entity.IngredientEntity
 
 class IngredientsRecyclerViewAdapter() :
     RecyclerView.Adapter<IngredientsRecyclerViewAdapter.ViewHolder>() {
 
-    private val differCallback = object : DiffUtil.ItemCallback<Ingredient>() {
-        override fun areItemsTheSame(oldItem: Ingredient, newItem: Ingredient): Boolean {
+    private val differCallback = object : DiffUtil.ItemCallback<IngredientEntity>() {
+        override fun areItemsTheSame(oldItem: IngredientEntity, newItem: IngredientEntity): Boolean {
             return oldItem.strIngredient1 == newItem.strIngredient1
         }
 
-        override fun areContentsTheSame(oldItem: Ingredient, newItem: Ingredient): Boolean {
+        override fun areContentsTheSame(oldItem: IngredientEntity, newItem: IngredientEntity): Boolean {
             return oldItem.strIngredient1 == newItem.strIngredient1
         }
     }
 
     val differ = AsyncListDiffer(this, differCallback)
 
-    private val _expandItem = MutableSharedFlow<Ingredient>()
-    val expandItem : SharedFlow<Ingredient> get() = _expandItem
+    private val _expandItem = MutableSharedFlow<IngredientEntity>()
+    val expandItem : SharedFlow<IngredientEntity> get() = _expandItem
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -51,7 +51,7 @@ class IngredientsRecyclerViewAdapter() :
 
     inner class ViewHolder(var itemIngredientBinding: ItemIngredientBinding) :
         RecyclerView.ViewHolder(itemIngredientBinding.root) {
-        fun bind(ingredient: Ingredient) {
+        fun bind(ingredient: IngredientEntity) {
             itemIngredientBinding.textViewName.text = ingredient.strIngredient1
             Glide.with(itemIngredientBinding.root.context)
                 .load(ingredient.thumbNail())
