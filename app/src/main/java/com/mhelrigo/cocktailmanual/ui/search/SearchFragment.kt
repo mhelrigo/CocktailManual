@@ -45,6 +45,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
         setUpRecyclerView()
         handleDrinks()
 
+        requestData()
+
         if (isTablet!!) {
             refreshDrinksWhenItemToggled()
         }
@@ -161,6 +163,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
 
     override fun requestData() {
         super.requestData()
-        searchForDrinkByName(searchedDrinkTemp)
+        if (drinksViewModel.drinkSearchedByName.value.noResultYet()) {
+            searchForDrinkByName(searchedDrinkTemp)
+        }
     }
 }

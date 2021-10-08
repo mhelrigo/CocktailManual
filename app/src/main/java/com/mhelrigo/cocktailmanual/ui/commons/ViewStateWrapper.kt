@@ -5,4 +5,8 @@ sealed class ViewStateWrapper<out T> {
     data class Loading<T>(val progress: Long?) : ViewStateWrapper<T>()
     data class Success<T>(var data: T) : ViewStateWrapper<T>()
     data class Error<T>(var throwable: Throwable) : ViewStateWrapper<T>()
+
+    fun noResultYet(): Boolean {
+        return this is Init || this is Loading || this is Error
+    }
 }

@@ -35,6 +35,8 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
 
         handleDrinkDetails()
         requestForDrinkById()
+
+        requestData()
     }
 
     private fun setUpToggleFavoriteButton() {
@@ -133,6 +135,8 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
 
     override fun requestData() {
         super.requestData()
-        drinksViewModel.requestForDrinkDetailsByName(drinksViewModel.drinkToBeSearched.value)
+        if (drinksViewModel.drinkDetails.value.noResultYet()) {
+            drinksViewModel.requestForDrinkDetailsByName(drinksViewModel.drinkToBeSearched.value)
+        }
     }
 }

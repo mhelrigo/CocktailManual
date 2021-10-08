@@ -41,6 +41,8 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
         handlePopularDrinks()
         handleRandomDrinks()
 
+        requestData()
+
         if (isTablet!!) {
             refreshDrinksWhenItemToggled()
         }
@@ -308,8 +310,16 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
 
     override fun requestData() {
         super.requestData()
-        requestForLatestDrinks()
-        requestForPopularDrinks()
-        requestForRandomDrinks()
+        if (drinksViewModel.latestDrinks.value.noResultYet()) {
+            requestForLatestDrinks()
+        }
+
+        if (drinksViewModel.popularDrinks.value.noResultYet()) {
+            requestForPopularDrinks()
+        }
+
+        if (drinksViewModel.randomDrinks.value.noResultYet()) {
+            requestForRandomDrinks()
+        }
     }
 }

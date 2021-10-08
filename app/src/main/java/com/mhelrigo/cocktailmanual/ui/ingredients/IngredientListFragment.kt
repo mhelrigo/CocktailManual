@@ -35,6 +35,8 @@ class IngredientListFragment : BaseFragment<FragmentIngredientListBinding>() {
 
         setUpRecyclerView()
         handleIngredients()
+
+        requestData()
     }
 
     private fun setUpRecyclerView() {
@@ -91,6 +93,8 @@ class IngredientListFragment : BaseFragment<FragmentIngredientListBinding>() {
 
     override fun requestData() {
         super.requestData()
-        requestForIngredients()
+        if (ingredientsViewModel.ingredients.value.noResultYet()) {
+            requestForIngredients()
+        }
     }
 }

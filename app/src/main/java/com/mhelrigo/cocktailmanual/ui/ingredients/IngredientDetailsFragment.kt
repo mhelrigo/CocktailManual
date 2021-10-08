@@ -46,6 +46,8 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
         handleIngredient()
         handleDrinksFilteredByIngredient()
 
+        requestData()
+
         if (isTablet!!) {
             refreshDrinksWhenItemToggled()
         }
@@ -133,7 +135,7 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
                         Glide.with(requireContext()).load(state.data.thumbNail())
                             .into(binding.imageViewThumbnail)
 
-                        drinksViewModel.filterDrinksByIngredient(state.data.strIngredient)
+                        drinksViewModel.filterDrinksByIngredient(arguments?.getString(NAME)!!)
                     }
                 }
             }
