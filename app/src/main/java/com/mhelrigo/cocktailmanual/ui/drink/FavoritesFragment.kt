@@ -78,30 +78,27 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigat
     }
 
     private fun handleFavorites() {
-        drinksViewModel.favoriteDrinks
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state ->
-                when (state) {
-                    is ViewStateWrapper.Loading -> {
-                        binding.recyclerViewFavorites.visibility = View.GONE
+        drinksViewModel.favoriteDrinks.observe(viewLifecycleOwner, { state ->
+            when (state) {
+                is ViewStateWrapper.Loading -> {
+                    binding.recyclerViewFavorites.visibility = View.GONE
+                    binding.textViewFavoritesError.visibility = View.GONE
+                }
+                is ViewStateWrapper.Error -> {
+                    binding.recyclerViewFavorites.visibility = View.GONE
+                    binding.textViewFavoritesError.visibility = View.VISIBLE
+                }
+                is ViewStateWrapper.Success -> {
+                    favoritesAdapter.submitList(state.data)
+                    if (state.data.isNotEmpty()) {
+                        binding.recyclerViewFavorites.visibility = View.VISIBLE
                         binding.textViewFavoritesError.visibility = View.GONE
-                    }
-                    is ViewStateWrapper.Error -> {
-                        binding.recyclerViewFavorites.visibility = View.GONE
-                        binding.textViewFavoritesError.visibility = View.VISIBLE
-                    }
-                    is ViewStateWrapper.Success -> {
-                        favoritesAdapter.differ.submitList(state.data)
-                        if (state.data.isNotEmpty()) {
-                            binding.recyclerViewFavorites.visibility = View.VISIBLE
-                            binding.textViewFavoritesError.visibility = View.GONE
-                        } else {
-                            binding.textViewFavoritesError.visibility =
-                                View.VISIBLE
-                        }
+                    } else {
+                        binding.textViewFavoritesError.visibility =
+                            View.VISIBLE
                     }
                 }
             }
-            .launchIn(lifecycleScope)
+        })
     }
 }

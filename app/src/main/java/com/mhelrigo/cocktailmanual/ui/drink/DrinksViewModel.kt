@@ -1,5 +1,7 @@
 package com.mhelrigo.cocktailmanual.ui.drink
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mhelrigo.cocktailmanual.mapper.DrinkModelMapper
 import com.mhelrigo.cocktailmanual.model.DrinkModel
@@ -37,58 +39,53 @@ class DrinksViewModel @Inject constructor(
     private var searchDrinkJob: Job = Job()
 
     private val _latestDrinks =
-        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
-            ViewStateWrapper.Loading(0)
-        )
-    val latestDrinks: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _latestDrinks
+        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(ViewStateWrapper.Loading(0))
+    val latestDrinks: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _latestDrinks
 
     private val _popularDrinks =
-        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
             ViewStateWrapper.Loading(0)
         )
-    val popularDrinks: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _popularDrinks
+    val popularDrinks: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _popularDrinks
 
     private val _randomDrinks =
-        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
             ViewStateWrapper.Loading(0)
         )
-    val randomDrinks: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _randomDrinks
+    val randomDrinks: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _randomDrinks
 
     private val _favoriteDrinks =
-        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
             ViewStateWrapper.Loading(0)
         )
-    val favoriteDrinks: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _favoriteDrinks
+    val favoriteDrinks: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _favoriteDrinks
 
     private val _drinkDetails =
-        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
             ViewStateWrapper.Init
         )
-    val drinkDetails: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _drinkDetails
+    val drinkDetails: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _drinkDetails
 
     private val _drinksFilteredByIngredient =
-        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
             ViewStateWrapper.Loading(0)
         )
-    val drinksFilteredByIngredient: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _drinksFilteredByIngredient
+    val drinksFilteredByIngredient: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _drinksFilteredByIngredient
 
     private val _drinkSearchedByName =
-        MutableStateFlow<ViewStateWrapper<List<DrinkModel>>>(
+        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
             ViewStateWrapper.Success(listOf())
         )
-    val drinkSearchedByName: StateFlow<ViewStateWrapper<List<DrinkModel>>> get() = _drinkSearchedByName
+    val drinkSearchedByName: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _drinkSearchedByName
 
     private val _drinkToBeSearched =
-        MutableStateFlow<String>("")
-    val drinkToBeSearched: StateFlow<String>
+        MutableLiveData<String>()
+    val drinkToBeSearched: LiveData<String>
         get() = _drinkToBeSearched
-
-    private val _toggledDrink = MutableSharedFlow<DrinkModel>()
-    val toggledDrink: SharedFlow<DrinkModel> get() = _toggledDrink
 
     fun requestForLatestDrinks() = launch {
         latestDrinksUseCase.buildExecutable(GetLatestDrinksUseCase.Params())
-            .onStart { _latestDrinks.value = ViewStateWrapper.Loading(0) }
+            .onStart { _latestDrinks.postValue(ViewStateWrapper.Loading(0)) }
             .map { drink ->
                 assignCollectionType(
                     drinkModelMapper.transform(drink),
@@ -96,15 +93,16 @@ class DrinksViewModel @Inject constructor(
                 )
             }
             .catch { throwable ->
-                _latestDrinks.value = ViewStateWrapper.Error(throwable)
-            }.collect { data ->
-                _latestDrinks.value = ViewStateWrapper.Success(data)
+                _latestDrinks.postValue(ViewStateWrapper.Error(throwable))
+            }
+            .collect { data ->
+                _latestDrinks.postValue(ViewStateWrapper.Success(data))
             }
     }
 
     fun requestForPopularDrinks() = launch {
         popularDrinksUseCase.buildExecutable(GetPopularDrinksUseCase.Params())
-            .onStart { _popularDrinks.value = ViewStateWrapper.Loading(0) }
+            .onStart { _popularDrinks.postValue(ViewStateWrapper.Loading(0)) }
             .map { drink ->
                 assignCollectionType(
                     drinkModelMapper.transform(drink),
@@ -112,33 +110,32 @@ class DrinksViewModel @Inject constructor(
                 )
             }
             .catch { throwable ->
-                _popularDrinks.value = ViewStateWrapper.Error(throwable)
-                Timber.e("requestForPopularDrinks ${throwable.message}")
+                _popularDrinks.postValue(ViewStateWrapper.Error(throwable))
 
             }
             .collect { data ->
-                _popularDrinks.value = ViewStateWrapper.Success(data)
+                _popularDrinks.postValue(ViewStateWrapper.Success(data))
             }
     }
 
     fun requestForRandomDrinks() = launch {
         randomDrinksUseCase.buildExecutable(GetRandomDrinksUseCase.Params())
-            .onStart { _randomDrinks.value = ViewStateWrapper.Loading(0) }
+            .onStart { _randomDrinks.postValue(ViewStateWrapper.Loading(0)) }
             .map { drink ->
                 assignCollectionType(
                     drinkModelMapper.transform(drink),
                     DrinkCollectionType.RANDOM
                 )
             }
-            .catch { throwable -> _randomDrinks.value = ViewStateWrapper.Error(throwable) }
+            .catch { throwable -> _randomDrinks.postValue(ViewStateWrapper.Error(throwable)) }
             .collect { data ->
-                _randomDrinks.value = ViewStateWrapper.Success(data)
+                _randomDrinks.postValue(ViewStateWrapper.Success(data))
             }
     }
 
     fun filterDrinksByIngredient(p0: String) = launch {
         searchDrinkByIngredientsUseCase.buildExecutable(SearchDrinkByIngredientsUseCase.Params(p0))
-            .onStart { _drinksFilteredByIngredient.value = ViewStateWrapper.Loading(0) }
+            .onStart { _drinksFilteredByIngredient.postValue(ViewStateWrapper.Loading(0)) }
             .map { drink ->
                 assignCollectionType(
                     drinkModelMapper.transform(drink),
@@ -146,26 +143,28 @@ class DrinksViewModel @Inject constructor(
                 )
             }
             .catch { throwable ->
-                _drinksFilteredByIngredient.value = ViewStateWrapper.Error(throwable)
+                _drinksFilteredByIngredient.postValue(ViewStateWrapper.Error(throwable))
             }
             .collect { data ->
-                _drinksFilteredByIngredient.value = ViewStateWrapper.Success(
-                    data
+                _drinksFilteredByIngredient.postValue(
+                    ViewStateWrapper.Success(
+                        data
+                    )
                 )
             }
     }
 
     fun requestForFavoriteDrinks() = launch {
         selectAllFavoritesUseCase.buildExecutable(SelectAllFavoritesUseCase.Params()).onStart {
-            _favoriteDrinks.value = ViewStateWrapper.Loading(0)
+            _favoriteDrinks.postValue(ViewStateWrapper.Loading(0))
         }.map {
             assignCollectionType(
                 drinkModelMapper.transform(it),
                 DrinkCollectionType.FAVORITE
             )
         }.catch { throwable ->
-            _favoriteDrinks.value = ViewStateWrapper.Error(throwable)
-        }.collect { data -> _favoriteDrinks.value = ViewStateWrapper.Success(data) }
+            _favoriteDrinks.postValue(ViewStateWrapper.Error(throwable))
+        }.collect { data -> _favoriteDrinks.postValue(ViewStateWrapper.Success(data)) }
     }
 
     fun toggleFavoriteOfADrink(drink: DrinkModel): Flow<DrinkModel> =
@@ -175,13 +174,25 @@ class DrinksViewModel @Inject constructor(
                     markFavorite(false)
                 }
 
-                removeFavoriteUseCase.buildExecutable(RemoveFavoriteUseCase.Params(drinkModelMapper.transform(drink)))
+                removeFavoriteUseCase.buildExecutable(
+                    RemoveFavoriteUseCase.Params(
+                        drinkModelMapper.transform(
+                            drink
+                        )
+                    )
+                )
             } else {
                 drink.apply {
                     markFavorite(true)
                 }
 
-                addFavoriteUseCase.buildExecutable(AddFavoriteUseCase.Params(drinkModelMapper.transform(drink)))
+                addFavoriteUseCase.buildExecutable(
+                    AddFavoriteUseCase.Params(
+                        drinkModelMapper.transform(
+                            drink
+                        )
+                    )
+                )
             }
 
             emit(drink)
@@ -190,17 +201,16 @@ class DrinksViewModel @Inject constructor(
     fun requestForDrinkDetailsByName(p0: String?) = launch {
         p0?.let { id ->
             getDrinkDetailsUseCase.buildExecutable(GetDrinkDetailsUseCase.Params(id))
-                .onStart { _drinkDetails.value = ViewStateWrapper.Loading(0) }
+                .onStart { _drinkDetails.postValue(ViewStateWrapper.Loading(0)) }
                 .map { drink ->
                     assignCollectionType(
                         drinkModelMapper.transform(drink),
                         DrinkCollectionType.NONE
                     )
                 }
-                .catch { throwable -> _drinkDetails.value = ViewStateWrapper.Error(throwable) }
+                .catch { throwable -> _drinkDetails.postValue(ViewStateWrapper.Error(throwable)) }
                 .collect { data ->
-                    _drinkDetails.value =
-                        ViewStateWrapper.Success(data)
+                    _drinkDetails.postValue(ViewStateWrapper.Success(data))
                 }
         }
     }
@@ -214,7 +224,7 @@ class DrinksViewModel @Inject constructor(
             delay(SEARCH_DELAY_IN_MILLIS)
 
             searchDrinkByNameUseCase.buildExecutable(SearchDrinkByNameUseCase.Params(p0.toString()))
-                .onStart { _drinkSearchedByName.value = ViewStateWrapper.Loading(0) }
+                .onStart { _drinkSearchedByName.postValue(ViewStateWrapper.Loading(0)) }
                 .map { drink ->
                     assignCollectionType(
                         drinkModelMapper.transform(drink),
@@ -222,20 +232,48 @@ class DrinksViewModel @Inject constructor(
                     )
                 }
                 .catch { throwable ->
-                    _drinkSearchedByName.value = ViewStateWrapper.Error(throwable)
+                    _drinkSearchedByName.postValue(ViewStateWrapper.Error(throwable))
                 }
                 .collect { data ->
-                    _drinkSearchedByName.value = ViewStateWrapper.Success(data)
+                    _drinkSearchedByName.postValue(ViewStateWrapper.Success(data))
                 }
         }
+
     }
 
     fun setDrinkToBeSearched(p0: String) = launch {
-        _drinkToBeSearched.value = p0
+        _drinkToBeSearched.postValue(p0)
     }
 
-    fun setToggledDrink(p0: DrinkModel) = launch {
-        _toggledDrink.emit(p0)
+    fun syncDrinks(p0: DrinkModel) = launch {
+        syncDrinks(p0, _latestDrinks)
+        syncDrinks(p0, _popularDrinks)
+        syncDrinks(p0, _drinksFilteredByIngredient)
+        syncDrinks(p0, _drinkSearchedByName)
+        syncDrinks(p0, _favoriteDrinks)
+        syncDrinks(p0, _randomDrinks)
+    }
+
+    private fun syncDrinks(
+        p0: DrinkModel,
+        p1: MutableLiveData<ViewStateWrapper<List<DrinkModel>>>
+    ) {
+        if (p1.value is ViewStateWrapper.Success) {
+            val v1: List<DrinkModel> =
+                (p1.value as ViewStateWrapper.Success<List<DrinkModel>>).data
+            var v2 = false
+            v1.map {
+                if (it.idDrink.equals(p0.idDrink)) {
+                    v2 = true
+                    it.markFavorite(p0.isFavourite)
+                }
+            }
+
+            if (v2) {
+                p1.postValue(ViewStateWrapper.Success(v1))
+                return
+            }
+        }
     }
 
     override val coroutineContext: CoroutineContext

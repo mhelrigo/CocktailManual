@@ -47,10 +47,6 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
         handleDrinksFilteredByIngredient()
 
         requestData()
-
-        if (isTablet!!) {
-            refreshDrinksWhenItemToggled()
-        }
     }
 
     private fun setUpRecyclerView() {
@@ -143,36 +139,22 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
     }
 
     private fun handleDrinksFilteredByIngredient() {
-        drinksViewModel.drinksFilteredByIngredient
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state ->
-                when (state) {
-                    is ViewStateWrapper.Loading -> {
-                        binding.recyclerViewDrinks.visibility = View.GONE
-                    }
-                    is ViewStateWrapper.Error -> {
-                        binding.recyclerViewDrinks.visibility = View.GONE
-                    }
-                    is ViewStateWrapper.Success -> {
-                        drinksRecyclerViewAdapter.differ.submitList(state.data)
-                        binding.recyclerViewDrinks.visibility = View.VISIBLE
-                    }
+        drinksViewModel.drinksFilteredByIngredient.observe(viewLifecycleOwner, { state ->
+            when (state) {
+                is ViewStateWrapper.Loading -> {
+                    binding.recyclerViewDrinks.visibility = View.GONE
+                }
+                is ViewStateWrapper.Error -> {
+                    binding.recyclerViewDrinks.visibility = View.GONE
+                }
+                is ViewStateWrapper.Success -> {
+                    drinksRecyclerViewAdapter.submitList(state.data)
+                    binding.recyclerViewDrinks.visibility = View.VISIBLE
                 }
             }
-            .launchIn(lifecycleScope)
+        })
     }
 
-    /**
-     * Called to update the list of Meals on the left side of screen.
-     * */
-    private fun refreshDrinksWhenItemToggled() {
-        drinksViewModel.toggledDrink
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach {
-                requestForIngredient(arguments?.getString(NAME)!!)
-            }
-            .launchIn(lifecycleScope)
-    }
 
     override fun requestData() {
         super.requestData()

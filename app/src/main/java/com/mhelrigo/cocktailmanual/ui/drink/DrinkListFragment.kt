@@ -42,10 +42,6 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
         handleRandomDrinks()
 
         requestData()
-
-        if (isTablet!!) {
-            refreshDrinksWhenItemToggled()
-        }
     }
 
     private fun setUpRecyclerViews() {
@@ -185,97 +181,88 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
     }
 
     private fun handleLatestDrinks() {
-        drinksViewModel.latestDrinks
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state ->
-                processLoadingState(
-                    state is ViewStateWrapper.Loading,
-                    binding?.imageViewLatestDrinkLoading
-                )
+        drinksViewModel.latestDrinks.observe(viewLifecycleOwner, { state ->
+            processLoadingState(
+                state is ViewStateWrapper.Loading,
+                binding?.imageViewLatestDrinkLoading
+            )
 
-                when (state) {
-                    is ViewStateWrapper.Loading -> {
-                        latestDrinkAdapter.differ.submitList(emptyList())
-                        binding?.imageViewLatestDrinkLoading?.visibility = View.VISIBLE
-                        binding?.textViewErrorLatest?.visibility = View.INVISIBLE
-                    }
+            when (state) {
+                is ViewStateWrapper.Loading -> {
+                    latestDrinkAdapter.submitList(emptyList())
+                    binding?.imageViewLatestDrinkLoading?.visibility = View.VISIBLE
+                    binding?.textViewErrorLatest?.visibility = View.INVISIBLE
+                }
 
-                    is ViewStateWrapper.Error -> {
-                        binding?.textViewErrorLatest?.visibility = View.VISIBLE
-                        binding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
-                        binding?.imageViewLatestDrinkLoading?.visibility = View.INVISIBLE
-                    }
-                    is ViewStateWrapper.Success -> {
-                        binding?.recyclerViewLatestDrinks?.visibility = View.VISIBLE
-                        latestDrinkAdapter.differ.submitList(state.data)
-                        binding?.textViewErrorLatest?.visibility = View.INVISIBLE
-                        binding?.imageViewLatestDrinkLoading?.visibility = View.INVISIBLE
-                    }
+                is ViewStateWrapper.Error -> {
+                    binding?.textViewErrorLatest?.visibility = View.VISIBLE
+                    binding?.recyclerViewLatestDrinks?.visibility = View.INVISIBLE
+                    binding?.imageViewLatestDrinkLoading?.visibility = View.INVISIBLE
+                }
+                is ViewStateWrapper.Success -> {
+                    binding?.recyclerViewLatestDrinks?.visibility = View.VISIBLE
+                    latestDrinkAdapter.submitList(state.data)
+                    binding?.textViewErrorLatest?.visibility = View.INVISIBLE
+                    binding?.imageViewLatestDrinkLoading?.visibility = View.INVISIBLE
                 }
             }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+        })
     }
 
     private fun handlePopularDrinks() {
-        drinksViewModel.popularDrinks
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state ->
-                processLoadingState(
-                    state is ViewStateWrapper.Loading,
-                    binding?.imageViewPopularDrinkLoading
-                )
+        drinksViewModel.popularDrinks.observe(viewLifecycleOwner, { state ->
+            processLoadingState(
+                state is ViewStateWrapper.Loading,
+                binding?.imageViewPopularDrinkLoading
+            )
 
-                when (state) {
-                    is ViewStateWrapper.Loading -> {
-                        popularDrinkAdapter.differ.submitList(emptyList())
-                        binding?.imageViewPopularDrinkLoading?.visibility = View.VISIBLE
-                        binding?.textViewErrorPopular?.visibility = View.INVISIBLE
-                    }
-                    is ViewStateWrapper.Error -> {
-                        binding?.textViewErrorPopular?.visibility = View.VISIBLE
-                        binding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
-                        binding?.imageViewPopularDrinkLoading?.visibility = View.INVISIBLE
-                    }
-                    is ViewStateWrapper.Success -> {
-                        binding?.recyclerViewPopularDrinks?.visibility = View.VISIBLE
-                        popularDrinkAdapter.differ.submitList(state.data)
-                        binding?.textViewErrorPopular?.visibility = View.INVISIBLE
-                        binding?.imageViewPopularDrinkLoading?.visibility = View.INVISIBLE
-                    }
+            when (state) {
+                is ViewStateWrapper.Loading -> {
+                    popularDrinkAdapter.submitList(emptyList())
+                    binding?.imageViewPopularDrinkLoading?.visibility = View.VISIBLE
+                    binding?.textViewErrorPopular?.visibility = View.INVISIBLE
+                }
+                is ViewStateWrapper.Error -> {
+                    binding?.textViewErrorPopular?.visibility = View.VISIBLE
+                    binding?.recyclerViewPopularDrinks?.visibility = View.INVISIBLE
+                    binding?.imageViewPopularDrinkLoading?.visibility = View.INVISIBLE
+                }
+                is ViewStateWrapper.Success -> {
+                    binding?.recyclerViewPopularDrinks?.visibility = View.VISIBLE
+                    popularDrinkAdapter.submitList(state.data)
+                    binding?.textViewErrorPopular?.visibility = View.INVISIBLE
+                    binding?.imageViewPopularDrinkLoading?.visibility = View.INVISIBLE
                 }
             }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+        })
     }
 
     private fun handleRandomDrinks() {
-        drinksViewModel.randomDrinks
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state ->
-                processLoadingState(
-                    state is ViewStateWrapper.Loading,
-                    binding?.imageViewRandomDrinkLoading
-                )
+        drinksViewModel.randomDrinks.observe(viewLifecycleOwner, { state ->
+            processLoadingState(
+                state is ViewStateWrapper.Loading,
+                binding?.imageViewRandomDrinkLoading
+            )
 
-                when (state) {
-                    is ViewStateWrapper.Loading -> {
-                        randomDrinkAdapter.differ.submitList(emptyList())
-                        binding?.imageViewRandomDrinkLoading?.visibility = View.VISIBLE
-                        binding?.textViewErrorRandom?.visibility = View.INVISIBLE
-                    }
-                    is ViewStateWrapper.Error -> {
-                        binding?.textViewErrorRandom?.visibility = View.VISIBLE
-                        binding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
-                        binding?.imageViewRandomDrinkLoading?.visibility = View.INVISIBLE
-                    }
-                    is ViewStateWrapper.Success -> {
-                        binding?.textViewErrorRandom?.visibility = View.INVISIBLE
-                        binding?.recyclerViewRandomDrinks?.visibility = View.VISIBLE
-                        randomDrinkAdapter.differ.submitList(state.data)
-                        binding?.imageViewRandomDrinkLoading?.visibility = View.INVISIBLE
-                    }
+            when (state) {
+                is ViewStateWrapper.Loading -> {
+                    randomDrinkAdapter.submitList(emptyList())
+                    binding?.imageViewRandomDrinkLoading?.visibility = View.VISIBLE
+                    binding?.textViewErrorRandom?.visibility = View.INVISIBLE
+                }
+                is ViewStateWrapper.Error -> {
+                    binding?.textViewErrorRandom?.visibility = View.VISIBLE
+                    binding?.recyclerViewRandomDrinks?.visibility = View.INVISIBLE
+                    binding?.imageViewRandomDrinkLoading?.visibility = View.INVISIBLE
+                }
+                is ViewStateWrapper.Success -> {
+                    binding?.textViewErrorRandom?.visibility = View.INVISIBLE
+                    binding?.recyclerViewRandomDrinks?.visibility = View.VISIBLE
+                    randomDrinkAdapter.submitList(state.data)
+                    binding?.imageViewRandomDrinkLoading?.visibility = View.INVISIBLE
                 }
             }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+        })
     }
 
     private fun requestForLatestDrinks() {
@@ -294,31 +281,17 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
         findNavController().navigate(R.id.action_drinkListFragment_to_searchFragment)
     }
 
-    /**
-     * Called to update the list of Meals on the left side of screen.
-     * */
-    private fun refreshDrinksWhenItemToggled() {
-        drinksViewModel.toggledDrink
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach {
-                requestForLatestDrinks()
-                requestForPopularDrinks()
-                requestForRandomDrinks()
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
     override fun requestData() {
         super.requestData()
-        if (drinksViewModel.latestDrinks.value.noResultYet()) {
+        if (drinksViewModel.latestDrinks.value?.noResultYet()!!) {
             requestForLatestDrinks()
         }
 
-        if (drinksViewModel.popularDrinks.value.noResultYet()) {
+        if (drinksViewModel.popularDrinks.value?.noResultYet()!!) {
             requestForPopularDrinks()
         }
 
-        if (drinksViewModel.randomDrinks.value.noResultYet()) {
+        if (drinksViewModel.randomDrinks.value?.noResultYet()!!) {
             requestForRandomDrinks()
         }
     }

@@ -13,7 +13,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.mhelrigo.cocktailmanual.databinding.FragmentDrinkDetailsBinding
 import com.mhelrigo.cocktailmanual.ui.commons.ViewStateWrapper
 import com.mhelrigo.cocktailmanual.ui.commons.base.BaseFragment
-import com.mhelrigo.cocktailmanual.model.DrinkModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -45,8 +44,8 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
             drinksViewModel.toggleFavoriteOfADrink(drink.data[0])
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED)
                 .onEach { data ->
-                    drinksViewModel.requestForDrinkDetailsByName(data.idDrink!!)
-                    refreshDataIfDeviceIsTablet(data)
+                    drinksViewModel.syncDrinks(data)
+                    drinksViewModel.setDrinkToBeSearched(data.idDrink!!)
                 }.catch { throwable ->
                     Timber.e("Something went wrong sport... ${throwable.message}")
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -54,60 +53,54 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
     }
 
     private fun requestForDrinkById() {
-        drinksViewModel.drinkToBeSearched
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED)
-            .onEach { data ->
-                drinksViewModel.requestForDrinkDetailsByName(data)
-            }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+        drinksViewModel.drinkToBeSearched.observe(viewLifecycleOwner, { data ->
+            drinksViewModel.requestForDrinkDetailsByName(data)
+        })
     }
 
     private fun handleDrinkDetails() {
-        drinksViewModel.drinkDetails
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state ->
-                processLoadingState(
-                    state is ViewStateWrapper.Loading,
-                    binding.imageViewDrinkLoading
-                )
+        drinksViewModel.drinkDetails.observe(viewLifecycleOwner, { state ->
+            processLoadingState(
+                state is ViewStateWrapper.Loading,
+                binding.imageViewDrinkLoading
+            )
 
-                when (state) {
-                    is ViewStateWrapper.Init -> {
-                        binding.textViewEmptyDrink.visibility = View.VISIBLE
-                    }
-                    is ViewStateWrapper.Loading -> {
-                        binding.imageViewDrinkLoading.visibility = View.VISIBLE
-                        binding.constraintLayoutRootSuccess.visibility = View.GONE
-                        binding.textViewEmptyDrink.visibility = View.GONE
-                    }
-                    is ViewStateWrapper.Error -> {
-                        binding.imageViewDrinkLoading.visibility = View.GONE
-                        binding.constraintLayoutRootSuccess.visibility = View.GONE
-                        binding.textViewEmptyDrink.visibility = View.VISIBLE
-                    }
-                    is ViewStateWrapper.Success -> {
-                        binding.imageViewDrinkLoading.visibility = View.GONE
-                        binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
-                        binding.textViewEmptyDrink.visibility = View.GONE
-                        state.data[0].let { drink ->
-                            binding.textViewName.text = drink.strDrink
-                            binding.textViewShortDesc.text =
-                                "${drink.strCategory} | ${drink.strAlcoholic} | ${drink.strGlass}"
-                            binding.textViewIngredients.text =
-                                drink.returnIngredientWithMeasurement()
-                            binding.textViewInstruction.text = drink.strInstructions
+            when (state) {
+                is ViewStateWrapper.Init -> {
+                    binding.textViewEmptyDrink.visibility = View.VISIBLE
+                }
+                is ViewStateWrapper.Loading -> {
+                    binding.imageViewDrinkLoading.visibility = View.VISIBLE
+                    binding.constraintLayoutRootSuccess.visibility = View.GONE
+                    binding.textViewEmptyDrink.visibility = View.GONE
+                }
+                is ViewStateWrapper.Error -> {
+                    binding.imageViewDrinkLoading.visibility = View.GONE
+                    binding.constraintLayoutRootSuccess.visibility = View.GONE
+                    binding.textViewEmptyDrink.visibility = View.VISIBLE
+                }
+                is ViewStateWrapper.Success -> {
+                    binding.imageViewDrinkLoading.visibility = View.GONE
+                    binding.constraintLayoutRootSuccess.visibility = View.VISIBLE
+                    binding.textViewEmptyDrink.visibility = View.GONE
+                    state.data[0].let { drink ->
+                        binding.textViewName.text = drink.strDrink
+                        binding.textViewShortDesc.text =
+                            "${drink.strCategory} | ${drink.strAlcoholic} | ${drink.strGlass}"
+                        binding.textViewIngredients.text =
+                            drink.returnIngredientWithMeasurement()
+                        binding.textViewInstruction.text = drink.strInstructions
 
-                            Glide.with(requireContext()).load(drink.strDrinkThumb)
-                                .diskCacheStrategy(
-                                    DiskCacheStrategy.ALL
-                                ).into(binding.imageViewThumbnail)
+                        Glide.with(requireContext()).load(drink.strDrinkThumb)
+                            .diskCacheStrategy(
+                                DiskCacheStrategy.ALL
+                            ).into(binding.imageViewThumbnail)
 
-                            setUpFavoriteIcon(drink.returnIconForFavorite())
-                        }
+                        setUpFavoriteIcon(drink.returnIconForFavorite())
                     }
                 }
             }
-            .launchIn(viewLifecycleOwner.lifecycleScope)
+        })
     }
 
     private fun setUpFavoriteIcon(resourceDrawable: Int) {
@@ -120,22 +113,9 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
         )
     }
 
-    /**
-     * Called to update the list of Meals on the left side of screen.
-     * */
-    private fun refreshDataIfDeviceIsTablet(p0: DrinkModel) {
-        if (isTablet!!) {
-            // For non-favorite screen
-            drinksViewModel.setToggledDrink(p0)
-
-            // For favorites screen
-            drinksViewModel.requestForFavoriteDrinks()
-        }
-    }
-
     override fun requestData() {
         super.requestData()
-        if (drinksViewModel.drinkDetails.value.noResultYet()) {
+        if (drinksViewModel.drinkDetails.value?.noResultYet()!!) {
             drinksViewModel.requestForDrinkDetailsByName(drinksViewModel.drinkToBeSearched.value)
         }
     }

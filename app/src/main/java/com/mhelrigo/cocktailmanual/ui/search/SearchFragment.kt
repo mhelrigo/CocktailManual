@@ -46,10 +46,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
         handleDrinks()
 
         requestData()
-
-        if (isTablet!!) {
-            refreshDrinksWhenItemToggled()
-        }
     }
 
     private fun searchForDrinkByName(p0: CharSequence) {
@@ -115,55 +111,40 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
     }
 
     private fun handleDrinks() {
-        drinksViewModel.drinkSearchedByName
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach { state ->
-                processLoadingState(
-                    state is ViewStateWrapper.Loading,
-                    binding.imageViewSearchDrinkLoading
-                )
+        drinksViewModel.drinkSearchedByName.observe(viewLifecycleOwner, { state ->
+            processLoadingState(
+                state is ViewStateWrapper.Loading,
+                binding.imageViewSearchDrinkLoading
+            )
 
-                when (state) {
-                    is ViewStateWrapper.Loading -> {
-                        binding.recyclerViewSearch.visibility = View.GONE
-                        binding.imageViewSearchDrinkLoading.visibility = View.VISIBLE
-                        binding.textViewErrorSearch.visibility = View.GONE
-                    }
-                    is ViewStateWrapper.Error -> {
-                        binding.recyclerViewSearch.visibility = View.GONE
-                        binding.imageViewSearchDrinkLoading.visibility = View.GONE
+            when (state) {
+                is ViewStateWrapper.Loading -> {
+                    binding.recyclerViewSearch.visibility = View.GONE
+                    binding.imageViewSearchDrinkLoading.visibility = View.VISIBLE
+                    binding.textViewErrorSearch.visibility = View.GONE
+                }
+                is ViewStateWrapper.Error -> {
+                    binding.recyclerViewSearch.visibility = View.GONE
+                    binding.imageViewSearchDrinkLoading.visibility = View.GONE
+                    binding.textViewErrorSearch.visibility = View.VISIBLE
+                }
+                is ViewStateWrapper.Success -> {
+                    binding.recyclerViewSearch.visibility = View.VISIBLE
+                    binding.imageViewSearchDrinkLoading.visibility = View.GONE
+                    binding.textViewErrorSearch.visibility = View.GONE
+                    drinksRecyclerViewAdapter.submitList(state.data)
+
+                    if (state.data.isEmpty()) {
                         binding.textViewErrorSearch.visibility = View.VISIBLE
-                    }
-                    is ViewStateWrapper.Success -> {
-                        binding.recyclerViewSearch.visibility = View.VISIBLE
-                        binding.imageViewSearchDrinkLoading.visibility = View.GONE
-                        binding.textViewErrorSearch.visibility = View.GONE
-                        drinksRecyclerViewAdapter.differ.submitList(state.data)
-
-                        if (state.data.isEmpty()) {
-                            binding.textViewErrorSearch.visibility = View.VISIBLE
-                        }
                     }
                 }
             }
-            .launchIn(lifecycleScope)
-    }
-
-    /**
-     * Called to update the list of Meals on the left side of screen.
-     * */
-    private fun refreshDrinksWhenItemToggled() {
-        drinksViewModel.toggledDrink
-            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .onEach {
-                searchForDrinkByName(searchedDrinkTemp)
-            }
-            .launchIn(lifecycleScope)
+        })
     }
 
     override fun requestData() {
         super.requestData()
-        if (drinksViewModel.drinkSearchedByName.value.noResultYet()) {
+        if (drinksViewModel.drinkSearchedByName.value?.noResultYet()!!) {
             searchForDrinkByName(searchedDrinkTemp)
         }
     }

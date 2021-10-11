@@ -2,8 +2,6 @@ package com.mhelrigo.cocktailmanual.ui.drink
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.mhelrigo.cocktailmanual.databinding.ItemDrinkBigBinding
 import com.mhelrigo.cocktailmanual.databinding.ItemDrinkRegularBinding
@@ -18,21 +16,11 @@ import com.mhelrigo.cocktailmanual.model.DrinkModel.Factory.VIEW_HOLDER_REGULAR
 import com.mhelrigo.cocktailmanual.model.DrinkModel.Factory.VIEW_HOLDER_SMALL
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import timber.log.Timber
 
 class DrinksRecyclerViewAdapter(
 ) : RecyclerView.Adapter<BaseViewHolder>() {
-    private val differCallback = object : DiffUtil.ItemCallback<DrinkModel>() {
-        override fun areItemsTheSame(oldItem: DrinkModel, newItem: DrinkModel): Boolean {
-            return oldItem.idDrink?.toInt() == newItem.idDrink?.toInt()
-        }
-
-        override fun areContentsTheSame(oldItem: DrinkModel, newItem: DrinkModel): Boolean {
-            return oldItem.strDrink == newItem.strDrink && oldItem.idDrink?.toInt() == newItem.idDrink?.toInt() && oldItem.isFavourite == newItem.isFavourite
-        }
-
-    }
-
-    val differ = AsyncListDiffer(this, differCallback)
+    private val _drinks = mutableListOf<DrinkModel>()
 
     private val _expandItem = MutableSharedFlow<DrinkModel>()
     val expandItem: SharedFlow<DrinkModel> get() = _expandItem
@@ -40,8 +28,14 @@ class DrinksRecyclerViewAdapter(
     private val _toggleFavorite = MutableSharedFlow<DrinkModel>()
     val toggleFavorite: SharedFlow<DrinkModel> get() = _toggleFavorite
 
+    fun submitList(p0: List<DrinkModel>) {
+        _drinks.clear()
+        _drinks.addAll(p0)
+        notifyDataSetChanged()
+    }
+
     fun toggleFavoriteOfADrink(position: Int, drink: DrinkModel) {
-        differ.currentList.find { a -> a.idDrink == drink.idDrink }?.isFavourite = drink.isFavourite
+        _drinks.find { a -> a.idDrink == drink.idDrink }?.isFavourite = drink.isFavourite
         notifyItemChanged(position)
     }
 
@@ -86,15 +80,15 @@ class DrinksRecyclerViewAdapter(
         position: Int
     ) {
         holder.bind(
-            differ.currentList[position],
+            _drinks[position],
             _toggleFavorite,
             _expandItem
         )
     }
 
-    override fun getItemCount() = differ.currentList.size
+    override fun getItemCount() = _drinks.size
 
     override fun getItemViewType(position: Int): Int {
-        return differ.currentList[position].returnViewHolderType()
+        return _drinks[position].returnViewHolderType()
     }
 }
