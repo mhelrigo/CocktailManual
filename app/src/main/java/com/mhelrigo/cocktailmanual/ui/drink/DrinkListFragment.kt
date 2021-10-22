@@ -40,8 +40,6 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
         handleLatestDrinks()
         handlePopularDrinks()
         handleRandomDrinks()
-
-        requestData()
     }
 
     private fun setUpRecyclerViews() {
@@ -66,7 +64,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
         latestDrinkAdapter.expandItem
             .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
             .onEach { drink ->
-                drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                drinksViewModel.setDrinkToBeSearched(drink)
                 navigateToDrinkDetail(
                     R.id.action_drinkListFragment_to_drinkDetailsFragment,
                     null,
@@ -83,11 +81,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
                     .catch { throwable ->
                         Timber.e("Something went wrong sport... ${throwable.message}")
                     }.collect { data ->
-                        drinksViewModel.setDrinkToBeSearched(data.idDrink!!)
-                        latestDrinkAdapter.toggleFavoriteOfADrink(
-                            data.bindingAdapterPosition,
-                            data
-                        )
+                        drinksViewModel.setDrinkToBeSearched(data)
                     }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
@@ -106,7 +100,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
         popularDrinkAdapter.expandItem
             .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
             .onEach { drink ->
-                drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                drinksViewModel.setDrinkToBeSearched(drink)
                 navigateToDrinkDetail(
                     R.id.action_drinkListFragment_to_drinkDetailsFragment,
                     null,
@@ -123,11 +117,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
                     .catch { throwable ->
                         Timber.e("Something went wrong sport... ${throwable.message}")
                     }.collect { data ->
-                        drinksViewModel.setDrinkToBeSearched(data.idDrink!!)
-                        popularDrinkAdapter.toggleFavoriteOfADrink(
-                            data.bindingAdapterPosition,
-                            data
-                        )
+                        drinksViewModel.setDrinkToBeSearched(data)
                     }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
@@ -140,13 +130,14 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
         }
     }
 
+
     private fun setUpRandomDrinkRecyclerView() {
         randomDrinkAdapter = DrinksRecyclerViewAdapter()
 
         randomDrinkAdapter.expandItem
             .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
             .onEach { drink ->
-                drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                drinksViewModel.setDrinkToBeSearched(drink)
                 navigateToDrinkDetail(
                     R.id.action_drinkListFragment_to_drinkDetailsFragment,
                     null,
@@ -163,11 +154,7 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
                     .catch { throwable ->
                         Timber.e("Something went wrong sport... ${throwable.message}")
                     }.collect { data ->
-                        drinksViewModel.setDrinkToBeSearched(data.idDrink!!)
-                        randomDrinkAdapter.toggleFavoriteOfADrink(
-                            data.bindingAdapterPosition,
-                            data
-                        )
+                        drinksViewModel.setDrinkToBeSearched(data)
                     }
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
@@ -228,7 +215,6 @@ class DrinkListFragment : BaseFragment<FragmentDrinkListBinding>(), DrinkNavigat
                     binding?.imageViewPopularDrinkLoading?.visibility = View.INVISIBLE
                 }
                 is ViewStateWrapper.Success -> {
-                    binding?.recyclerViewPopularDrinks?.visibility = View.VISIBLE
                     popularDrinkAdapter.submitList(state.data)
                     binding?.textViewErrorPopular?.visibility = View.INVISIBLE
                     binding?.imageViewPopularDrinkLoading?.visibility = View.INVISIBLE

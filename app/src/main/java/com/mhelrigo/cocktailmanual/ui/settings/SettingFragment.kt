@@ -1,6 +1,5 @@
 package com.mhelrigo.cocktailmanual.ui.settings
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,7 +21,6 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
             settingsViewModel.toggleNightMode(p1)
         }
 
-        settingsViewModel.toggleNightMode(isNightMode(resources.configuration))
         settingsViewModel.isNightMode.observe(viewLifecycleOwner, {
             it?.let {
                 binding.switchNightMode.isChecked = it
@@ -30,18 +28,6 @@ class SettingFragment : BaseFragment<FragmentSettingBinding>() {
         })
 
         displayApplicationVersion()
-    }
-
-    /**
-     * Method that check if the system is in Dark Mode
-     * */
-    private fun isNightMode(newConfig: Configuration): Boolean {
-        return when (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_YES -> true
-            Configuration.UI_MODE_NIGHT_NO -> false
-            Configuration.UI_MODE_NIGHT_UNDEFINED -> false
-            else -> false
-        }
     }
 
     private fun displayApplicationVersion() {

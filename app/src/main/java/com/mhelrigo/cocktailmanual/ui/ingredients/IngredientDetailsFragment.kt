@@ -17,6 +17,7 @@ import com.mhelrigo.cocktailmanual.ui.commons.base.BaseFragment
 import com.mhelrigo.cocktailmanual.ui.drink.DrinkNavigator
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksRecyclerViewAdapter
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
+import com.mhelrigo.cocktailmanual.ui.drink.SYNC_MEALS_DEFAULT_INDEX
 import com.mhelrigo.commons.NAME
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.catch
@@ -46,7 +47,12 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
         handleIngredient()
         handleDrinksFilteredByIngredient()
 
-        requestData()
+        requestForIngredient(arguments?.getString(NAME)!!)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        drinksViewModel.resetDrinksFilteredByIngredient()
     }
 
     private fun setUpRecyclerView() {
@@ -55,7 +61,7 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
         drinksRecyclerViewAdapter.expandItem
             .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
             .onEach { drink ->
-                drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                drinksViewModel.setDrinkToBeSearched(drink)
                 navigateToDrinkDetail(
                     R.id.action_ingredientDetailsFragment_to_drinkDetailsFragment,
                     null,
@@ -73,12 +79,8 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
                     .catch { throwable ->
                         Timber.e("Something went wrong sport... ${throwable.message}")
                     }
-                    .collect {
-                        drinksViewModel.setDrinkToBeSearched(it.idDrink!!)
-                        drinksRecyclerViewAdapter.toggleFavoriteOfADrink(
-                            it.bindingAdapterPosition,
-                            it
-                        )
+                    .collect { data ->
+                        drinksViewModel.setDrinkToBeSearched(data)
                     }
             }
             .launchIn(lifecycleScope)
@@ -109,7 +111,6 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
                         binding.textViewError.visibility = View.GONE
                         binding.textViewName.visibility = View.GONE
                         binding.textViewDescription.visibility = View.GONE
-                        binding.recyclerViewDrinks.visibility = View.GONE
                     }
                     is ViewStateWrapper.Error -> {
                         binding.textViewError.visibility = View.VISIBLE
@@ -130,8 +131,6 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
                         binding.textViewDescription.text = state.data.strDescription
                         Glide.with(requireContext()).load(state.data.thumbNail())
                             .into(binding.imageViewThumbnail)
-
-                        drinksViewModel.filterDrinksByIngredient(arguments?.getString(NAME)!!)
                     }
                 }
             }
@@ -141,14 +140,13 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
     private fun handleDrinksFilteredByIngredient() {
         drinksViewModel.drinksFilteredByIngredient.observe(viewLifecycleOwner, { state ->
             when (state) {
-                is ViewStateWrapper.Loading -> {
-                    binding.recyclerViewDrinks.visibility = View.GONE
-                }
                 is ViewStateWrapper.Error -> {
                     binding.recyclerViewDrinks.visibility = View.GONE
                 }
                 is ViewStateWrapper.Success -> {
-                    drinksRecyclerViewAdapter.submitList(state.data)
+                    drinksRecyclerViewAdapter.submitList(
+                        state.data
+                    )
                     binding.recyclerViewDrinks.visibility = View.VISIBLE
                 }
             }
@@ -158,6 +156,8 @@ class IngredientDetailsFragment : BaseFragment<FragmentIngredientDetailsBinding>
 
     override fun requestData() {
         super.requestData()
-        requestForIngredient(arguments?.getString(NAME)!!)
+        if (drinksViewModel.drinksFilteredByIngredient.value?.noResultYet()!!) {
+            drinksViewModel.filterDrinksByIngredient(arguments?.getString(NAME)!!)
+        }
     }
 }

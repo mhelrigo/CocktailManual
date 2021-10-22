@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.window.SplashScreen
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
@@ -13,14 +14,17 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
+import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.di.AppModule.IS_TABLET
 import com.mhelrigo.cocktailmanual.ui.settings.SettingsViewModel
 import com.mhelrigo.commons.DISPATCHERS_IO
 import com.mhelrigo.commons.DISPATCHERS_MAIN
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.coroutines.CoroutineContext
@@ -82,7 +86,9 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), RetryRequestManager {
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    findNavController().popBackStack()
+                    if (!findNavController().popBackStack()) {
+                        requireActivity().finish()
+                    }
                 }
             })
     }

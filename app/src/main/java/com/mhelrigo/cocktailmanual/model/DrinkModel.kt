@@ -1,6 +1,7 @@
 package com.mhelrigo.cocktailmanual.model
 
 import com.mhelrigo.cocktailmanual.R
+import timber.log.Timber
 
 /**
  * Presentation version of [mhelrigo.cocktailmanual.domain.entity.DrinkEntity]
@@ -60,7 +61,8 @@ data class DrinkModel(
     var isFavourite: Boolean,
     var backGroundColorDrawableColor: Int,
     var bindingAdapterPosition: Int,
-    var drinkCollectionType: DrinkCollectionType
+    var drinkCollectionType: DrinkCollectionType,
+    var updateAt: String?
 ) {
     companion object Factory {
         const val VIEW_HOLDER_SMALL = 0
@@ -126,5 +128,13 @@ data class DrinkModel(
                 (if (strMeasure8.isNullOrBlank()) "" else "$strMeasure8") + (if (strIngredient8.isNullOrBlank()) "" else "$strIngredient8\n") +
                 (if (strMeasure9.isNullOrBlank()) "" else "$strMeasure9") + (if (strIngredient9.isNullOrBlank()) "" else "$strIngredient9\n") +
                 if (strMeasure10.isNullOrBlank()) "" else "$strMeasure10" + if (strIngredient10.isNullOrBlank()) "" else "$strIngredient10"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is DrinkModel) {
+            return false
+        }
+
+        return idDrink.equals(other.idDrink) && isFavourite == other.isFavourite
     }
 }

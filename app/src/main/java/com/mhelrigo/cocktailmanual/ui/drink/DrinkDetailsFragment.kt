@@ -34,8 +34,6 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
 
         handleDrinkDetails()
         requestForDrinkById()
-
-        requestData()
     }
 
     private fun setUpToggleFavoriteButton() {
@@ -44,8 +42,9 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
             drinksViewModel.toggleFavoriteOfADrink(drink.data[0])
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.RESUMED)
                 .onEach { data ->
-                    drinksViewModel.syncDrinks(data)
-                    drinksViewModel.setDrinkToBeSearched(data.idDrink!!)
+                    drinksViewModel.syncMeals(data, SYNC_MEALS_DEFAULT_INDEX)
+                    drinksViewModel.requestForFavoriteDrinks()
+                    drinksViewModel.setDrinkToBeSearched(data)
                 }.catch { throwable ->
                     Timber.e("Something went wrong sport... ${throwable.message}")
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -116,7 +115,11 @@ class DrinkDetailsFragment : BaseFragment<FragmentDrinkDetailsBinding>() {
     override fun requestData() {
         super.requestData()
         if (drinksViewModel.drinkDetails.value?.noResultYet()!!) {
-            drinksViewModel.requestForDrinkDetailsByName(drinksViewModel.drinkToBeSearched.value)
+            drinksViewModel.drinkToBeSearched.value?.let {
+                drinksViewModel.requestForDrinkDetailsByName(
+                    it
+                )
+            }
         }
     }
 }

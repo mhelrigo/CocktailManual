@@ -35,8 +35,6 @@ class IngredientListFragment : BaseFragment<FragmentIngredientListBinding>() {
 
         setUpRecyclerView()
         handleIngredients()
-
-        requestData()
     }
 
     private fun setUpRecyclerView() {

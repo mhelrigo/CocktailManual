@@ -46,7 +46,7 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigat
         favoritesAdapter.expandItem
             .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
             .onEach { drink ->
-                drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                drinksViewModel.setDrinkToBeSearched(drink)
                 navigateToDrinkDetail(
                     R.id.action_favoritesFragment_to_drinkDetailsFragment,
                     null,
@@ -64,7 +64,7 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>(), DrinkNavigat
                         Timber.e("Something went wrong sport... ${throwable.message}")
                     }
                     .collect { drink ->
-                        drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                        drinksViewModel.setDrinkToBeSearched(drink)
                         drinksViewModel.requestForFavoriteDrinks()
                     }
             }

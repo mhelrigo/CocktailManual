@@ -68,7 +68,8 @@ class DrinkModelMapper @Inject constructor() {
             isFavourite = drinkEntity.isFavourite,
             bindingAdapterPosition = -1,
             backGroundColorDrawableColor = 0,
-            drinkCollectionType = DrinkCollectionType.NONE
+            drinkCollectionType = DrinkCollectionType.NONE,
+            updateAt = System.currentTimeMillis().toString()
         )
     }
 
@@ -115,7 +116,7 @@ class DrinkModelMapper @Inject constructor() {
             drinkModel.strMeasure13,
             drinkModel.strMeasure14,
             drinkModel.strMeasure15,
-            drinkModel. strMeasure2,
+            drinkModel.strMeasure2,
             drinkModel.strMeasure3,
             drinkModel.strMeasure4,
             drinkModel.strMeasure5,

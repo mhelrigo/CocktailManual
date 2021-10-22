@@ -13,21 +13,17 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.mhelrigo.cocktailmanual.R
 import com.mhelrigo.cocktailmanual.databinding.ActivityHomeBinding
 import com.mhelrigo.cocktailmanual.di.AppModule.IS_TABLET
-import com.mhelrigo.cocktailmanual.ui.commons.ViewStateWrapper
 import com.mhelrigo.cocktailmanual.ui.drink.DrinkDetailsFragment
 import com.mhelrigo.cocktailmanual.ui.drink.DrinksViewModel
 import com.mhelrigo.cocktailmanual.ui.settings.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -50,11 +46,14 @@ class HomeActivity : AppCompatActivity() {
 
         setUpBottomNavigation()
 
+        handleNightModeSwitchChanges()
         handleInternetConnectionChanges()
 
         requestForRandomDrinks()
 
         setUpViewForFragment(savedInstanceState)
+
+        settingsViewModel.requestForSettings()
     }
 
     private fun setUpViewForFragment(p0: Bundle?) {
@@ -81,13 +80,7 @@ class HomeActivity : AppCompatActivity() {
         unRegisterConnectivityListener()
     }
 
-    private fun setUpBottomNavigation() {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.fragmentContainerViewNavHost) as NavHostFragment
-        val navController = navHostFragment.navController
-
-        binding.bottomNavigationView.setupWithNavController(navController)
-
+    private fun handleNightModeSwitchChanges() {
         settingsViewModel.isNightMode.observe(this, {
             it?.let {
                 if (it) {
@@ -97,6 +90,14 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun setUpBottomNavigation() {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.fragmentContainerViewNavHost) as NavHostFragment
+        val navController = navHostFragment.navController
+
+        binding.bottomNavigationView.setupWithNavController(navController)
     }
 
     private fun handleInternetConnectionChanges() {

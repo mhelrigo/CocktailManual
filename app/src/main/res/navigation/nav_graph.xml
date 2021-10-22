@@ -9,10 +9,10 @@
         android:id="@+id/drinkListFragment"
         android:name="com.mhelrigo.cocktailmanual.ui.drink.DrinkListFragment"
         android:label="fragment_drink_list"
-        tools:layout="@layout/fragment_drink_list" >
+        tools:layout="@layout/fragment_drink_list">
         <action
             android:id="@+id/action_drinkListFragment_to_drinkDetailsFragment"
-            app:destination="@id/drinkDetailsFragment"/>
+            app:destination="@id/drinkDetailsFragment" />
         <action
             android:id="@+id/action_drinkListFragment_to_favoritesFragment"
             app:destination="@id/favoritesFragment" />
@@ -24,7 +24,7 @@
         android:id="@+id/drinkDetailsFragment"
         android:name="com.mhelrigo.cocktailmanual.ui.drink.DrinkDetailsFragment"
         android:label="fragment_drink_details"
-        tools:layout="@layout/fragment_drink_details" >
+        tools:layout="@layout/fragment_drink_details">
         <action
             android:id="@+id/action_drinkDetailsFragment_to_drinkListFragment"
             app:destination="@id/drinkListFragment" />
@@ -33,7 +33,7 @@
         android:id="@+id/favoritesFragment"
         android:name="com.mhelrigo.cocktailmanual.ui.drink.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" >
+        tools:layout="@layout/fragment_favorites">
         <action
             android:id="@+id/action_favoritesFragment_to_drinkDetailsFragment"
             app:destination="@id/drinkDetailsFragment" />
@@ -47,7 +47,7 @@
         android:id="@+id/ingredientListFragment"
         android:name="com.mhelrigo.cocktailmanual.ui.ingredients.IngredientListFragment"
         android:label="fragment_ingredient_list"
-        tools:layout="@layout/fragment_ingredient_list" >
+        tools:layout="@layout/fragment_ingredient_list">
         <action
             android:id="@+id/action_ingredientListFragment_to_ingredientDetailsFragment"
             app:destination="@id/ingredientDetailsFragment" />
@@ -56,7 +56,7 @@
         android:id="@+id/ingredientDetailsFragment"
         android:name="com.mhelrigo.cocktailmanual.ui.ingredients.IngredientDetailsFragment"
         android:label="fragment_ingredient_details"
-        tools:layout="@layout/fragment_ingredient_details" >
+        tools:layout="@layout/fragment_ingredient_details">
         <action
             android:id="@+id/action_ingredientDetailsFragment_to_drinkDetailsFragment"
             app:destination="@id/drinkDetailsFragment" />
@@ -65,7 +65,7 @@
         android:id="@+id/searchFragment"
         android:name="com.mhelrigo.cocktailmanual.ui.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" >
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_drinkDetailsFragment"
             app:destination="@id/drinkDetailsFragment" />

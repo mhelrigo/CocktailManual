@@ -44,8 +44,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
         setUpTextWatcherForSearching()
         setUpRecyclerView()
         handleDrinks()
-
-        requestData()
     }
 
     private fun searchForDrinkByName(p0: CharSequence) {
@@ -76,7 +74,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
         drinksRecyclerViewAdapter.expandItem
             .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
             .onEach { drink ->
-                drinksViewModel.setDrinkToBeSearched(drink.idDrink!!)
+                drinksViewModel.setDrinkToBeSearched(drink)
                 navigateToDrinkDetail(
                     R.id.action_searchFragment_to_drinkDetailsFragment,
                     null,
@@ -92,12 +90,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
                 drinksViewModel.toggleFavoriteOfADrink(drink)
                     .catch { throwable ->
                         Timber.e("Something went wrong sport... ${throwable.message}")
-                    }.collect {
-                        drinksRecyclerViewAdapter.toggleFavoriteOfADrink(
-                            it.bindingAdapterPosition,
-                            it
-                        )
-                    }
+                    }.collect {}
             }
             .catch { throwable ->
                 Timber.e("Something went wrong sport... ${throwable.message}")
@@ -132,7 +125,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), DrinkNavigator {
                     binding.recyclerViewSearch.visibility = View.VISIBLE
                     binding.imageViewSearchDrinkLoading.visibility = View.GONE
                     binding.textViewErrorSearch.visibility = View.GONE
-                    drinksRecyclerViewAdapter.submitList(state.data)
+                    drinksRecyclerViewAdapter.submitList(
+                        state.data
+                    )
 
                     if (state.data.isEmpty()) {
                         binding.textViewErrorSearch.visibility = View.VISIBLE

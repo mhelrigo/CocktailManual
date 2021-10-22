@@ -25,11 +25,11 @@ class IngredientsViewModel @Inject constructor(
     private val job = Job()
 
     private val _ingredients =
-        MutableStateFlow<ViewStateWrapper<IngredientsEntity>>(ViewStateWrapper.Loading(0))
+        MutableStateFlow<ViewStateWrapper<IngredientsEntity>>(ViewStateWrapper.Init)
     val ingredients: StateFlow<ViewStateWrapper<IngredientsEntity>> get() = _ingredients
 
     private val _ingredient =
-        MutableStateFlow<ViewStateWrapper<IngredientEntity>>(ViewStateWrapper.Loading(0))
+        MutableStateFlow<ViewStateWrapper<IngredientEntity>>(ViewStateWrapper.Init)
     val ingredient: StateFlow<ViewStateWrapper<IngredientEntity>> get() = _ingredient
 
 

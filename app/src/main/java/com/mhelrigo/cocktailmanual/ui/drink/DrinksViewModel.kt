@@ -19,6 +19,8 @@ import javax.inject.Inject
 import javax.inject.Named
 import kotlin.coroutines.CoroutineContext
 
+const val SYNC_MEALS_DEFAULT_INDEX = -1
+
 @HiltViewModel
 class DrinksViewModel @Inject constructor(
     var popularDrinksUseCase: GetPopularDrinksUseCase,
@@ -33,24 +35,23 @@ class DrinksViewModel @Inject constructor(
     var drinkModelMapper: DrinkModelMapper,
     @Named(DISPATCHERS_IO) var mainCoroutineContext: CoroutineContext
 ) : ViewModel(),
-    CoroutineScope {
-
+    CoroutineScope, SyncDrinks {
     private val job = Job()
     private var searchDrinkJob: Job = Job()
 
     private val _latestDrinks =
-        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(ViewStateWrapper.Loading(0))
+        MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(ViewStateWrapper.Init)
     val latestDrinks: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _latestDrinks
 
     private val _popularDrinks =
         MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
-            ViewStateWrapper.Loading(0)
+            ViewStateWrapper.Init
         )
     val popularDrinks: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _popularDrinks
 
     private val _randomDrinks =
         MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
-            ViewStateWrapper.Loading(0)
+            ViewStateWrapper.Init
         )
     val randomDrinks: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _randomDrinks
 
@@ -68,7 +69,7 @@ class DrinksViewModel @Inject constructor(
 
     private val _drinksFilteredByIngredient =
         MutableLiveData<ViewStateWrapper<List<DrinkModel>>>(
-            ViewStateWrapper.Loading(0)
+            ViewStateWrapper.Init
         )
     val drinksFilteredByIngredient: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _drinksFilteredByIngredient
 
@@ -79,8 +80,8 @@ class DrinksViewModel @Inject constructor(
     val drinkSearchedByName: LiveData<ViewStateWrapper<List<DrinkModel>>> get() = _drinkSearchedByName
 
     private val _drinkToBeSearched =
-        MutableLiveData<String>()
-    val drinkToBeSearched: LiveData<String>
+        MutableLiveData<DrinkModel>()
+    val drinkToBeSearched: LiveData<DrinkModel>
         get() = _drinkToBeSearched
 
     fun requestForLatestDrinks() = launch {
@@ -194,18 +195,18 @@ class DrinksViewModel @Inject constructor(
                     )
                 )
             }
-
+            syncMeals(drink, SYNC_MEALS_DEFAULT_INDEX);
             emit(drink)
         }
 
-    fun requestForDrinkDetailsByName(p0: String?) = launch {
-        p0?.let { id ->
-            getDrinkDetailsUseCase.buildExecutable(GetDrinkDetailsUseCase.Params(id))
+    fun requestForDrinkDetailsByName(p0: DrinkModel) = launch {
+        p0?.let { drinkModel ->
+            getDrinkDetailsUseCase.buildExecutable(GetDrinkDetailsUseCase.Params(drinkModel.idDrink!!))
                 .onStart { _drinkDetails.postValue(ViewStateWrapper.Loading(0)) }
                 .map { drink ->
                     assignCollectionType(
                         drinkModelMapper.transform(drink),
-                        DrinkCollectionType.NONE
+                        p0.drinkCollectionType
                     )
                 }
                 .catch { throwable -> _drinkDetails.postValue(ViewStateWrapper.Error(throwable)) }
@@ -241,39 +242,30 @@ class DrinksViewModel @Inject constructor(
 
     }
 
-    fun setDrinkToBeSearched(p0: String) = launch {
+    fun setDrinkToBeSearched(p0: DrinkModel) = launch {
         _drinkToBeSearched.postValue(p0)
     }
 
-    fun syncDrinks(p0: DrinkModel) = launch {
-        syncDrinks(p0, _latestDrinks)
-        syncDrinks(p0, _popularDrinks)
-        syncDrinks(p0, _drinksFilteredByIngredient)
-        syncDrinks(p0, _drinkSearchedByName)
-        syncDrinks(p0, _favoriteDrinks)
-        syncDrinks(p0, _randomDrinks)
-    }
+    fun syncMeals(p0: DrinkModel, index: Int): Job = launch {
+        val v0 = ArrayList<MutableLiveData<ViewStateWrapper<List<DrinkModel>>>>()
+        v0.add(_latestDrinks)
+        v0.add(_popularDrinks)
+        v0.add(_drinksFilteredByIngredient)
+        v0.add(_drinkSearchedByName)
+        v0.add(_randomDrinks)
 
-    private fun syncDrinks(
-        p0: DrinkModel,
-        p1: MutableLiveData<ViewStateWrapper<List<DrinkModel>>>
-    ) {
-        if (p1.value is ViewStateWrapper.Success) {
-            val v1: List<DrinkModel> =
-                (p1.value as ViewStateWrapper.Success<List<DrinkModel>>).data
-            var v2 = false
-            v1.map {
-                if (it.idDrink.equals(p0.idDrink)) {
-                    v2 = true
-                    it.markFavorite(p0.isFavourite)
-                }
-            }
-
-            if (v2) {
-                p1.postValue(ViewStateWrapper.Success(v1))
-                return
+        if (v0.size - 1 > index) {
+            var v1 = index
+            v1++
+            sync(p0, v0, v1).collect {
+                this.cancel()
+                syncMeals(p0, v1)
             }
         }
+    }
+
+    fun resetDrinksFilteredByIngredient() {
+        _drinksFilteredByIngredient.postValue(ViewStateWrapper.Init)
     }
 
     override val coroutineContext: CoroutineContext
